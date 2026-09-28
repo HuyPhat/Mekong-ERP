@@ -15,14 +15,16 @@ so the whole thing runs and deploys with no real server.
 
 ## Current status
 
-Phase 0 (scaffold) landed 2026-09-28: pnpm + Turborepo monorepo, empty-but-real
-`apps/erp` (Vite + React 19 + TanStack Router + Tailwind v4), `apps/site`
-(Next.js static export), `packages/ui`/`packages/contract` (source-only
-placeholders), shared lint/tsconfig in `packages/config`, husky + lint-staged
-
-- commitlint, and CI — all green. No feature code yet. Check §14 (Progress
-  log) in `docs/PLAN.md` for the latest state before assuming more exists than
-  this.
+Phase 1 (logged-in shell) landed 2026-09-28, on top of the Phase 0 scaffold
+(pnpm + Turborepo monorepo, CI, husky/lint-staged/commitlint). `apps/erp` now
+has a real session-gated shell: MSW-backed session endpoint, RBAC
+(`useCan`/`<Can>`/route guards), `_auth`/`_app` routing, sidebar/topbar/
+command palette, i18n (vi default, en), light/dark theme, 404/error
+boundaries. First real components in `packages/ui` (Button, Dialog,
+DropdownMenu, Command). `packages/contract` and `apps/erp` both have real
+Vitest coverage for this phase's domain logic. No business-entity features
+yet (products, POs, etc. — that starts Phase 2). Check §14 (Progress log) in
+`docs/PLAN.md` for the latest state before assuming more exists than this.
 
 ## Commands
 
@@ -32,15 +34,17 @@ pnpm dev              # run apps/erp (and other apps as added)
 pnpm build            # build all apps/packages via Turborepo
 pnpm lint             # eslint across the workspace
 pnpm typecheck        # tsc across the workspace
-pnpm test             # turbo run test (no test scripts exist yet — trivially green)
+pnpm test             # turbo run test (vitest in packages/contract and apps/erp)
 pnpm format           # prettier --write
 pnpm format:check     # prettier --check
 ```
 
-`pnpm test:e2e` and `pnpm storybook` don't exist yet — Vitest lands in Phase 1
-alongside the first real domain logic to test; Storybook lands whenever
-`packages/ui` has its first real component. Don't claim either runs until
-they're actually wired up.
+`pnpm test:e2e` and `pnpm storybook` don't exist yet. `packages/ui` already
+has its first real components (Button, Dialog, DropdownMenu, Command as of
+Phase 1), but four small primitives don't yet earn a Storybook setup —
+deliberately deferred to Phase 2, when DataGrid gives it a real payoff.
+Playwright e2e lands per the plan, in Phase 5. Don't claim either runs until
+actually wired up.
 
 Run `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build`
 before every commit that touches app code (this is exactly what CI runs).
@@ -130,12 +134,13 @@ settled, not defaults):
 
 ## Status of this plan
 
-Phase 0 is complete (approved 2026-09-28, scaffold landed same day — see
-`docs/PLAN.md` §14). **Phase 1 has not been asked for yet** — don't start
-building the app shell, mock auth, or contract/MSW wiring until the project
-owner explicitly says to move on, per the standing "ask before" rules above.
+Phase 1 is complete (approved 2026-09-28, landed same day — see
+`docs/PLAN.md` §14). **Phase 2 (DataGrid + Inventory) has not been asked for
+yet** — don't start building the DataGrid, Products list/detail, or the
+100k-row Stock Movements view until the project owner explicitly says to
+move on, per the standing "ask before" rules above.
 
-## Known tooling notes (Phase 0)
+## Known tooling notes
 
 - `eslint-plugin-jsx-a11y@6.10.2`'s declared peer range tops out at
   ESLint 9; we run ESLint 10 anyway since every other plugin already supports
@@ -152,3 +157,20 @@ owner explicitly says to move on, per the standing "ask before" rules above.
   `CLAUDE.md` stub) warning that their APIs may differ from training data.
   These are legitimate and self-explanatory — keep them committed as their
   own content asks; don't mistake them for stray files.
+- **Tailwind only auto-scans `apps/erp`'s own files.** Any class used only
+  inside `packages/ui` (or any other workspace package) needs an explicit
+  `@source '../../../packages/ui/src';` in `apps/erp/src/index.css` (already
+  added) or it silently never makes it into the compiled CSS — components
+  render with zero styling/positioning, and lint/typecheck/build all stay
+  green regardless. If a future `packages/*` UI package needs its classes
+  picked up too, it needs its own `@source` line. Caught only by an actual
+  browser check (Dialog rendered unstyled and inline until this was added).
+- `i18next-browser-languagedetector`'s `detection.order` must NOT include
+  `'navigator'` for this project — the visitor's OS/browser locale would
+  silently override the "vi default" requirement (§3) on first load.
+  `localStorage` only, so the default holds until an explicit in-app switch.
+- Intl output (`Intl.NumberFormat`, `Intl.DateTimeFormat`) uses locale-
+  specific whitespace (e.g. a no-break space, U+00A0, before "₫") that is
+  visually identical to a regular space but fails a strict string-equality
+  test against a hand-typed literal. Check real output (`node -e "..."` or a
+  code-point dump) before asserting exact formatter output in a test.

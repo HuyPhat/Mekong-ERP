@@ -1,6 +1,6 @@
 # Mekong ERP — Project Plan
 
-Status: **Phase 0 — Planning. Awaiting approval before any app code is written.**
+Status: **Phase 1 complete (logged-in shell). Phase 2 not yet started.**
 Last updated: 2026-09-28
 
 This document is the durable source of truth for scope, architecture, phasing,
@@ -409,10 +409,11 @@ XLSX, which is a scope/prioritization call rather than an architectural one:
 
 ## 13. Immediate next step
 
-Phase 0 is done (§14). **Phase 1 has not been asked for yet** — per the
-standing "ask before" rules, work on the app shell, mock auth, RBAC
-primitives, i18n, or the first real `packages/contract`/MSW wiring will not
-start until the project owner explicitly says to move on.
+Phase 1 is done (§14). **Phase 2 (DataGrid + Inventory) has not been asked
+for yet** — per the standing "ask before" rules, work on the DataGrid,
+Products list/detail, the 100k-row Stock Movements view, or CSV
+export/import will not start until the project owner explicitly says to
+move on.
 
 ## 14. Progress log
 
@@ -442,3 +443,39 @@ start until the project owner explicitly says to move on.
   9.x (verified jsx-a11y's rules actually run correctly against real JSX
   first). See `CLAUDE.md` "Known tooling notes" for details. Pushed to
   `claude/vibrant-mccarthy-hj07u8`.
+- **2026-09-28** — Project owner said to proceed to Phase 1. Landed the full
+  logged-in shell: session modeled as a real MSW-backed endpoint
+  (GET/POST/DELETE `/api/session`, localStorage-persisted) rather than a
+  zustand slice, so it doubles as the "MSW + contract proven end-to-end"
+  exit criterion; six fixed demo personas with a `resource:action`
+  permission catalog; `useCan()`/`<Can>` plus `requireSession`/
+  `requirePermission` route guards; `_auth` (login) and `_app`
+  (session-gated shell) route layouts with one guarded route per sidebar
+  module; app shell (sidebar, topbar, cmdk command palette, role switcher
+  doubling as the topbar user menu); i18n (vi default, en, persisted only on
+  explicit switch) and Intl-based VND/number/date formatters; light/dark
+  theme tokens with a zustand-backed toggle (zustand also owns sidebar-
+  collapsed and command-palette-open state, per ADR-0008); root-level 404
+  and error boundaries. First real components landed in `packages/ui`
+  (Button, Dialog, DropdownMenu, Command), hand-authored in shadcn/ui's own
+  style rather than via its CLI. All checks green throughout.
+  Two bugs surfaced only by an actual Playwright run against the dev
+  server, invisible to lint/typecheck/build: (1) `i18next-browser-
+languagedetector`'s navigator-based detection was silently forcing
+  English on first load, contradicting the "vi default" requirement — fixed
+  by dropping `navigator` from the detection order; (2) Tailwind's content
+  scanner doesn't reach `packages/ui` from this app by default, so utility
+  classes used only there (Dialog's centering, specifically) never made it
+  into the compiled CSS — the command palette rendered unstyled and inline
+  at the page bottom until an explicit `@source` was added. Full flow
+  (login → RBAC-filtered nav → direct-URL 403 and unknown-route 404 → role
+  switch → theme/language toggle → reload-persistence) verified with zero
+  console errors. Pushed to `claude/vibrant-mccarthy-hj07u8`.
+- **2026-09-28** — Closed a gap against `CLAUDE.md`'s own definition of done
+  (tests land with the phase that introduces the logic): wired up Vitest in
+  `packages/contract` and `apps/erp` and covered this phase's actual domain
+  logic — `hasPermission()`'s wildcard/exact-match rules and the VND/number/
+  date Intl formatters. Writing the VND test surfaced a genuine gotcha
+  (Intl's no-break space before the currency symbol is byte-different from,
+  but visually identical to, a regular space), normalized explicitly rather
+  than papered over. `pnpm test` now runs 11 real tests instead of 0.
