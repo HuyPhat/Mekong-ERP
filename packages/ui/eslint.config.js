@@ -1,3 +1,3 @@
-import { base } from '@mekong-erp/config/eslint/base';
+import { react } from '@mekong-erp/config/eslint/react';
 
-export default base;
+export default react;
