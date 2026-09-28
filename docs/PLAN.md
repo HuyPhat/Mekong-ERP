@@ -1,6 +1,6 @@
 # Mekong ERP — Project Plan
 
-Status: **Phase 1 complete (logged-in shell). Phase 2 not yet started.**
+Status: **Phase 2 complete (DataGrid + Inventory). Phase 3 not yet started.**
 Last updated: 2026-09-28
 
 This document is the durable source of truth for scope, architecture, phasing,
@@ -409,11 +409,10 @@ XLSX, which is a scope/prioritization call rather than an architectural one:
 
 ## 13. Immediate next step
 
-Phase 1 is done (§14). **Phase 2 (DataGrid + Inventory) has not been asked
-for yet** — per the standing "ask before" rules, work on the DataGrid,
-Products list/detail, the 100k-row Stock Movements view, or CSV
-export/import will not start until the project owner explicitly says to
-move on.
+Phase 2 is done (§14). **Phase 3 (Procure-to-Pay) has not been asked for
+yet** — per the standing "ask before" rules, work on the PO wizard,
+approval engine, Goods Receipt, Vendor Bill, three-way match, or AP
+postings will not start until the project owner explicitly says to move on.
 
 ## 14. Progress log
 
@@ -479,3 +478,80 @@ languagedetector`'s navigator-based detection was silently forcing
   (Intl's no-break space before the currency symbol is byte-different from,
   but visually identical to, a regular space), normalized explicitly rather
   than papered over. `pnpm test` now runs 11 real tests instead of 0.
+- **2026-09-28** — Project owner said to proceed to Phase 2. Landed the full
+  DataGrid + Inventory milestone (§6, §8 exit criteria).
+  **Contract**: entity schemas (`Product`, `Warehouse`, `StockLevel`,
+  `StockMovement`, denormalized `*View` variants) and generic list-query
+  helpers (`parseSort`/`applySort`/`paginate`/`matchesSearch`) shared by every
+  list endpoint; a hand-rolled Promise-based IndexedDB wrapper (`Collection<T>`
+  over raw `indexedDB`, no external dependency — `idb` wasn't pre-approved in
+  §3) persisting seed data across reloads; deterministic `@faker-js/faker`
+  generators (fixed seeds) for 2 warehouses, 3,000 products, and 100,000 stock
+  movements, with stock levels derived from movement history rather than
+  seeded independently; MSW handlers for the full products/warehouses/
+  stock-levels/stock-movements surface plus a bulk CSV-import upsert-by-SKU
+  endpoint, all Zod-validated at the boundary.
+  **DataGrid** (`packages/ui`): built on TanStack Table v9, which turned out
+  to have a completely redesigned feature-plugin API versus the v8 shape
+  assumed from training data — caught early by pulling version-matched
+  guidance via `npx @tanstack/intent@latest` instead of guessing, which
+  avoided building the whole thing against the wrong API. Delivered: manual
+  (server) and virtualized (TanStack Virtual, client) row models; multi-column
+  sort; column show/hide and resize/pin with localStorage layout persistence
+  and "Reset layout" (column drag-reorder has state and persistence wired but
+  no drag handle UI yet — a real gap, not claimed as done); per-column filters
+  covering all four required types (text, number-range, date-range,
+  enum-multiselect) plus debounced global search; saved views/favorites
+  (localStorage-backed, per view); row selection with a bulk-action bar
+  (confirmation + succeeded/failed reporting); right-aligned money/number
+  cells with tabular numerals and a totals-footer slot; loading-skeleton/
+  error-retry/empty states; ARIA grid semantics (`role="grid"`, `aria-sort`,
+  a focusable-separator resize handle per the APG pattern) — full spreadsheet-
+  style arrow-key cell navigation was not built, only per-control keyboard
+  access (sort/pin/resize/checkboxes), another honest gap rather than an
+  overstated "keyboard nav" checkbox; CSV export of the current filtered
+  result and CSV import with column mapping, Zod row-level validation
+  preview, and commit. `packages/ui` had no i18n mechanism of its own (by
+  design, to stay reusable) but its chrome text was still hardcoded English
+  — fixed by threading a `labels` prop (with English defaults) through every
+  DataGrid subcomponent, populated from `apps/erp`'s real translations, so
+  the "vi default, en" requirement now actually covers the grid, not just
+  business copy.
+  **apps/erp**: five new `_app/inventory/*` routes — a shared tabs layout,
+  Products list (DataGrid + filters + saved views + CSV export/import + bulk
+  "set reorder point" demo action, gated behind a new `inventory:write`
+  permission), Product detail/form (React Hook Form + Zod — the project's
+  first form, `z.coerce.number()` fields needed RHF's 3-generic
+  `useForm<Input, Context, Output>` form to reconcile raw-vs-coerced types
+  under `exactOptionalPropertyTypes`), Stock levels (warehouse/quantity
+  filters, totals footer), and Stock movements (100k rows, client-virtualized,
+  client-side filtering since there's no server pagination to filter
+  against). All list state (page, sort, filters, search) round-trips through
+  Zod-validated URL search params.
+  Two real bugs surfaced only by an actual Playwright/Chromium run against
+  the dev server — invisible to lint/typecheck/build/tests: (1) naming the
+  detail route `products.$productId.tsx` next to `products.tsx` makes
+  TanStack Router nest it as a child (the same dot-file convention that
+  already nests `_app/inventory/*` under `_app.tsx`), so the list route had
+  to become a pure `<Outlet/>` layout with its content moved to
+  `products/index.tsx` for both routes to render correctly instead of one
+  clobbering the other; (2) the Stock Movements grid's virtualized rows use a
+  `<tbody style="display:block">` so TanStack Virtual can absolutely-position
+  rows inside it — but a `<tbody>` forced off its table display loses the
+  `<table>`'s width entirely (a real, if obscure, browser quirk) and
+  shrink-wraps to ~150px, so every row's cells collapsed and overlapped into
+  a garbled mess in the first ~20% of the grid. Row counts, filtering, and
+  DOM structure all checked out fine in headless assertions; only a rendered
+  screenshot showed the corruption. Fixed with an explicit `width:
+table.getTotalSize()` on the `<tbody>`.
+  Also added this phase's tests (list-query helpers, CSV formula-injection
+  sanitization, filter-count logic, sort-param URL round-trip, stock-level
+  computation from movements) and wired Vitest into `packages/ui` for the
+  first time (`pnpm test` now covers all three packages that have logic
+  worth testing, 61 tests total, 0 skipped). `pnpm format:check`, `lint`,
+  `typecheck`, `test`, and `build` all green across every package. Verified
+  in a real browser as warehouse-staff and admin personas: search, every
+  filter type, sort, pagination, product edit/save/revert, bulk action with
+  confirmation, CSV export (real download) and import dialog, saved-view
+  save/apply, and the 100k-row virtualized scroll — all with zero console or
+  page errors. Pushed to `claude/vibrant-mccarthy-hj07u8`.

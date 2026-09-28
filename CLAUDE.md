@@ -15,15 +15,19 @@ so the whole thing runs and deploys with no real server.
 
 ## Current status
 
-Phase 1 (logged-in shell) landed 2026-09-28, on top of the Phase 0 scaffold
-(pnpm + Turborepo monorepo, CI, husky/lint-staged/commitlint). `apps/erp` now
-has a real session-gated shell: MSW-backed session endpoint, RBAC
-(`useCan`/`<Can>`/route guards), `_auth`/`_app` routing, sidebar/topbar/
-command palette, i18n (vi default, en), light/dark theme, 404/error
-boundaries. First real components in `packages/ui` (Button, Dialog,
-DropdownMenu, Command). `packages/contract` and `apps/erp` both have real
-Vitest coverage for this phase's domain logic. No business-entity features
-yet (products, POs, etc. — that starts Phase 2). Check §14 (Progress log) in
+Phase 2 (DataGrid + Inventory) landed 2026-09-28, on top of Phase 1's
+logged-in shell and the Phase 0 scaffold. `apps/erp` now has real
+business-entity screens: five `_app/inventory/*` routes (Products list,
+Product detail/form, Stock levels, Stock movements) all backed by
+`packages/contract`'s Zod-validated MSW endpoints over 3,000 seeded products
+and 100,000 seeded stock movements persisted to IndexedDB. `packages/ui`
+gained a full DataGrid (server + virtualized modes, sort/filter/search,
+column show-hide/resize/pin with persisted layout, saved views, row
+selection + bulk actions, CSV export/import) and its first form landed
+(React Hook Form + Zod, on the Product detail route). All three packages
+with real logic (`packages/contract`, `packages/ui`, `apps/erp`) now have
+Vitest coverage. No Procure-to-Pay, Order-to-Cash, Accounting, or Dashboard
+features yet — that starts Phase 3. Check §14 (Progress log) in
 `docs/PLAN.md` for the latest state before assuming more exists than this.
 
 ## Commands
@@ -34,17 +38,18 @@ pnpm dev              # run apps/erp (and other apps as added)
 pnpm build            # build all apps/packages via Turborepo
 pnpm lint             # eslint across the workspace
 pnpm typecheck        # tsc across the workspace
-pnpm test             # turbo run test (vitest in packages/contract and apps/erp)
+pnpm test             # turbo run test (vitest in packages/contract, packages/ui, and apps/erp)
 pnpm format           # prettier --write
 pnpm format:check     # prettier --check
 ```
 
-`pnpm test:e2e` and `pnpm storybook` don't exist yet. `packages/ui` already
-has its first real components (Button, Dialog, DropdownMenu, Command as of
-Phase 1), but four small primitives don't yet earn a Storybook setup —
-deliberately deferred to Phase 2, when DataGrid gives it a real payoff.
-Playwright e2e lands per the plan, in Phase 5. Don't claim either runs until
-actually wired up.
+`pnpm test:e2e` and `pnpm storybook` don't exist yet. `packages/ui` now has
+DataGrid (the component Storybook was deliberately waiting for, per the
+Phase 1 note this replaces) alongside Button/Dialog/DropdownMenu/Command,
+so the payoff case for Storybook is real now — but setting it up is a
+project-owner call (new tooling, not free), not something to add silently.
+Playwright e2e still lands per the plan, in Phase 5. Don't claim either runs
+until actually wired up.
 
 Run `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build`
 before every commit that touches app code (this is exactly what CI runs).
@@ -134,11 +139,18 @@ settled, not defaults):
 
 ## Status of this plan
 
-Phase 1 is complete (approved 2026-09-28, landed same day — see
-`docs/PLAN.md` §14). **Phase 2 (DataGrid + Inventory) has not been asked for
-yet** — don't start building the DataGrid, Products list/detail, or the
-100k-row Stock Movements view until the project owner explicitly says to
+Phase 2 is complete (approved 2026-09-28, landed same day — see
+`docs/PLAN.md` §14). **Phase 3 (Procure-to-Pay) has not been asked for
+yet** — don't start building the PO wizard, approval engine, Goods Receipt,
+Vendor Bill, or three-way match until the project owner explicitly says to
 move on, per the standing "ask before" rules above.
+
+Two known gaps carried forward from Phase 2's DataGrid rather than
+overstated as done: column drag-reorder has state and persistence wired but
+no drag-handle UI, and grid keyboard support covers individual controls
+(sort/pin/resize/checkboxes) but not full ARIA-APG arrow-key cell
+navigation. Pick these up if a future phase's grid work would benefit, or
+if asked.
 
 ## Known tooling notes
 
@@ -174,3 +186,33 @@ move on, per the standing "ask before" rules above.
   visually identical to a regular space but fails a strict string-equality
   test against a hand-typed literal. Check real output (`node -e "..."` or a
   code-point dump) before asserting exact formatter output in a test.
+- A `<tbody>` forced to `display: block` (needed to let TanStack Virtual
+  absolutely-position rows inside it) loses the parent `<table>`'s width
+  entirely and shrink-wraps instead — a genuine, easy-to-miss browser quirk,
+  not a TanStack Virtual bug. Give it an explicit `width` matching
+  `table.getTotalSize()`. Caught only by a rendered screenshot; row counts
+  and DOM structure looked completely fine in headless assertions
+  (`packages/ui/src/data-grid/data-grid.tsx`).
+- TanStack Router's default search-param codec JSON-parses any value that
+  looks like JSON (`?page=2` → the number `2`, not the string `"2"`). A Zod
+  search schema field using `.catch()`/`.default()` to survive a bad URL
+  therefore has a non-optional _output_ type, which makes that field
+  required at every typed `<Link>`/`redirect()` call site targeting that
+  route — including from unrelated routes, since ancestor routes' search
+  stays live during a child navigation. Pass the field explicitly at those
+  call sites (see the inventory routes' `search={{ page: 1, pageSize: 50 }}`
+  back-links) rather than fighting the type.
+- A route file named `foo.bar.tsx` next to `foo.tsx` (TanStack Router's
+  flat-file nesting convention — the same mechanism that nests `_app/*`
+  under `_app.tsx`) makes `foo.tsx` `bar`'s parent whether you intended
+  nesting or two siblings. If `foo.tsx` renders content directly instead of
+  `<Outlet/>`, the child route has nowhere to render. Two routes meant to be
+  siblings both need to live one level down (`foo/index.tsx` +
+  `foo/bar.tsx`), with `foo.tsx` reduced to a pure `<Outlet/>` layout.
+- `zod`, `@tanstack/react-table`, and any other package only `apps/erp`
+  imports directly (not just transitively through a workspace dependency
+  like `@mekong-erp/contract` or `@mekong-erp/ui`) needs its own entry in
+  `apps/erp/package.json`. pnpm's workspace linking doesn't hoist a
+  transitive dependency into a place `tsc`/Vite will resolve it from for a
+  package that doesn't declare it — `tsc -b` fails with "Cannot find module"
+  even though the package is already in the lockfile.
