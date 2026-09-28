@@ -7,7 +7,7 @@ This document is the durable source of truth for scope, architecture, phasing,
 risks, and open decisions. It exists so any future session (including this one
 after context is compacted) can resume work without re-reading the original
 request in full. `CLAUDE.md` holds the day-to-day conventions and commands;
-this file holds the *why* and the *what*.
+this file holds the _why_ and the _what_.
 
 ---
 
@@ -19,6 +19,7 @@ Mekong** — FMCG trading/distribution SME, 2 warehouses (HCM-01 Thủ Đức,
 HCM-02 Bình Tân).
 
 The project is "done enough to submit" when:
+
 - A live demo is deployed, loads fast, and its mock backend (MSW) persists
   seed data across reloads with a visible "reset demo data" action.
 - Every row in the JD-mapping table (§10) points at a feature that actually
@@ -31,17 +32,17 @@ The project is "done enough to submit" when:
 ## 2. Sequencing philosophy
 
 This is a multi-week build even done efficiently. To avoid an all-or-nothing
-outcome, every phase boundary is a *demoable, deployed* state:
+outcome, every phase boundary is a _demoable, deployed_ state:
 
-| After phase | State |
-|---|---|
-| 0 | Not demoable — tooling/CI only. Internal milestone. |
-| 1 | Not demoable — shell + mock auth only. Internal milestone. |
-| 2 | **First demoable milestone.** Inventory + DataGrid alone is already portfolio-worthy. |
-| 3 | P2P loop complete. Phases 2+3 together are a credible minimum submission. |
-| 4 | Full JD coverage: O2C, GL, dashboards, realtime. |
-| 5 | Polish-or-bust: this is where every quality-bar claim in the README has to actually be true. |
-| 6 | Stretch (Vue inbox, HRM). Explicitly OK to skip if the application deadline arrives first. |
+| After phase | State                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------- |
+| 0           | Not demoable — tooling/CI only. Internal milestone.                                          |
+| 1           | Not demoable — shell + mock auth only. Internal milestone.                                   |
+| 2           | **First demoable milestone.** Inventory + DataGrid alone is already portfolio-worthy.        |
+| 3           | P2P loop complete. Phases 2+3 together are a credible minimum submission.                    |
+| 4           | Full JD coverage: O2C, GL, dashboards, realtime.                                             |
+| 5           | Polish-or-bust: this is where every quality-bar claim in the README has to actually be true. |
+| 6           | Stretch (Vue inbox, HRM). Explicitly OK to skip if the application deadline arrives first.   |
 
 I'll checkpoint explicitly at the end of Phase 3 on whether Phases 4–5 fit the
 remaining time, rather than assuming.
@@ -70,9 +71,10 @@ DB. Framework-agnostic — no React imports (this is what lets `apps/erp-vue`
 reuse it).
 
 **apps/site** — Next.js (App Router, static export/SSG): landing + case study
-+ architecture write-up + screenshots, full SEO metadata, sitemap, OG image.
-*(Will pin the actual current stable Next.js version at scaffold time rather
-than assume one — see §9 risks.)*
+
+- architecture write-up + screenshots, full SEO metadata, sitemap, OG image.
+  _(Will pin the actual current stable Next.js version at scaffold time rather
+  than assume one — see §9 risks.)_
 
 **apps/erp-vue** (stretch) — Vue 3 + Vite + TanStack Vue Query + Vue Router on
 `packages/contract`; single "Approvals Inbox" screen.
@@ -240,39 +242,39 @@ different permissions, plus a "Reset demo data" action.
 PLAN.md + CLAUDE.md (this work); pnpm/Turborepo monorepo; empty
 apps/packages; base tsconfig/eslint/prettier/tailwind configs; husky +
 lint-staged + commitlint; GitHub Actions CI skeleton (install/lint/typecheck/build
-on the empty apps). *Exit:* CI green on a scaffold with no real features yet.
+on the empty apps). _Exit:_ CI green on a scaffold with no real features yet.
 
 **Phase 1 — Foundation (M1: "logged-in shell").**
 App shell (sidebar modules, topbar, breadcrumbs, command palette); mock auth +
 role switcher; RBAC primitives (`<Can>`, `useCan`, route guards); i18n vi/en +
 formatters; `packages/contract` + MSW + seed + persistence proven end-to-end
 with one trivial handler; error boundaries; 404/403 pages; light/dark theme
-tokens. *Exit:* can log in as each demo user, see a permission-gated shell,
+tokens. _Exit:_ can log in as each demo user, see a permission-gated shell,
 reload the page and keep the session/seed state.
 
 **Phase 2 — DataGrid + Inventory (M2: "the grid").**
 Full DataGrid feature set (§6); Products list↔form, Stock levels; 100k-row
-Stock Movements virtualized view; CSV export/import for products. *Exit:*
+Stock Movements virtualized view; CSV export/import for products. _Exit:_
 first genuinely demoable milestone — grid, filtering, virtualization, CSV
 round-trip all work against real seed data.
 
 **Phase 3 — Procure-to-Pay (M3: "P2P end-to-end").**
 PO wizard + line items; approval engine + inbox + timeline; Goods Receipt
 (partial); Vendor Bill; Three-way match; AP postings; audit log entries.
-*Exit:* PO → approve → receive (partial) → bill → match → payment works
+_Exit:_ PO → approve → receive (partial) → bill → match → payment works
 start to finish as one scripted demo path.
 
 **Phase 4 — Order-to-Cash, Accounting, Dashboard, Realtime (M4: "live ERP").**
 Quotation → SO → delivery → invoice (+ e-invoice preview) → payment; GL,
 trial balance, AR/AP aging; GraphQL dashboard KPIs + charts; WebSocket events
-updating the inventory grid + approval toasts. *Exit:* full JD-mapping table
+updating the inventory grid + approval toasts. _Exit:_ full JD-mapping table
 (§10) is true end to end.
 
 **Phase 5 — Quality, docs, deploy (M5: "apply-ready MVP").**
 Test coverage on critical logic; Playwright happy paths; axe checks;
 Lighthouse pass; performance budget; security headers; README + JD table +
 architecture diagram + ADR links; screenshots; GIF/Loom script; Next.js site;
-both apps deployed; Dockerfile. *Exit:* every claim in the README has been
+both apps deployed; Dockerfile. _Exit:_ every claim in the README has been
 actually run and is true.
 
 **Phase 6 — Stretch (after applying).**
@@ -299,7 +301,7 @@ support. Explicitly optional.
    only (as specified) keeps this bounded.
 5. **"Realtime" with no real server.** Within one browser tab, optimistic
    Query-cache updates driven by the mock WS are straightforward. Making an
-   approval in one tab show a toast in *another* tab of the same browser
+   approval in one tab show a toast in _another_ tab of the same browser
    needs a mechanism the brief doesn't specify (e.g. `BroadcastChannel`).
    I'll treat single-tab optimistic updates as the Phase 4 baseline and
    cross-tab sync as an enhancement if time allows, not a blocking
@@ -311,10 +313,11 @@ support. Explicitly optional.
    getting a regulation number wrong in a public portfolio aimed at a
    Vietnamese ERP-focused employer is a real credibility risk. See §12 —
    I'd rather soften the wording than assert an unverified number.
-7. **Next.js version drift.** I'll pin whatever the actual current stable
-   Next.js release is when `apps/site` is scaffolded in Phase 5, and record
-   the real version in `CLAUDE.md`, rather than trust a version number
-   written months before scaffolding happens.
+7. **Next.js version drift.** Resolved in Phase 0: `apps/site` was scaffolded
+   against whatever was actually current at install time (Next.js 16.3.6 —
+   the brief's guess held up), not a version number assumed from memory.
+   Real content still lands in Phase 5; re-verify the installed version
+   hasn't moved meaningfully by then.
 8. **Coverage target (≥80% on `packages/contract` + domain logic)** is far
    easier to hit as a per-phase habit than a Phase-5 retrofit. Each phase's
    exit criteria (§8) includes tests for that phase's new logic.
@@ -323,27 +326,27 @@ support. Explicitly optional.
 
 (Canonical source for this table; copied into `README.md` in Phase 5.)
 
-| JD requirement | Feature / evidence |
-|---|---|
-| ERP UIs: Accounting, Inventory, SCM (+HRM stretch) | Inventory, Purchasing, Sales, Accounting modules; HRM Leave (stretch) |
-| Multi-step forms | PO wizard: Supplier → Lines → Delivery/Terms → Review; autosave draft |
-| Approval flows | Approval engine + Approvals Inbox + status timeline on documents |
-| Financial dashboards | Dashboard: revenue, gross margin, AR/AP aging, cash position |
-| Real-time reporting tables | Inventory grid live-updates via WebSocket; "live" badge + row flash |
-| GL/AR/AP, P2P, O2C, inventory | Document flows auto-post journal entries; GL, trial balance, aging |
-| REST / GraphQL / WebSocket | MSW REST for CRUD, GraphQL for dashboard/reports, ws.link for events |
-| Reusable components, FE architecture | `packages/ui` design system + DataGrid + FormKit; feature-sliced app |
-| Performance optimization | Server-side pagination; virtualized 100k-row movements grid; code-splitting; bundle budget |
-| Responsive design | Desktop-first dense layouts; tablet/mobile fallbacks (card lists) |
-| Frontend security best practices | RBAC-aware UI, route guards, CSP headers, input sanitization, SECURITY.md |
-| TypeScript, Tailwind, SCSS | TS strict; Tailwind v4; one SCSS module (print styles for invoice) |
-| Git, CI/CD, Docker | GitHub Actions pipeline; Dockerfile (nginx static) |
-| SSR/SSG (Next.js), SEO | `apps/site`: Next.js SSG case-study site with metadata, OG images, sitemap |
-| Unit testing (Vitest/RTL) | Vitest + React Testing Library + Playwright e2e + axe a11y checks |
-| Vue.js (equal option) | `apps/erp-vue`: Vue 3 Approvals Inbox on the same API contract (stretch) |
-| Micro frontend (nice-to-have) | Shared contract package + Vue app mountable standalone; ADR on MFE trade-offs |
-| VAS localization (nice-to-have) | VAS account codes, VND formatting, vi-VN dates, VAT 0/5/8/10%, mock e-invoice |
-| Collaboration with BA/design/QA | `/docs/workflows` (user stories + Mermaid flows), Storybook, test plan |
+| JD requirement                                     | Feature / evidence                                                                         |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| ERP UIs: Accounting, Inventory, SCM (+HRM stretch) | Inventory, Purchasing, Sales, Accounting modules; HRM Leave (stretch)                      |
+| Multi-step forms                                   | PO wizard: Supplier → Lines → Delivery/Terms → Review; autosave draft                      |
+| Approval flows                                     | Approval engine + Approvals Inbox + status timeline on documents                           |
+| Financial dashboards                               | Dashboard: revenue, gross margin, AR/AP aging, cash position                               |
+| Real-time reporting tables                         | Inventory grid live-updates via WebSocket; "live" badge + row flash                        |
+| GL/AR/AP, P2P, O2C, inventory                      | Document flows auto-post journal entries; GL, trial balance, aging                         |
+| REST / GraphQL / WebSocket                         | MSW REST for CRUD, GraphQL for dashboard/reports, ws.link for events                       |
+| Reusable components, FE architecture               | `packages/ui` design system + DataGrid + FormKit; feature-sliced app                       |
+| Performance optimization                           | Server-side pagination; virtualized 100k-row movements grid; code-splitting; bundle budget |
+| Responsive design                                  | Desktop-first dense layouts; tablet/mobile fallbacks (card lists)                          |
+| Frontend security best practices                   | RBAC-aware UI, route guards, CSP headers, input sanitization, SECURITY.md                  |
+| TypeScript, Tailwind, SCSS                         | TS strict; Tailwind v4; one SCSS module (print styles for invoice)                         |
+| Git, CI/CD, Docker                                 | GitHub Actions pipeline; Dockerfile (nginx static)                                         |
+| SSR/SSG (Next.js), SEO                             | `apps/site`: Next.js SSG case-study site with metadata, OG images, sitemap                 |
+| Unit testing (Vitest/RTL)                          | Vitest + React Testing Library + Playwright e2e + axe a11y checks                          |
+| Vue.js (equal option)                              | `apps/erp-vue`: Vue 3 Approvals Inbox on the same API contract (stretch)                   |
+| Micro frontend (nice-to-have)                      | Shared contract package + Vue app mountable standalone; ADR on MFE trade-offs              |
+| VAS localization (nice-to-have)                    | VAS account codes, VND formatting, vi-VN dates, VAT 0/5/8/10%, mock e-invoice              |
+| Collaboration with BA/design/QA                    | `/docs/workflows` (user stories + Mermaid flows), Storybook, test plan                     |
 
 ## 11. ADR backlog
 
@@ -394,9 +397,9 @@ XLSX, which is a scope/prioritization call rather than an architectural one:
   green, not after every micro-commit, so CI signal on the branch stays
   meaningful. Say so if you'd rather I push after every single commit.
 - **License** — default: MIT (portfolio code), unless you want none/other.
-- **Node version** — default: whatever is Active LTS at Phase-0 scaffold
-  time; I'll record the exact pinned version in `CLAUDE.md` rather than
-  assume one now.
+- **Node version** — resolved in Phase 0: pinned to `22.22.2` (the Active LTS
+  actually installed in the scaffold environment), recorded in `.nvmrc` and
+  root `package.json` `engines`.
 - **shadcn/ui theme** — default: "New York" style, neutral base color to
   start, with a teal/blue Mekong-river-ish accent once the shell exists —
   better to iterate visually than to bikeshed color hexes now.
@@ -404,18 +407,12 @@ XLSX, which is a scope/prioritization call rather than an architectural one:
   unless you ask; work lands via commits pushed to
   `claude/vibrant-mccarthy-hj07u8`.
 
-## 13. Immediate next step once approved
+## 13. Immediate next step
 
-Phase 0: scaffold the pnpm + Turborepo monorepo, empty apps/packages, base
-tsconfig/eslint/prettier/tailwind configs, husky + lint-staged + commitlint,
-and a GitHub Actions CI skeleton (install/lint/typecheck/build against the
-empty apps). Confirm everything is green, commit phase-by-phase, then report
-back before starting Phase 1.
-
-**Still waiting on an explicit go-ahead to start Phase 0 scaffolding** — the
-four forced-choice questions are resolved (§12), but that's a different
-checkpoint than approving the plan as a whole (phase breakdown, folder
-structure, risk acceptance). Will not start scaffolding until that's given.
+Phase 0 is done (§14). **Phase 1 has not been asked for yet** — per the
+standing "ask before" rules, work on the app shell, mock auth, RBAC
+primitives, i18n, or the first real `packages/contract`/MSW wiring will not
+start until the project owner explicitly says to move on.
 
 ## 14. Progress log
 
@@ -425,5 +422,23 @@ structure, risk acceptance). Will not start scaffolding until that's given.
 - **2026-09-28** — Form library, client UI state, hosting, and XLSX
   questions (§12) resolved by the project owner, all matching the
   recommended defaults. Wrote ADR-0001, 0002, 0003, 0006, 0007, 0008, 0009.
-  Still waiting for explicit approval of the plan as a whole before starting
-  Phase 0.
+- **2026-09-28** — Project owner said to proceed with the scaffold. Phase 0
+  complete: pnpm + Turborepo monorepo; `packages/config` (shared strict
+  tsconfig + flat ESLint configs); `packages/contract` and `packages/ui` as
+  source-only placeholder packages; `apps/erp` (Vite + React 19 + TanStack
+  Router file-based routing + Tailwind v4, importing `@mekong-erp/contract`
+  to prove workspace wiring); `apps/site` (Next.js 16, `output: 'export'`);
+  husky + lint-staged + commitlint; GitHub Actions CI
+  (format:check/lint/typecheck/test/build). `pnpm format:check`, `lint`,
+  `typecheck`, `test` (trivially, 0 test scripts exist yet), and `build` all
+  pass. Both apps' dev servers were verified rendering in a real browser
+  (Playwright/Chromium screenshots), not just build success. Deferred out of
+  Phase 0 as premature: TanStack Query/Zod/MSW, shadcn/ui, Storybook,
+  Vitest, Dockerfile, `apps/erp-vue` — each lands with the phase that
+  actually needs it. Two tooling decisions made empirically rather than
+  from memory: TypeScript pinned to `6.0.3` (not the newest `7.x`, which
+  `typescript-eslint` doesn't support yet) and ESLint kept at current `10.x`
+  despite `eslint-plugin-jsx-a11y`'s peer range still declaring only up to
+  9.x (verified jsx-a11y's rules actually run correctly against real JSX
+  first). See `CLAUDE.md` "Known tooling notes" for details. Pushed to
+  `claude/vibrant-mccarthy-hj07u8`.
