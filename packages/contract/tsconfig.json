@@ -2,7 +2,8 @@
   "extends": "../config/typescript/base.json",
   "compilerOptions": {
     "noEmit": true,
-    "rootDir": "src"
+    "rootDir": "src",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
   "include": ["src", "eslint.config.js"]
 }

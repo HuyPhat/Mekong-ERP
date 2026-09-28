@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./mocks/browser": "./src/mocks/browser.ts",
+    "./mocks/handlers": "./src/mocks/handlers.ts"
   },
   "scripts": {
     "lint": "eslint .",
@@ -13,5 +15,9 @@
   },
   "devDependencies": {
     "@mekong-erp/config": "workspace:*"
+  },
+  "dependencies": {
+    "msw": "^2.15.0",
+    "zod": "^4.6.5"
   }
 }
