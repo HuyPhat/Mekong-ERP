@@ -1,9 +1,38 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { PERMISSIONS } from '@mekong-erp/contract';
 import { requirePermission } from '../../shared/permissions/guards';
-import { ModulePlaceholder } from '../../shared/components/module-placeholder';
 
 export const Route = createFileRoute('/_app/inventory')({
   beforeLoad: ({ context }) => requirePermission(context.queryClient, PERMISSIONS.inventoryRead),
-  component: () => <ModulePlaceholder titleKey="nav.inventory" phase={2} />,
+  component: InventoryLayout,
 });
+
+const TABS = [
+  { to: '/inventory/products', labelKey: 'inventory.tabs.products' },
+  { to: '/inventory/stock-levels', labelKey: 'inventory.tabs.stockLevels' },
+  { to: '/inventory/stock-movements', labelKey: 'inventory.tabs.stockMovements' },
+] as const;
+
+function InventoryLayout() {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-col gap-4">
+      <h1 className="text-xl font-semibold">{t('nav.inventory')}</h1>
+      <nav className="flex gap-4 border-b border-border">
+        {TABS.map((tab) => (
+          <Link
+            key={tab.to}
+            to={tab.to}
+            className="border-b-2 border-transparent px-1 pb-2 text-sm text-muted-foreground hover:text-foreground"
+            activeProps={{ className: 'border-accent font-medium text-foreground' }}
+          >
+            {t(tab.labelKey)}
+          </Link>
+        ))}
+      </nav>
+      <Outlet />
+    </div>
+  );
+}

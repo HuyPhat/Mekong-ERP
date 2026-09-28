@@ -53,5 +53,120 @@
   "purchasing": {
     "approveDemoButton": "Approve PO-2026-000123 (demo)",
     "approveHidden": "(Approve action hidden — needs purchase_order:approve)"
+  },
+  "dataGrid": {
+    "resetLayout": "Reset layout",
+    "rowsPerPage": "Rows per page",
+    "rangeOfTotal": "{{from}}–{{to}} of {{total}}",
+    "pageIndicator": "Page {{page}} / {{pageCount}}",
+    "firstPage": "First page",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "lastPage": "Last page",
+    "selectedCount": "{{count}} selected",
+    "clearSelection": "Clear selection",
+    "bulkActionWorking": "Working…",
+    "bulkActionSucceeded": "{{succeeded}} succeeded",
+    "bulkActionSucceededAndFailed": "{{succeeded}} succeeded, {{failed}} failed",
+    "chooseColumns": "Choose columns",
+    "columnsMenuLabel": "Columns",
+    "switchToCompactDensity": "Compact density",
+    "switchToComfortableDensity": "Comfortable density",
+    "exportCsv": "Export CSV",
+    "selectAllRows": "Select all rows",
+    "selectRow": "Select row",
+    "pinColumn": "Pin column",
+    "unpinColumn": "Unpin column",
+    "resizeColumn": "Resize column {{columnId}}",
+    "clearFilters": "Clear filters",
+    "any": "Any",
+    "clearOption": "Clear",
+    "minimumLabel": "{{label}} minimum",
+    "maximumLabel": "{{label}} maximum",
+    "selectedOptionCount": "{{label}} ({{count}})",
+    "viewsButton": "Views",
+    "savedViewsMenuLabel": "Saved views",
+    "noSavedViews": "No saved views yet.",
+    "deleteView": "Delete view {{name}}",
+    "saveCurrentView": "Save current view…",
+    "namePrompt": "Name this view"
+  },
+  "inventory": {
+    "tabs": {
+      "products": "Products",
+      "stockLevels": "Stock levels",
+      "stockMovements": "Stock movements"
+    },
+    "products": {
+      "columns": {
+        "sku": "SKU",
+        "name": "Name",
+        "category": "Category",
+        "unit": "Unit",
+        "costPrice": "Cost price",
+        "salePrice": "Sale price",
+        "reorderPoint": "Reorder point",
+        "createdAt": "Created"
+      },
+      "empty": "No products match these filters.",
+      "searchPlaceholder": "Search by name or SKU…",
+      "bulk": {
+        "setReorderPoint": "Set reorder point to {{value}} (demo)",
+        "confirmSetReorderPoint": "Set the reorder point to {{value}} for every selected product?"
+      },
+      "import": {
+        "trigger": "Import CSV",
+        "title": "Import products from CSV",
+        "description": "Map columns, review validation results, then commit the valid rows.",
+        "pickFile": "Choose a CSV file",
+        "noColumn": "— Don't import —",
+        "cancel": "Cancel",
+        "validate": "Validate",
+        "summary": "{{valid}} valid row(s), {{invalid}} invalid row(s).",
+        "rowOk": "OK",
+        "committing": "Importing…",
+        "commit": "Import {{count}} row(s)",
+        "done": "Import finished: {{succeeded}} succeeded, {{failed}} failed.",
+        "close": "Close"
+      },
+      "detail": {
+        "loading": "Loading product…",
+        "notFound": "Product not found.",
+        "backToList": "Back to products",
+        "createdOn": "created {{date}}",
+        "saving": "Saving…",
+        "save": "Save changes",
+        "saved": "Saved.",
+        "saveFailed": "Couldn't save — please try again."
+      }
+    },
+    "stockLevels": {
+      "columns": {
+        "warehouse": "Warehouse",
+        "quantityOnHand": "On hand",
+        "reorderPoint": "Reorder point",
+        "status": "Status"
+      },
+      "belowReorder": "Below reorder point",
+      "ok": "OK",
+      "empty": "No stock levels match these filters.",
+      "searchPlaceholder": "Search by product name or SKU…",
+      "pageTotal": "Total on hand (this page): {{total}}"
+    },
+    "stockMovements": {
+      "columns": {
+        "occurredAt": "Date",
+        "type": "Type",
+        "quantity": "Quantity",
+        "reference": "Reference"
+      },
+      "types": {
+        "in": "Stock in",
+        "out": "Stock out",
+        "adjustment": "Adjustment"
+      },
+      "empty": "No movements match these filters.",
+      "searchPlaceholder": "Search by product, SKU, or reference…"
+    }
   }
 }

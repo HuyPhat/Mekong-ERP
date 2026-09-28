@@ -53,5 +53,120 @@
   "purchasing": {
     "approveDemoButton": "Duyệt PO-2026-000123 (demo)",
     "approveHidden": "(Ẩn nút duyệt — cần quyền purchase_order:approve)"
+  },
+  "dataGrid": {
+    "resetLayout": "Đặt lại bố cục",
+    "rowsPerPage": "Số dòng mỗi trang",
+    "rangeOfTotal": "{{from}}–{{to}} trong {{total}}",
+    "pageIndicator": "Trang {{page}} / {{pageCount}}",
+    "firstPage": "Trang đầu",
+    "previousPage": "Trang trước",
+    "nextPage": "Trang sau",
+    "lastPage": "Trang cuối",
+    "selectedCount": "Đã chọn {{count}}",
+    "clearSelection": "Bỏ chọn",
+    "bulkActionWorking": "Đang xử lý…",
+    "bulkActionSucceeded": "{{succeeded}} thành công",
+    "bulkActionSucceededAndFailed": "{{succeeded}} thành công, {{failed}} thất bại",
+    "chooseColumns": "Chọn cột",
+    "columnsMenuLabel": "Cột",
+    "switchToCompactDensity": "Mật độ gọn",
+    "switchToComfortableDensity": "Mật độ thoáng",
+    "exportCsv": "Xuất CSV",
+    "selectAllRows": "Chọn tất cả các dòng",
+    "selectRow": "Chọn dòng",
+    "pinColumn": "Ghim cột",
+    "unpinColumn": "Bỏ ghim cột",
+    "resizeColumn": "Đổi cỡ cột {{columnId}}",
+    "clearFilters": "Xóa bộ lọc",
+    "any": "Tất cả",
+    "clearOption": "Xóa",
+    "minimumLabel": "{{label}} tối thiểu",
+    "maximumLabel": "{{label}} tối đa",
+    "selectedOptionCount": "{{label}} ({{count}})",
+    "viewsButton": "Bộ lọc đã lưu",
+    "savedViewsMenuLabel": "Bộ lọc đã lưu",
+    "noSavedViews": "Chưa có bộ lọc nào được lưu.",
+    "deleteView": "Xóa bộ lọc {{name}}",
+    "saveCurrentView": "Lưu bộ lọc hiện tại…",
+    "namePrompt": "Đặt tên cho bộ lọc này"
+  },
+  "inventory": {
+    "tabs": {
+      "products": "Sản phẩm",
+      "stockLevels": "Tồn kho",
+      "stockMovements": "Lịch sử xuất nhập"
+    },
+    "products": {
+      "columns": {
+        "sku": "Mã SKU",
+        "name": "Tên sản phẩm",
+        "category": "Danh mục",
+        "unit": "Đơn vị",
+        "costPrice": "Giá vốn",
+        "salePrice": "Giá bán",
+        "reorderPoint": "Mức tồn tối thiểu",
+        "createdAt": "Ngày tạo"
+      },
+      "empty": "Không có sản phẩm nào khớp bộ lọc.",
+      "searchPlaceholder": "Tìm theo tên hoặc mã SKU…",
+      "bulk": {
+        "setReorderPoint": "Đặt mức tồn tối thiểu là {{value}} (demo)",
+        "confirmSetReorderPoint": "Đặt mức tồn tối thiểu là {{value}} cho tất cả sản phẩm đã chọn?"
+      },
+      "import": {
+        "trigger": "Nhập từ CSV",
+        "title": "Nhập sản phẩm từ CSV",
+        "description": "Ánh xạ cột, xem kết quả kiểm tra dữ liệu, rồi xác nhận nhập các dòng hợp lệ.",
+        "pickFile": "Chọn tệp CSV",
+        "noColumn": "— Không nhập —",
+        "cancel": "Hủy",
+        "validate": "Kiểm tra dữ liệu",
+        "summary": "{{valid}} dòng hợp lệ, {{invalid}} dòng không hợp lệ.",
+        "rowOk": "Hợp lệ",
+        "committing": "Đang nhập…",
+        "commit": "Nhập {{count}} dòng",
+        "done": "Đã nhập xong: {{succeeded}} thành công, {{failed}} thất bại.",
+        "close": "Đóng"
+      },
+      "detail": {
+        "loading": "Đang tải sản phẩm…",
+        "notFound": "Không tìm thấy sản phẩm.",
+        "backToList": "Quay lại danh sách",
+        "createdOn": "tạo ngày {{date}}",
+        "saving": "Đang lưu…",
+        "save": "Lưu thay đổi",
+        "saved": "Đã lưu.",
+        "saveFailed": "Lưu thất bại — vui lòng thử lại."
+      }
+    },
+    "stockLevels": {
+      "columns": {
+        "warehouse": "Kho",
+        "quantityOnHand": "Tồn kho",
+        "reorderPoint": "Mức tồn tối thiểu",
+        "status": "Trạng thái"
+      },
+      "belowReorder": "Dưới mức tồn tối thiểu",
+      "ok": "Bình thường",
+      "empty": "Không có tồn kho nào khớp bộ lọc.",
+      "searchPlaceholder": "Tìm theo tên sản phẩm hoặc mã SKU…",
+      "pageTotal": "Tổng tồn (trang này): {{total}}"
+    },
+    "stockMovements": {
+      "columns": {
+        "occurredAt": "Ngày",
+        "type": "Loại",
+        "quantity": "Số lượng",
+        "reference": "Chứng từ"
+      },
+      "types": {
+        "in": "Nhập kho",
+        "out": "Xuất kho",
+        "adjustment": "Điều chỉnh"
+      },
+      "empty": "Không có giao dịch nào khớp bộ lọc.",
+      "searchPlaceholder": "Tìm theo sản phẩm, SKU hoặc chứng từ…"
+    }
   }
 }
