@@ -18,6 +18,7 @@
     "@mekong-erp/config": "workspace:*"
   },
   "dependencies": {
+    "@faker-js/faker": "^10.6.0",
     "msw": "^2.15.0",
     "zod": "^4.6.5"
   }

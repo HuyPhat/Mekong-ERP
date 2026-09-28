@@ -3,6 +3,7 @@ import type { User } from './schemas';
 export const PERMISSIONS = {
   dashboardRead: 'dashboard:read',
   inventoryRead: 'inventory:read',
+  inventoryWrite: 'inventory:write',
   purchasingRead: 'purchasing:read',
   salesRead: 'sales:read',
   accountingRead: 'accounting:read',
@@ -25,7 +26,7 @@ export const DEMO_USERS: User[] = [
     id: 'warehouse',
     name: 'Trần Thị Bình',
     role: 'warehouse',
-    permissions: [PERMISSIONS.dashboardRead, PERMISSIONS.inventoryRead],
+    permissions: [PERMISSIONS.dashboardRead, PERMISSIONS.inventoryRead, PERMISSIONS.inventoryWrite],
   },
   {
     id: 'accountant',
