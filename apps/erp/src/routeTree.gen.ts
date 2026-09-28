@@ -9,50 +9,270 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as App403RouteImport } from './routes/_app/403'
+import { Route as AppAccountingRouteImport } from './routes/_app/accounting'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
+import { Route as AppApprovalsRouteImport } from './routes/_app/approvals'
+import { Route as AppInventoryRouteImport } from './routes/_app/inventory'
+import { Route as AppPurchasingRouteImport } from './routes/_app/purchasing'
+import { Route as AppSalesRouteImport } from './routes/_app/sales'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 
-const IndexRoute = IndexRouteImport.update({
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
+} as any)
+const App403Route = App403RouteImport.update({
+  id: '/403',
+  path: '/403',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAccountingRoute = AppAccountingRouteImport.update({
+  id: '/accounting',
+  path: '/accounting',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppApprovalsRoute = AppApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryRoute = AppInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPurchasingRoute = AppPurchasingRouteImport.update({
+  id: '/purchasing',
+  path: '/purchasing',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSalesRoute = AppSalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => AppRoute,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/403': typeof App403Route
+  '/accounting': typeof AppAccountingRoute
+  '/admin': typeof AppAdminRoute
+  '/approvals': typeof AppApprovalsRoute
+  '/inventory': typeof AppInventoryRoute
+  '/purchasing': typeof AppPurchasingRoute
+  '/sales': typeof AppSalesRoute
+  '/login': typeof AuthLoginRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/403': typeof App403Route
+  '/accounting': typeof AppAccountingRoute
+  '/admin': typeof AppAdminRoute
+  '/approvals': typeof AppApprovalsRoute
+  '/inventory': typeof AppInventoryRoute
+  '/purchasing': typeof AppPurchasingRoute
+  '/sales': typeof AppSalesRoute
+  '/login': typeof AuthLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_auth': typeof AuthRouteWithChildren
+  '/_app/403': typeof App403Route
+  '/_app/accounting': typeof AppAccountingRoute
+  '/_app/admin': typeof AppAdminRoute
+  '/_app/approvals': typeof AppApprovalsRoute
+  '/_app/inventory': typeof AppInventoryRoute
+  '/_app/purchasing': typeof AppPurchasingRoute
+  '/_app/sales': typeof AppSalesRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/403'
+    | '/accounting'
+    | '/admin'
+    | '/approvals'
+    | '/inventory'
+    | '/purchasing'
+    | '/sales'
+    | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/403'
+    | '/accounting'
+    | '/admin'
+    | '/approvals'
+    | '/inventory'
+    | '/purchasing'
+    | '/sales'
+    | '/login'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_auth'
+    | '/_app/403'
+    | '/_app/accounting'
+    | '/_app/admin'
+    | '/_app/approvals'
+    | '/_app/inventory'
+    | '/_app/purchasing'
+    | '/_app/sales'
+    | '/_auth/login'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/403': {
+      id: '/_app/403'
+      path: '/403'
+      fullPath: '/403'
+      preLoaderRoute: typeof App403RouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/accounting': {
+      id: '/_app/accounting'
+      path: '/accounting'
+      fullPath: '/accounting'
+      preLoaderRoute: typeof AppAccountingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/approvals': {
+      id: '/_app/approvals'
+      path: '/approvals'
+      fullPath: '/approvals'
+      preLoaderRoute: typeof AppApprovalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory': {
+      id: '/_app/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AppInventoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/purchasing': {
+      id: '/_app/purchasing'
+      path: '/purchasing'
+      fullPath: '/purchasing'
+      preLoaderRoute: typeof AppPurchasingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/sales': {
+      id: '/_app/sales'
+      path: '/sales'
+      fullPath: '/sales'
+      preLoaderRoute: typeof AppSalesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  App403Route: typeof App403Route
+  AppAccountingRoute: typeof AppAccountingRoute
+  AppAdminRoute: typeof AppAdminRoute
+  AppApprovalsRoute: typeof AppApprovalsRoute
+  AppInventoryRoute: typeof AppInventoryRoute
+  AppPurchasingRoute: typeof AppPurchasingRoute
+  AppSalesRoute: typeof AppSalesRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  App403Route: App403Route,
+  AppAccountingRoute: AppAccountingRoute,
+  AppAdminRoute: AppAdminRoute,
+  AppApprovalsRoute: AppApprovalsRoute,
+  AppInventoryRoute: AppInventoryRoute,
+  AppPurchasingRoute: AppPurchasingRoute,
+  AppSalesRoute: AppSalesRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface AuthRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

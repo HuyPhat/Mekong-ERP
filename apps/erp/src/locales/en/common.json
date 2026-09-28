@@ -1,0 +1,57 @@
+{
+  "app": {
+    "name": "Mekong ERP"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "inventory": "Inventory",
+    "purchasing": "Purchasing",
+    "sales": "Sales",
+    "accounting": "Accounting",
+    "approvals": "Approvals",
+    "admin": "Admin"
+  },
+  "auth": {
+    "loginTitle": "Choose a demo account",
+    "loginSubtitle": "No password needed — this is a demo environment.",
+    "logout": "Log out",
+    "switchUser": "Switch user",
+    "userMenu": "User menu"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "purchasing": "Purchasing Officer",
+    "warehouse": "Warehouse Staff",
+    "accountant": "Accountant",
+    "approver_manager": "Purchasing Manager",
+    "approver_director": "Director"
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you're looking for doesn't exist.",
+    "forbiddenTitle": "Access denied",
+    "forbiddenBody": "Your account doesn't have permission to view this page.",
+    "genericTitle": "Something went wrong",
+    "backHome": "Back to home"
+  },
+  "commandPalette": {
+    "trigger": "Search...",
+    "placeholder": "Type a command or search...",
+    "empty": "No results found.",
+    "groupNav": "Navigate",
+    "groupSettings": "Settings",
+    "toggleTheme": "Toggle light/dark theme",
+    "toggleLanguage": "Switch language"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}",
+    "roleLabel": "Role: {{role}}"
+  },
+  "placeholder": {
+    "comingInPhase": "Coming in Phase {{phase}}"
+  },
+  "purchasing": {
+    "approveDemoButton": "Approve PO-2026-000123 (demo)",
+    "approveHidden": "(Approve action hidden — needs purchase_order:approve)"
+  }
+}

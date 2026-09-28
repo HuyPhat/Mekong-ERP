@@ -1,0 +1,57 @@
+{
+  "app": {
+    "name": "Mekong ERP"
+  },
+  "nav": {
+    "dashboard": "Tổng quan",
+    "inventory": "Tồn kho",
+    "purchasing": "Mua hàng",
+    "sales": "Bán hàng",
+    "accounting": "Kế toán",
+    "approvals": "Phê duyệt",
+    "admin": "Quản trị"
+  },
+  "auth": {
+    "loginTitle": "Chọn tài khoản demo",
+    "loginSubtitle": "Không cần mật khẩu — đây là môi trường demo.",
+    "logout": "Đăng xuất",
+    "switchUser": "Đổi tài khoản",
+    "userMenu": "Menu người dùng"
+  },
+  "roles": {
+    "admin": "Quản trị viên",
+    "purchasing": "Nhân viên mua hàng",
+    "warehouse": "Nhân viên kho",
+    "accountant": "Kế toán viên",
+    "approver_manager": "Trưởng phòng mua hàng",
+    "approver_director": "Giám đốc"
+  },
+  "errors": {
+    "notFoundTitle": "Không tìm thấy trang",
+    "notFoundBody": "Trang bạn tìm không tồn tại.",
+    "forbiddenTitle": "Không có quyền truy cập",
+    "forbiddenBody": "Tài khoản của bạn không có quyền xem trang này.",
+    "genericTitle": "Đã xảy ra lỗi",
+    "backHome": "Về trang chủ"
+  },
+  "commandPalette": {
+    "trigger": "Tìm kiếm...",
+    "placeholder": "Nhập lệnh hoặc tìm kiếm...",
+    "empty": "Không có kết quả.",
+    "groupNav": "Điều hướng",
+    "groupSettings": "Cài đặt",
+    "toggleTheme": "Chuyển giao diện sáng/tối",
+    "toggleLanguage": "Chuyển ngôn ngữ"
+  },
+  "dashboard": {
+    "welcome": "Chào mừng, {{name}}",
+    "roleLabel": "Vai trò: {{role}}"
+  },
+  "placeholder": {
+    "comingInPhase": "Sẽ có ở Phase {{phase}}"
+  },
+  "purchasing": {
+    "approveDemoButton": "Duyệt PO-2026-000123 (demo)",
+    "approveHidden": "(Ẩn nút duyệt — cần quyền purchase_order:approve)"
+  }
+}
