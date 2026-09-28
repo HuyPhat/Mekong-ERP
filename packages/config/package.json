@@ -1,0 +1,11 @@
+{
+  "name": "@mekong-erp/config",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/react": "./eslint/react.js",
+    "./typescript/base.json": "./typescript/base.json"
+  }
+}

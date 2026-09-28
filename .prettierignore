@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+**/routeTree.gen.ts
+**/dist/**
+**/.next/**
+**/out/**
+**/.turbo/**
+**/coverage/**
