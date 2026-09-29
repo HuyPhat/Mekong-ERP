@@ -364,13 +364,12 @@ Written:
 - [**0007**](adr/0007-form-library.md) — Form library: React Hook Form + Zod.
 - [**0008**](adr/0008-client-ui-state.md) — Client UI state: zustand.
 - [**0009**](adr/0009-hosting-vercel.md) — Hosting: Vercel.
-
-Not written yet — deferred until the design work actually happens, so the
-ADR reflects a real decision rather than a placeholder:
-
-- **0004** — Approval-engine data model (rules, thresholds, ordering).
-  Needed before Phase 3.
-- **0005** — Three-way-match tolerance model. Needed before Phase 3.
+- [**0004**](adr/0004-approval-engine-data-model.md) — Approval-engine data
+  model: cumulative-tier rules, up-front chain materialization, halt-on-
+  reject semantics.
+- [**0005**](adr/0005-three-way-match-tolerance-model.md) — Three-way-match
+  tolerance model: cumulative-received comparison, status priority order,
+  override-with-reason gate.
 
 ## 12. Open questions
 
@@ -555,3 +554,97 @@ table.getTotalSize()` on the `<tbody>`.
   confirmation, CSV export (real download) and import dialog, saved-view
   save/apply, and the 100k-row virtualized scroll — all with zero console or
   page errors. Pushed to `claude/vibrant-mccarthy-hj07u8`.
+- **2026-09-28/29** — Project owner said to move on to Phase 3. Landed the
+  full Procure-to-Pay milestone (§6, §8 exit criteria): PO wizard, a
+  configurable amount-tiered approval engine, partial Goods Receipt, Vendor
+  Bill with three-way match (and override), AP postings, and an audit log —
+  one PO can now go create → submit → approve → receive (partial ×2) → bill
+  → match → pay → closed as a single scripted path.
+  **Contract**: entity schemas (`Supplier`, `PurchaseOrder`/`*Line`,
+  `GoodsReceipt`, `VendorBill`, `Approval`/`ApprovalRule`, `AuditLogEntry`,
+  `JournalEntry`, each with denormalized `*View` variants); `money.ts`
+  (`computeLineTotal`/`computeLineVat`/`computeDocumentTotals`/`isBalanced`)
+  as the one ADR-0003-mandated home for arithmetic, now that Phase 3 is the
+  first phase needing real computation rather than display; a pure
+  `approval-engine.ts` (cumulative-tier rule resolution, up-front chain
+  materialization, halt-on-reject/changes-requested with remaining steps
+  marked `skipped` — ADR-0004) and a pure `three-way-match.ts` (cumulative-
+  received-qty comparison, priority-ordered status, configurable tolerance,
+  default 2% price / exact qty — ADR-0005); a new `approver_finance` role so
+  the brief's 3-tier escalation example is genuinely three different people;
+  seed generators for 150 suppliers and 1,500 POs spread realistically across
+  all 9 lifecycle statuses, with a `procurement.ts` orchestrator building
+  each PO's matching approval chain, GRNs, journal entries, and (for
+  billed/closed POs) a vendor bill with ~30% of bills carrying an intentional
+  price/qty variance for three-way-match demo variety; MSW handlers for the
+  full suppliers/purchase-orders/goods-receipts/vendor-bills/approvals/audit-
+  log surface including every status-transition action
+  (submit/cancel/receive/create-bill/confirm-match/override-match/pay/
+  decide); IndexedDB extended to 12 stores total. Added 41 new tests
+  (`money`, `approval-engine`, `three-way-match` — all pure functions), 70
+  total in `packages/contract`.
+  **`packages/ui`**: Toast (Radix, zustand-backed queue so any mutation
+  callback can fire one via `toast({...})` without prop drilling);
+  `StatusBadge` (5-tone system — added `--color-success`/`--color-warning`
+  tokens, the first phase needing more than accent/destructive) and
+  `Timeline` for document activity; FormKit — `Form`/`FormField`/`FormItem`/
+  `FormLabel`/`FormControl`/`FormMessage` (shadcn's canonical RHF-Controller
+  pattern, context-linking label/control/error via generated ids),
+  `Input`/`Textarea`/`Select`/`Checkbox`, a `Wizard`/`WizardFooter`/
+  `WizardDraftBanner` shell with a `useWizardDraft` hook (debounced
+  localStorage autosave of in-progress form state, independent of any real
+  entity persistence), and a `LineItemsTable` shell deliberately decoupled
+  from `useFieldArray`'s generics (the caller drives `useFieldArray` itself
+  and hands over `fields`/add/remove/a per-cell render prop) to avoid fighting
+  RHF's typing across a reusable component.
+  **`apps/erp`**: query-keys/hooks/search-schemas for the whole purchasing
+  feature; a `purchasing` tab layout (Suppliers/Purchase Orders/Vendor Bills)
+  replacing its Phase-1 placeholder; a `ComboboxField` (built on the existing
+  Command/Dialog primitives, not a new Radix Select) for supplier/product/PO
+  pickers, client-filtered at this app's seed sizes rather than a real-scale
+  server-searched combobox; a 4-step PO wizard (Supplier → Lines → Delivery &
+  terms → Review) with autosaved drafts, "save as draft" and "create &
+  submit" both wired; PO detail (status-conditional actions, linked
+  GRNs/bills, an approval-chain timeline) and a Goods Receipt route
+  supporting partial receipt against an approved PO; Vendor Bill
+  create/detail with a live three-way-match table and confirm/override
+  actions; an Approvals inbox (search/status filters, per-row
+  approve/reject/changes-requested-with-reason, bulk approve); an Audit Log
+  viewer replacing the Admin section's Phase-1 placeholder. `<Toaster/>`
+  mounted once at the root.
+  Two real findings surfaced only by an actual Playwright/Chromium run
+  against a production build — invisible to lint/typecheck/build/tests:
+  (1) first-load seeding now writes roughly 110,000+ records across 12
+  IndexedDB stores (Phase 2's 100k stock movements plus this phase's
+  suppliers/POs/GRNs/bills/approvals/journal/audit volume); in a real
+  browser's IndexedDB (as opposed to the in-memory polyfill the seed
+  generator's own smoke test ran against) this took 20–30 seconds
+  sequentially, during which the app showed nothing but a loading skeleton —
+  indistinguishable from broken. Fixed two ways: the 12 stores' bulk-put
+  writes now run concurrently (`Promise.all`, since they're independent
+  transactions) instead of sequentially, and `main.tsx` now awaits
+  `ensureSeeded()` explicitly before rendering the router, showing a
+  one-time "Preparing demo data…" splash instead of leaving seeding as a
+  silent side effect of whichever query happens to fire first — a one-time
+  cost per browser profile; every later load hydrates from IndexedDB in
+  under a second. (2) Not a bug but worth recording: a combobox trigger
+  wrapped in `FormControl`/`FormLabel` gets its accessible name from the
+  associated `<label>` text ("Supplier"), correctly overriding the button's
+  own visible placeholder text ("Search suppliers…") per the browser's name-
+  computation algorithm — confirmed the accessibility wiring is working as
+  intended, but means testing such a field means querying by its label, not
+  its placeholder text (noted in `CLAUDE.md`).
+  Known, deliberate simplifications (not silently skipped): a
+  `changes_requested` PO is resubmitted as-is from its detail page rather
+  than re-opened in the wizard for editing (ADR-0004 describes edit-then-
+  resubmit; only the resubmit half is built, since re-populating the
+  wizard's product comboboxes from bare stored ids needs product-name
+  resolution this phase didn't need to build); PO-side operational actions
+  (submit/cancel/receive/create-bill/pay/confirm-match) attribute the audit
+  log to the operating role (`purchasing`/`warehouse`/`accountant`) rather
+  than the specific logged-in demo user, matching the existing seed-
+  generation convention — only approval decisions (approve/reject/changes-
+  requested) carry the real actor id, since the UI passes the session's
+  user id there. `pnpm format:check`, `lint`, `typecheck`, `test`, and
+  `build` all green across every package. Pushed to
+  `claude/vibrant-mccarthy-hj07u8`.

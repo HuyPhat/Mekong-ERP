@@ -15,19 +15,26 @@ so the whole thing runs and deploys with no real server.
 
 ## Current status
 
-Phase 2 (DataGrid + Inventory) landed 2026-09-28, on top of Phase 1's
-logged-in shell and the Phase 0 scaffold. `apps/erp` now has real
-business-entity screens: five `_app/inventory/*` routes (Products list,
-Product detail/form, Stock levels, Stock movements) all backed by
-`packages/contract`'s Zod-validated MSW endpoints over 3,000 seeded products
-and 100,000 seeded stock movements persisted to IndexedDB. `packages/ui`
-gained a full DataGrid (server + virtualized modes, sort/filter/search,
-column show-hide/resize/pin with persisted layout, saved views, row
-selection + bulk actions, CSV export/import) and its first form landed
-(React Hook Form + Zod, on the Product detail route). All three packages
-with real logic (`packages/contract`, `packages/ui`, `apps/erp`) now have
-Vitest coverage. No Procure-to-Pay, Order-to-Cash, Accounting, or Dashboard
-features yet — that starts Phase 3. Check §14 (Progress log) in
+Phase 3 (Procure-to-Pay) landed 2026-09-29, on top of Phase 2's DataGrid +
+Inventory and Phase 1's logged-in shell. `apps/erp` now has a full P2P
+flow: Suppliers list, Purchase Orders list + a 4-step create wizard
+(Supplier → Lines → Delivery & terms → Review, with autosaved drafts),
+PO detail (status-conditional submit/cancel/receive/create-bill actions,
+an approval-chain timeline), a partial Goods Receipt route, Vendor Bill
+create/detail with a live three-way-match table and confirm/override
+actions, an Approvals inbox (filters, per-row decisions with a
+reject/changes-requested reason dialog, bulk approve), and an Audit Log
+viewer — one PO can go create → submit → approve → receive (×2, partial)
+→ bill → match → pay → closed as a single scripted demo path, verified in
+a real browser. `packages/contract` gained the approval engine and
+three-way-match pure logic (each with real unit tests — 70 tests total in
+that package now), Supplier/PO/GRN/VendorBill/Approval/AuditLog/Journal
+entities, and seed data for 150 suppliers and 1,500 POs across every
+lifecycle status. `packages/ui` gained Toast, StatusBadge, Timeline, and a
+full FormKit (Form/FormField primitives, Input/Textarea/Select/Checkbox, a
+Wizard shell with autosave, and a `useFieldArray`-friendly line-items
+table). No Order-to-Cash, full Accounting (GL/trial balance), or Dashboard
+features yet — that starts Phase 4. Check §14 (Progress log) in
 `docs/PLAN.md` for the latest state before assuming more exists than this.
 
 ## Commands
@@ -139,18 +146,33 @@ settled, not defaults):
 
 ## Status of this plan
 
-Phase 2 is complete (approved 2026-09-28, landed same day — see
-`docs/PLAN.md` §14). **Phase 3 (Procure-to-Pay) has not been asked for
-yet** — don't start building the PO wizard, approval engine, Goods Receipt,
-Vendor Bill, or three-way match until the project owner explicitly says to
-move on, per the standing "ask before" rules above.
+Phase 3 is complete (approved 2026-09-28 via "Move on", landed 2026-09-29 —
+see `docs/PLAN.md` §14). **Phase 4 (Order-to-Cash, Accounting, Dashboard,
+Realtime) has not been asked for yet** — don't start building the
+quotation→SO→invoice flow, the GL/trial balance, GraphQL dashboards, or
+WebSocket events until the project owner explicitly says to move on, per
+the standing "ask before" rules above.
 
-Two known gaps carried forward from Phase 2's DataGrid rather than
-overstated as done: column drag-reorder has state and persistence wired but
-no drag-handle UI, and grid keyboard support covers individual controls
-(sort/pin/resize/checkboxes) but not full ARIA-APG arrow-key cell
-navigation. Pick these up if a future phase's grid work would benefit, or
-if asked.
+Known gaps carried forward rather than overstated as done:
+
+- From Phase 2's DataGrid: column drag-reorder has state and persistence
+  wired but no drag-handle UI, and grid keyboard support covers individual
+  controls (sort/pin/resize/checkboxes) but not full ARIA-APG arrow-key cell
+  navigation.
+- From Phase 3: a `changes_requested` PO is resubmitted as-is from its
+  detail page rather than re-opened in the wizard for editing (ADR-0004
+  frames edit-then-resubmit as the intended path; only the resubmit half is
+  built — re-populating the wizard's product comboboxes from bare stored
+  ids needs product-name resolution this phase didn't need elsewhere). The
+  supplier/product comboboxes load the full catalog client-side and filter
+  in memory rather than a server-searched, paginated combobox — fine at
+  this app's seed sizes (150 suppliers, 3,000 products), not a real-scale
+  pattern. PO-side operational actions (submit/cancel/receive/create-
+  bill/pay/confirm-match) attribute the audit log to the operating role
+  (`purchasing`/`warehouse`/`accountant`) rather than the specific logged-in
+  demo user; only approval decisions carry the real actor id.
+
+Pick these up if a future phase's work would benefit, or if asked.
 
 ## Known tooling notes
 
@@ -216,3 +238,26 @@ if asked.
   transitive dependency into a place `tsc`/Vite will resolve it from for a
   package that doesn't declare it — `tsc -b` fails with "Cannot find module"
   even though the package is already in the lockfile.
+- **First-load seeding is a real, multi-second wait, not a bug** — by Phase 3
+  the seed data is 110,000+ records across 12 IndexedDB stores. A real
+  browser's IndexedDB (unlike the in-memory polyfill the seed generator's own
+  smoke-test script runs against) took 20–30 seconds to write all of that on
+  first visit before this was fixed, with nothing on screen but a loading
+  skeleton — indistinguishable from a hung app. Fixed by (1) writing all 12
+  stores' bulk-put transactions concurrently (`Promise.all`, they're
+  independent) instead of sequentially, and (2) `main.tsx` now explicitly
+  awaits `ensureSeeded()` before rendering the router, showing a one-time
+  "Preparing demo data…" splash instead of leaving seeding as a silent side
+  effect of whichever query fires first. Still a one-time real cost per
+  browser profile (every later load hydrates from IndexedDB in under a
+  second) — if a future phase adds much more seed volume, re-check this
+  rather than assuming it still fits comfortably in a few seconds.
+- A form control wrapped in FormKit's `FormLabel`/`FormControl` gets its
+  accessible name from the associated `<label>` text, which correctly wins
+  over the control's own visible text per the browser's name-computation
+  algorithm (e.g. a combobox trigger displaying "Search suppliers…" but
+  labeled "Supplier" has an accessible name of "Supplier", not its own
+  placeholder text). This is correct, intended behavior, not a bug — but it
+  means a test (or anything else querying by accessible role/name) has to
+  target the label, not the visible placeholder text, for any field built
+  this way.
