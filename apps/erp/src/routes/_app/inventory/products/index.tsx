@@ -33,7 +33,7 @@ import {
   ProductsSearchSchema,
   type ProductsSearch,
 } from '../../../../features/inventory/search-schemas';
-import { sortingToParam, paramToSorting } from '../../../../features/inventory/sort-params';
+import { sortingToParam, paramToSorting } from '../../../../shared/lib/sort-params';
 import { CsvImportDialog } from '../../../../features/inventory/csv-import-dialog';
 import {
   buildDataGridLabels,

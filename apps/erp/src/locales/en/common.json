@@ -24,6 +24,7 @@
     "warehouse": "Warehouse Staff",
     "accountant": "Accountant",
     "approver_manager": "Purchasing Manager",
+    "approver_finance": "Finance Manager",
     "approver_director": "Director"
   },
   "errors": {
@@ -50,9 +51,298 @@
   "placeholder": {
     "comingInPhase": "Coming in Phase {{phase}}"
   },
+  "wizard": {
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "draftMessage": "You have an unsaved draft from a previous session.",
+    "resume": "Resume draft",
+    "discard": "Discard draft"
+  },
+  "lineItems": {
+    "addLine": "Add line",
+    "removeLine": "Remove line",
+    "empty": "No lines yet."
+  },
   "purchasing": {
-    "approveDemoButton": "Approve PO-2026-000123 (demo)",
-    "approveHidden": "(Approve action hidden — needs purchase_order:approve)"
+    "tabs": {
+      "suppliers": "Suppliers",
+      "orders": "Purchase Orders",
+      "bills": "Vendor Bills"
+    },
+    "suppliers": {
+      "columns": {
+        "code": "Code",
+        "name": "Name",
+        "taxCode": "Tax code",
+        "phone": "Phone",
+        "email": "Email",
+        "creditLimit": "Credit limit",
+        "paymentTermsDays": "Payment terms (days)"
+      },
+      "empty": "No suppliers match these filters.",
+      "searchPlaceholder": "Search by name, code, or tax code…"
+    },
+    "orders": {
+      "columns": {
+        "number": "PO number",
+        "supplierName": "Supplier",
+        "status": "Status",
+        "orderDate": "Order date",
+        "deliveryDate": "Delivery date",
+        "grandTotal": "Total"
+      },
+      "empty": "No purchase orders match these filters.",
+      "searchPlaceholder": "Search by PO number or supplier…",
+      "newButton": "New purchase order",
+      "status": {
+        "draft": "Draft",
+        "pending_approval": "Pending approval",
+        "changes_requested": "Changes requested",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "partially_received": "Partially received",
+        "received": "Received",
+        "billed": "Billed",
+        "closed": "Closed",
+        "cancelled": "Cancelled"
+      },
+      "wizard": {
+        "createTitle": "New purchase order",
+        "editTitle": "Edit purchase order",
+        "steps": {
+          "supplier": "Supplier",
+          "lines": "Lines",
+          "terms": "Delivery & terms",
+          "review": "Review"
+        },
+        "supplier": {
+          "title": "Choose a supplier and warehouse",
+          "supplierLabel": "Supplier",
+          "supplierPlaceholder": "Search suppliers…",
+          "supplierRequired": "Choose a supplier to continue.",
+          "warehouseLabel": "Receiving warehouse",
+          "warehousePlaceholder": "Select a warehouse"
+        },
+        "lines": {
+          "title": "Order lines",
+          "productColumn": "Product",
+          "productPlaceholder": "Search products…",
+          "qtyColumn": "Qty",
+          "unitPriceColumn": "Unit price",
+          "discountColumn": "Discount %",
+          "vatColumn": "VAT %",
+          "lineTotalColumn": "Line total",
+          "linesRequired": "Add at least one line to continue."
+        },
+        "terms": {
+          "title": "Delivery and terms",
+          "deliveryDateLabel": "Expected delivery date",
+          "termsLabel": "Payment terms",
+          "termsPlaceholder": "e.g. Net 30 days"
+        },
+        "review": {
+          "title": "Review and submit",
+          "supplierLabel": "Supplier",
+          "warehouseLabel": "Warehouse",
+          "deliveryDateLabel": "Delivery date",
+          "termsLabel": "Terms",
+          "linesTitle": "Lines",
+          "subtotal": "Subtotal",
+          "vatTotal": "VAT",
+          "grandTotal": "Grand total",
+          "submitButton": "Create & submit for approval",
+          "submitting": "Submitting…",
+          "saveDraftButton": "Save as draft",
+          "submitSuccess": "Purchase order submitted for approval.",
+          "submitPartialError": "Purchase order created as a draft, but submitting for approval failed — try again from the order.",
+          "draftSaved": "Purchase order saved as a draft."
+        }
+      },
+      "detail": {
+        "backToList": "Back to purchase orders",
+        "loading": "Loading purchase order…",
+        "notFound": "Purchase order not found.",
+        "supplierLabel": "Supplier",
+        "warehouseLabel": "Warehouse",
+        "deliveryDateLabel": "Delivery date",
+        "termsLabel": "Terms",
+        "createdLabel": "Created {{date}}",
+        "submittedLabel": "Submitted {{date}}",
+        "linesTitle": "Lines",
+        "columns": {
+          "product": "Product",
+          "qty": "Qty",
+          "unitPrice": "Unit price",
+          "discount": "Discount %",
+          "vat": "VAT %",
+          "lineTotal": "Line total"
+        },
+        "totalsSubtotal": "Subtotal",
+        "totalsVat": "VAT",
+        "totalsGrand": "Grand total",
+        "timelineTitle": "Activity",
+        "grnsTitle": "Goods receipts",
+        "noGrns": "No goods received yet.",
+        "billsTitle": "Vendor bills",
+        "noBills": "No vendor bills yet.",
+        "submitButton": "Submit for approval",
+        "resubmitButton": "Resubmit for approval",
+        "submitting": "Submitting…",
+        "cancelButton": "Cancel purchase order",
+        "cancelling": "Cancelling…",
+        "editButton": "Edit",
+        "receiveButton": "Receive goods",
+        "createBillButton": "Create vendor bill"
+      },
+      "receive": {
+        "title": "Receive goods",
+        "backToOrder": "Back to purchase order",
+        "loading": "Loading purchase order…",
+        "notFound": "Purchase order not found.",
+        "notReceivable": "This purchase order isn't ready to receive.",
+        "productColumn": "Product",
+        "orderedColumn": "Ordered",
+        "receivedColumn": "Received so far",
+        "remainingColumn": "Remaining",
+        "receiveNowColumn": "Receive now",
+        "allReceived": "Every line has already been fully received.",
+        "submitButton": "Record receipt",
+        "submitting": "Recording…",
+        "nothingToReceive": "Enter a quantity for at least one line."
+      }
+    },
+    "bills": {
+      "columns": {
+        "number": "Bill number",
+        "poNumber": "PO number",
+        "supplierName": "Supplier",
+        "status": "Status",
+        "grandTotal": "Total",
+        "dueDate": "Due date"
+      },
+      "empty": "No vendor bills match these filters.",
+      "searchPlaceholder": "Search by bill number, PO number, or supplier…",
+      "newButton": "New vendor bill",
+      "status": {
+        "pending_match": "Pending match",
+        "matched": "Matched",
+        "match_override": "Match overridden",
+        "paid": "Paid"
+      },
+      "matchStatus": {
+        "matched": "Matched",
+        "qty_variance": "Quantity variance",
+        "price_variance": "Price variance",
+        "not_received": "Not received"
+      },
+      "new": {
+        "title": "New vendor bill",
+        "poLabel": "Purchase order",
+        "poPlaceholder": "Search received purchase orders…",
+        "selectPoFirst": "Choose a purchase order to bill.",
+        "linesTitle": "Bill lines",
+        "productColumn": "Product",
+        "orderedColumn": "Ordered",
+        "receivedColumn": "Received",
+        "qtyColumn": "Billed qty",
+        "unitPriceColumn": "Unit price",
+        "vatColumn": "VAT %",
+        "lineTotalColumn": "Line total",
+        "submitButton": "Create bill",
+        "submitting": "Creating…"
+      },
+      "detail": {
+        "backToList": "Back to vendor bills",
+        "loading": "Loading vendor bill…",
+        "notFound": "Vendor bill not found.",
+        "supplierLabel": "Supplier",
+        "poLabel": "Purchase order",
+        "dueDateLabel": "Due date",
+        "linesTitle": "Lines",
+        "columns": {
+          "product": "Product",
+          "qty": "Qty",
+          "unitPrice": "Unit price",
+          "vat": "VAT %",
+          "lineTotal": "Line total"
+        },
+        "matchTitle": "Three-way match",
+        "matchColumns": {
+          "product": "Product",
+          "poQty": "Ordered",
+          "poUnitPrice": "PO price",
+          "receivedQty": "Received",
+          "billedQty": "Billed",
+          "billedUnitPrice": "Billed price",
+          "status": "Status"
+        },
+        "hasExceptions": "This bill has unresolved match exceptions.",
+        "noExceptions": "Everything matches within tolerance.",
+        "confirmMatchButton": "Confirm match",
+        "confirming": "Confirming…",
+        "overrideMatchButton": "Override match",
+        "overrideReasonLabel": "Reason for override",
+        "overrideReasonPlaceholder": "Explain why this exception is being accepted…",
+        "overrideSubmit": "Confirm override",
+        "overriding": "Overriding…",
+        "overrideReasonShown": "Override reason: {{reason}}",
+        "payButton": "Record payment",
+        "paying": "Recording payment…",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "approvals": {
+    "title": "Approvals inbox",
+    "columns": {
+      "docNumber": "Document",
+      "supplierName": "Supplier",
+      "amount": "Amount",
+      "approverRole": "Approver role",
+      "createdAt": "Submitted"
+    },
+    "empty": "No approvals match these filters.",
+    "searchPlaceholder": "Search by document number or supplier…",
+    "statusFilterLabel": "Status",
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "changes_requested": "Changes requested",
+      "skipped": "Skipped"
+    },
+    "approveButton": "Approve",
+    "approving": "Approving…",
+    "rejectButton": "Reject",
+    "changesRequestedButton": "Request changes",
+    "reasonDialogTitleReject": "Reject this document",
+    "reasonDialogTitleChanges": "Request changes",
+    "reasonLabel": "Comment",
+    "reasonPlaceholder": "Explain what needs to change…",
+    "reasonSubmit": "Submit",
+    "reasonRequired": "A comment is required.",
+    "bulkApprove": "Approve selected",
+    "bulkApproveConfirm": "Approve all selected documents?"
+  },
+  "admin": {
+    "auditLog": {
+      "title": "Audit log",
+      "columns": {
+        "at": "Timestamp",
+        "entityType": "Entity type",
+        "entityNumber": "Document",
+        "action": "Action",
+        "actorId": "Actor"
+      },
+      "empty": "No audit entries match these filters.",
+      "searchPlaceholder": "Search by document number, action, or actor…",
+      "entityTypeFilterLabel": "Entity type",
+      "entityTypes": {
+        "purchase_order": "Purchase order",
+        "vendor_bill": "Vendor bill"
+      }
+    }
   },
   "dataGrid": {
     "resetLayout": "Reset layout",

@@ -24,6 +24,7 @@
     "warehouse": "Nhân viên kho",
     "accountant": "Kế toán viên",
     "approver_manager": "Trưởng phòng mua hàng",
+    "approver_finance": "Trưởng phòng tài chính",
     "approver_director": "Giám đốc"
   },
   "errors": {
@@ -50,9 +51,298 @@
   "placeholder": {
     "comingInPhase": "Sẽ có ở Phase {{phase}}"
   },
+  "wizard": {
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "submit": "Gửi",
+    "draftMessage": "Bạn có bản nháp chưa lưu từ lần trước.",
+    "resume": "Tiếp tục bản nháp",
+    "discard": "Bỏ bản nháp"
+  },
+  "lineItems": {
+    "addLine": "Thêm dòng",
+    "removeLine": "Xóa dòng",
+    "empty": "Chưa có dòng nào."
+  },
   "purchasing": {
-    "approveDemoButton": "Duyệt PO-2026-000123 (demo)",
-    "approveHidden": "(Ẩn nút duyệt — cần quyền purchase_order:approve)"
+    "tabs": {
+      "suppliers": "Nhà cung cấp",
+      "orders": "Đơn mua hàng",
+      "bills": "Hóa đơn nhà cung cấp"
+    },
+    "suppliers": {
+      "columns": {
+        "code": "Mã",
+        "name": "Tên",
+        "taxCode": "Mã số thuế",
+        "phone": "Điện thoại",
+        "email": "Email",
+        "creditLimit": "Hạn mức công nợ",
+        "paymentTermsDays": "Thời hạn thanh toán (ngày)"
+      },
+      "empty": "Không có nhà cung cấp nào khớp bộ lọc.",
+      "searchPlaceholder": "Tìm theo tên, mã hoặc mã số thuế…"
+    },
+    "orders": {
+      "columns": {
+        "number": "Số PO",
+        "supplierName": "Nhà cung cấp",
+        "status": "Trạng thái",
+        "orderDate": "Ngày đặt hàng",
+        "deliveryDate": "Ngày giao hàng",
+        "grandTotal": "Tổng tiền"
+      },
+      "empty": "Không có đơn mua hàng nào khớp bộ lọc.",
+      "searchPlaceholder": "Tìm theo số PO hoặc nhà cung cấp…",
+      "newButton": "Tạo đơn mua hàng",
+      "status": {
+        "draft": "Nháp",
+        "pending_approval": "Chờ duyệt",
+        "changes_requested": "Yêu cầu chỉnh sửa",
+        "approved": "Đã duyệt",
+        "rejected": "Bị từ chối",
+        "partially_received": "Nhận hàng một phần",
+        "received": "Đã nhận hàng",
+        "billed": "Đã lập hóa đơn",
+        "closed": "Đã hoàn tất",
+        "cancelled": "Đã hủy"
+      },
+      "wizard": {
+        "createTitle": "Tạo đơn mua hàng",
+        "editTitle": "Sửa đơn mua hàng",
+        "steps": {
+          "supplier": "Nhà cung cấp",
+          "lines": "Chi tiết đơn hàng",
+          "terms": "Giao hàng & điều khoản",
+          "review": "Xem lại"
+        },
+        "supplier": {
+          "title": "Chọn nhà cung cấp và kho nhận hàng",
+          "supplierLabel": "Nhà cung cấp",
+          "supplierPlaceholder": "Tìm nhà cung cấp…",
+          "supplierRequired": "Chọn nhà cung cấp để tiếp tục.",
+          "warehouseLabel": "Kho nhận hàng",
+          "warehousePlaceholder": "Chọn kho"
+        },
+        "lines": {
+          "title": "Chi tiết đơn hàng",
+          "productColumn": "Sản phẩm",
+          "productPlaceholder": "Tìm sản phẩm…",
+          "qtyColumn": "Số lượng",
+          "unitPriceColumn": "Đơn giá",
+          "discountColumn": "Chiết khấu %",
+          "vatColumn": "VAT %",
+          "lineTotalColumn": "Thành tiền",
+          "linesRequired": "Thêm ít nhất một dòng để tiếp tục."
+        },
+        "terms": {
+          "title": "Giao hàng và điều khoản",
+          "deliveryDateLabel": "Ngày giao hàng dự kiến",
+          "termsLabel": "Điều khoản thanh toán",
+          "termsPlaceholder": "VD: Thanh toán trong 30 ngày"
+        },
+        "review": {
+          "title": "Xem lại và gửi duyệt",
+          "supplierLabel": "Nhà cung cấp",
+          "warehouseLabel": "Kho",
+          "deliveryDateLabel": "Ngày giao hàng",
+          "termsLabel": "Điều khoản",
+          "linesTitle": "Chi tiết đơn hàng",
+          "subtotal": "Tạm tính",
+          "vatTotal": "Thuế VAT",
+          "grandTotal": "Tổng cộng",
+          "submitButton": "Tạo & gửi duyệt",
+          "submitting": "Đang gửi…",
+          "saveDraftButton": "Lưu nháp",
+          "submitSuccess": "Đã gửi đơn mua hàng để duyệt.",
+          "submitPartialError": "Đã tạo đơn mua hàng (nháp) nhưng gửi duyệt thất bại — hãy thử lại từ trang chi tiết đơn hàng.",
+          "draftSaved": "Đã lưu đơn mua hàng dưới dạng nháp."
+        }
+      },
+      "detail": {
+        "backToList": "Quay lại danh sách đơn mua hàng",
+        "loading": "Đang tải đơn mua hàng…",
+        "notFound": "Không tìm thấy đơn mua hàng.",
+        "supplierLabel": "Nhà cung cấp",
+        "warehouseLabel": "Kho",
+        "deliveryDateLabel": "Ngày giao hàng",
+        "termsLabel": "Điều khoản",
+        "createdLabel": "Tạo ngày {{date}}",
+        "submittedLabel": "Gửi duyệt ngày {{date}}",
+        "linesTitle": "Chi tiết đơn hàng",
+        "columns": {
+          "product": "Sản phẩm",
+          "qty": "Số lượng",
+          "unitPrice": "Đơn giá",
+          "discount": "Chiết khấu %",
+          "vat": "VAT %",
+          "lineTotal": "Thành tiền"
+        },
+        "totalsSubtotal": "Tạm tính",
+        "totalsVat": "Thuế VAT",
+        "totalsGrand": "Tổng cộng",
+        "timelineTitle": "Hoạt động",
+        "grnsTitle": "Phiếu nhập kho",
+        "noGrns": "Chưa nhận hàng.",
+        "billsTitle": "Hóa đơn nhà cung cấp",
+        "noBills": "Chưa có hóa đơn.",
+        "submitButton": "Gửi duyệt",
+        "resubmitButton": "Gửi duyệt lại",
+        "submitting": "Đang gửi…",
+        "cancelButton": "Hủy đơn mua hàng",
+        "cancelling": "Đang hủy…",
+        "editButton": "Sửa",
+        "receiveButton": "Nhận hàng",
+        "createBillButton": "Tạo hóa đơn"
+      },
+      "receive": {
+        "title": "Nhận hàng",
+        "backToOrder": "Quay lại đơn mua hàng",
+        "loading": "Đang tải đơn mua hàng…",
+        "notFound": "Không tìm thấy đơn mua hàng.",
+        "notReceivable": "Đơn mua hàng này chưa thể nhận hàng.",
+        "productColumn": "Sản phẩm",
+        "orderedColumn": "Đã đặt",
+        "receivedColumn": "Đã nhận",
+        "remainingColumn": "Còn lại",
+        "receiveNowColumn": "Nhận lần này",
+        "allReceived": "Tất cả các dòng đã được nhận đủ.",
+        "submitButton": "Ghi nhận nhập kho",
+        "submitting": "Đang ghi nhận…",
+        "nothingToReceive": "Nhập số lượng cho ít nhất một dòng."
+      }
+    },
+    "bills": {
+      "columns": {
+        "number": "Số hóa đơn",
+        "poNumber": "Số PO",
+        "supplierName": "Nhà cung cấp",
+        "status": "Trạng thái",
+        "grandTotal": "Tổng tiền",
+        "dueDate": "Hạn thanh toán"
+      },
+      "empty": "Không có hóa đơn nào khớp bộ lọc.",
+      "searchPlaceholder": "Tìm theo số hóa đơn, số PO hoặc nhà cung cấp…",
+      "newButton": "Tạo hóa đơn",
+      "status": {
+        "pending_match": "Chờ đối chiếu",
+        "matched": "Đã khớp",
+        "match_override": "Đã ghi đè đối chiếu",
+        "paid": "Đã thanh toán"
+      },
+      "matchStatus": {
+        "matched": "Khớp",
+        "qty_variance": "Lệch số lượng",
+        "price_variance": "Lệch đơn giá",
+        "not_received": "Chưa nhận hàng"
+      },
+      "new": {
+        "title": "Tạo hóa đơn nhà cung cấp",
+        "poLabel": "Đơn mua hàng",
+        "poPlaceholder": "Tìm đơn mua hàng đã nhận hàng…",
+        "selectPoFirst": "Chọn đơn mua hàng để lập hóa đơn.",
+        "linesTitle": "Chi tiết hóa đơn",
+        "productColumn": "Sản phẩm",
+        "orderedColumn": "Đã đặt",
+        "receivedColumn": "Đã nhận",
+        "qtyColumn": "Số lượng hóa đơn",
+        "unitPriceColumn": "Đơn giá",
+        "vatColumn": "VAT %",
+        "lineTotalColumn": "Thành tiền",
+        "submitButton": "Tạo hóa đơn",
+        "submitting": "Đang tạo…"
+      },
+      "detail": {
+        "backToList": "Quay lại danh sách hóa đơn",
+        "loading": "Đang tải hóa đơn…",
+        "notFound": "Không tìm thấy hóa đơn.",
+        "supplierLabel": "Nhà cung cấp",
+        "poLabel": "Đơn mua hàng",
+        "dueDateLabel": "Hạn thanh toán",
+        "linesTitle": "Chi tiết hóa đơn",
+        "columns": {
+          "product": "Sản phẩm",
+          "qty": "Số lượng",
+          "unitPrice": "Đơn giá",
+          "vat": "VAT %",
+          "lineTotal": "Thành tiền"
+        },
+        "matchTitle": "Đối chiếu 3 chiều",
+        "matchColumns": {
+          "product": "Sản phẩm",
+          "poQty": "Đã đặt",
+          "poUnitPrice": "Đơn giá PO",
+          "receivedQty": "Đã nhận",
+          "billedQty": "Đã lập hóa đơn",
+          "billedUnitPrice": "Đơn giá hóa đơn",
+          "status": "Trạng thái"
+        },
+        "hasExceptions": "Hóa đơn này có sai lệch chưa được xử lý.",
+        "noExceptions": "Mọi thứ khớp trong ngưỡng cho phép.",
+        "confirmMatchButton": "Xác nhận khớp",
+        "confirming": "Đang xác nhận…",
+        "overrideMatchButton": "Ghi đè đối chiếu",
+        "overrideReasonLabel": "Lý do ghi đè",
+        "overrideReasonPlaceholder": "Giải thích lý do chấp nhận sai lệch này…",
+        "overrideSubmit": "Xác nhận ghi đè",
+        "overriding": "Đang ghi đè…",
+        "overrideReasonShown": "Lý do ghi đè: {{reason}}",
+        "payButton": "Ghi nhận thanh toán",
+        "paying": "Đang ghi nhận…",
+        "cancel": "Hủy"
+      }
+    }
+  },
+  "approvals": {
+    "title": "Hộp thư phê duyệt",
+    "columns": {
+      "docNumber": "Chứng từ",
+      "supplierName": "Nhà cung cấp",
+      "amount": "Số tiền",
+      "approverRole": "Vai trò duyệt",
+      "createdAt": "Ngày gửi"
+    },
+    "empty": "Không có yêu cầu duyệt nào khớp bộ lọc.",
+    "searchPlaceholder": "Tìm theo số chứng từ hoặc nhà cung cấp…",
+    "statusFilterLabel": "Trạng thái",
+    "status": {
+      "pending": "Chờ duyệt",
+      "approved": "Đã duyệt",
+      "rejected": "Bị từ chối",
+      "changes_requested": "Yêu cầu chỉnh sửa",
+      "skipped": "Đã bỏ qua"
+    },
+    "approveButton": "Duyệt",
+    "approving": "Đang duyệt…",
+    "rejectButton": "Từ chối",
+    "changesRequestedButton": "Yêu cầu chỉnh sửa",
+    "reasonDialogTitleReject": "Từ chối chứng từ này",
+    "reasonDialogTitleChanges": "Yêu cầu chỉnh sửa",
+    "reasonLabel": "Ghi chú",
+    "reasonPlaceholder": "Giải thích cần chỉnh sửa gì…",
+    "reasonSubmit": "Gửi",
+    "reasonRequired": "Vui lòng nhập ghi chú.",
+    "bulkApprove": "Duyệt các mục đã chọn",
+    "bulkApproveConfirm": "Duyệt tất cả chứng từ đã chọn?"
+  },
+  "admin": {
+    "auditLog": {
+      "title": "Nhật ký hệ thống",
+      "columns": {
+        "at": "Thời gian",
+        "entityType": "Loại đối tượng",
+        "entityNumber": "Chứng từ",
+        "action": "Hành động",
+        "actorId": "Người thực hiện"
+      },
+      "empty": "Không có nhật ký nào khớp bộ lọc.",
+      "searchPlaceholder": "Tìm theo số chứng từ, hành động hoặc người thực hiện…",
+      "entityTypeFilterLabel": "Loại đối tượng",
+      "entityTypes": {
+        "purchase_order": "Đơn mua hàng",
+        "vendor_bill": "Hóa đơn nhà cung cấp"
+      }
+    }
   },
   "dataGrid": {
     "resetLayout": "Đặt lại bố cục",

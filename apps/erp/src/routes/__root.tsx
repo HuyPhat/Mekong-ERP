@@ -6,6 +6,7 @@ import {
   type ErrorComponentProps,
 } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { Toaster } from '@mekong-erp/ui';
 import { ThemeEffect } from '../shared/theme/theme-effect';
 
 export interface RouterContext {
@@ -23,6 +24,7 @@ function RootComponent() {
     <>
       <ThemeEffect />
       <Outlet />
+      <Toaster />
     </>
   );
 }

@@ -16,7 +16,7 @@ import {
   StockLevelsSearchSchema,
   type StockLevelsSearch,
 } from '../../../features/inventory/search-schemas';
-import { sortingToParam, paramToSorting } from '../../../features/inventory/sort-params';
+import { sortingToParam, paramToSorting } from '../../../shared/lib/sort-params';
 import { formatNumber } from '../../../shared/lib/format';
 import {
   buildDataGridLabels,

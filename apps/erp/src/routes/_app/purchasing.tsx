@@ -1,27 +1,39 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@mekong-erp/ui';
 import { PERMISSIONS } from '@mekong-erp/contract';
 import { requirePermission } from '../../shared/permissions/guards';
-import { ModulePlaceholder } from '../../shared/components/module-placeholder';
-import { Can } from '../../shared/permissions/can';
 
 export const Route = createFileRoute('/_app/purchasing')({
   beforeLoad: ({ context }) => requirePermission(context.queryClient, PERMISSIONS.purchasingRead),
-  component: PurchasingPage,
+  component: PurchasingLayout,
 });
 
-function PurchasingPage() {
+const TABS = [
+  { to: '/purchasing/suppliers', labelKey: 'purchasing.tabs.suppliers' },
+  { to: '/purchasing/orders', labelKey: 'purchasing.tabs.orders' },
+  { to: '/purchasing/bills', labelKey: 'purchasing.tabs.bills' },
+] as const;
+
+function PurchasingLayout() {
   const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-4">
-      <ModulePlaceholder titleKey="nav.purchasing" phase={3} />
-      <Can
-        permission={PERMISSIONS.purchaseOrderApprove}
-        fallback={<p className="text-sm text-muted-foreground">{t('purchasing.approveHidden')}</p>}
-      >
-        <Button className="w-fit">{t('purchasing.approveDemoButton')}</Button>
-      </Can>
+      <h1 className="text-xl font-semibold">{t('nav.purchasing')}</h1>
+      <nav className="flex gap-4 border-b border-border">
+        {TABS.map((tab) => (
+          <Link
+            key={tab.to}
+            to={tab.to}
+            search={{ page: 1, pageSize: 50 }}
+            className="border-b-2 border-transparent px-1 pb-2 text-sm text-muted-foreground hover:text-foreground"
+            activeProps={{ className: 'border-accent font-medium text-foreground' }}
+          >
+            {t(tab.labelKey)}
+          </Link>
+        ))}
+      </nav>
+      <Outlet />
     </div>
   );
 }

@@ -24,8 +24,19 @@ import { Route as AppInventoryIndexRouteImport } from './routes/_app/inventory/i
 import { Route as AppInventoryProductsRouteImport } from './routes/_app/inventory/products'
 import { Route as AppInventoryStockLevelsRouteImport } from './routes/_app/inventory/stock-levels'
 import { Route as AppInventoryStockMovementsRouteImport } from './routes/_app/inventory/stock-movements'
+import { Route as AppPurchasingIndexRouteImport } from './routes/_app/purchasing/index'
+import { Route as AppPurchasingBillsRouteImport } from './routes/_app/purchasing/bills'
+import { Route as AppPurchasingOrdersRouteImport } from './routes/_app/purchasing/orders'
+import { Route as AppPurchasingSuppliersRouteImport } from './routes/_app/purchasing/suppliers'
 import { Route as AppInventoryProductsIndexRouteImport } from './routes/_app/inventory/products/index'
 import { Route as AppInventoryProductsProductIdRouteImport } from './routes/_app/inventory/products/$productId'
+import { Route as AppPurchasingBillsIndexRouteImport } from './routes/_app/purchasing/bills/index'
+import { Route as AppPurchasingBillsBillIdRouteImport } from './routes/_app/purchasing/bills/$billId'
+import { Route as AppPurchasingBillsNewRouteImport } from './routes/_app/purchasing/bills/new'
+import { Route as AppPurchasingOrdersIndexRouteImport } from './routes/_app/purchasing/orders/index'
+import { Route as AppPurchasingOrdersNewRouteImport } from './routes/_app/purchasing/orders/new'
+import { Route as AppPurchasingOrdersPoIdIndexRouteImport } from './routes/_app/purchasing/orders/$poId/index'
+import { Route as AppPurchasingOrdersPoIdReceiveRouteImport } from './routes/_app/purchasing/orders/$poId/receive'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -101,6 +112,26 @@ const AppInventoryStockMovementsRoute =
     path: '/stock-movements',
     getParentRoute: () => AppInventoryRoute,
   } as any)
+const AppPurchasingIndexRoute = AppPurchasingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPurchasingRoute,
+} as any)
+const AppPurchasingBillsRoute = AppPurchasingBillsRouteImport.update({
+  id: '/bills',
+  path: '/bills',
+  getParentRoute: () => AppPurchasingRoute,
+} as any)
+const AppPurchasingOrdersRoute = AppPurchasingOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AppPurchasingRoute,
+} as any)
+const AppPurchasingSuppliersRoute = AppPurchasingSuppliersRouteImport.update({
+  id: '/suppliers',
+  path: '/suppliers',
+  getParentRoute: () => AppPurchasingRoute,
+} as any)
 const AppInventoryProductsIndexRoute =
   AppInventoryProductsIndexRouteImport.update({
     id: '/',
@@ -113,6 +144,45 @@ const AppInventoryProductsProductIdRoute =
     path: '/$productId',
     getParentRoute: () => AppInventoryProductsRoute,
   } as any)
+const AppPurchasingBillsIndexRoute = AppPurchasingBillsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPurchasingBillsRoute,
+} as any)
+const AppPurchasingBillsBillIdRoute =
+  AppPurchasingBillsBillIdRouteImport.update({
+    id: '/$billId',
+    path: '/$billId',
+    getParentRoute: () => AppPurchasingBillsRoute,
+  } as any)
+const AppPurchasingBillsNewRoute = AppPurchasingBillsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppPurchasingBillsRoute,
+} as any)
+const AppPurchasingOrdersIndexRoute =
+  AppPurchasingOrdersIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppPurchasingOrdersRoute,
+  } as any)
+const AppPurchasingOrdersNewRoute = AppPurchasingOrdersNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppPurchasingOrdersRoute,
+} as any)
+const AppPurchasingOrdersPoIdIndexRoute =
+  AppPurchasingOrdersPoIdIndexRouteImport.update({
+    id: '/$poId/',
+    path: '/$poId/',
+    getParentRoute: () => AppPurchasingOrdersRoute,
+  } as any)
+const AppPurchasingOrdersPoIdReceiveRoute =
+  AppPurchasingOrdersPoIdReceiveRouteImport.update({
+    id: '/$poId/receive',
+    path: '/$poId/receive',
+    getParentRoute: () => AppPurchasingOrdersRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -121,15 +191,26 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AppAdminRoute
   '/approvals': typeof AppApprovalsRoute
   '/inventory': typeof AppInventoryRouteWithChildren
-  '/purchasing': typeof AppPurchasingRoute
+  '/purchasing': typeof AppPurchasingRouteWithChildren
   '/sales': typeof AppSalesRoute
   '/login': typeof AuthLoginRoute
   '/inventory/products': typeof AppInventoryProductsRouteWithChildren
   '/inventory/stock-levels': typeof AppInventoryStockLevelsRoute
   '/inventory/stock-movements': typeof AppInventoryStockMovementsRoute
+  '/purchasing/bills': typeof AppPurchasingBillsRouteWithChildren
+  '/purchasing/orders': typeof AppPurchasingOrdersRouteWithChildren
+  '/purchasing/suppliers': typeof AppPurchasingSuppliersRoute
   '/inventory/': typeof AppInventoryIndexRoute
+  '/purchasing/': typeof AppPurchasingIndexRoute
   '/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
+  '/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
+  '/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
+  '/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
   '/inventory/products/': typeof AppInventoryProductsIndexRoute
+  '/purchasing/bills/': typeof AppPurchasingBillsIndexRoute
+  '/purchasing/orders/': typeof AppPurchasingOrdersIndexRoute
+  '/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
+  '/purchasing/orders/$poId/': typeof AppPurchasingOrdersPoIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
@@ -137,14 +218,22 @@ export interface FileRoutesByTo {
   '/accounting': typeof AppAccountingRoute
   '/admin': typeof AppAdminRoute
   '/approvals': typeof AppApprovalsRoute
-  '/purchasing': typeof AppPurchasingRoute
   '/sales': typeof AppSalesRoute
   '/login': typeof AuthLoginRoute
   '/inventory/stock-levels': typeof AppInventoryStockLevelsRoute
   '/inventory/stock-movements': typeof AppInventoryStockMovementsRoute
+  '/purchasing/suppliers': typeof AppPurchasingSuppliersRoute
   '/inventory': typeof AppInventoryIndexRoute
+  '/purchasing': typeof AppPurchasingIndexRoute
   '/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
+  '/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
+  '/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
+  '/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
   '/inventory/products': typeof AppInventoryProductsIndexRoute
+  '/purchasing/bills': typeof AppPurchasingBillsIndexRoute
+  '/purchasing/orders': typeof AppPurchasingOrdersIndexRoute
+  '/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
+  '/purchasing/orders/$poId': typeof AppPurchasingOrdersPoIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -155,16 +244,27 @@ export interface FileRoutesById {
   '/_app/admin': typeof AppAdminRoute
   '/_app/approvals': typeof AppApprovalsRoute
   '/_app/inventory': typeof AppInventoryRouteWithChildren
-  '/_app/purchasing': typeof AppPurchasingRoute
+  '/_app/purchasing': typeof AppPurchasingRouteWithChildren
   '/_app/sales': typeof AppSalesRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_app/': typeof AppIndexRoute
   '/_app/inventory/products': typeof AppInventoryProductsRouteWithChildren
   '/_app/inventory/stock-levels': typeof AppInventoryStockLevelsRoute
   '/_app/inventory/stock-movements': typeof AppInventoryStockMovementsRoute
+  '/_app/purchasing/bills': typeof AppPurchasingBillsRouteWithChildren
+  '/_app/purchasing/orders': typeof AppPurchasingOrdersRouteWithChildren
+  '/_app/purchasing/suppliers': typeof AppPurchasingSuppliersRoute
   '/_app/inventory/': typeof AppInventoryIndexRoute
+  '/_app/purchasing/': typeof AppPurchasingIndexRoute
   '/_app/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
+  '/_app/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
+  '/_app/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
+  '/_app/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
   '/_app/inventory/products/': typeof AppInventoryProductsIndexRoute
+  '/_app/purchasing/bills/': typeof AppPurchasingBillsIndexRoute
+  '/_app/purchasing/orders/': typeof AppPurchasingOrdersIndexRoute
+  '/_app/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
+  '/_app/purchasing/orders/$poId/': typeof AppPurchasingOrdersPoIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -181,9 +281,20 @@ export interface FileRouteTypes {
     | '/inventory/products'
     | '/inventory/stock-levels'
     | '/inventory/stock-movements'
+    | '/purchasing/bills'
+    | '/purchasing/orders'
+    | '/purchasing/suppliers'
     | '/inventory/'
+    | '/purchasing/'
     | '/inventory/products/$productId'
+    | '/purchasing/bills/$billId'
+    | '/purchasing/bills/new'
+    | '/purchasing/orders/new'
     | '/inventory/products/'
+    | '/purchasing/bills/'
+    | '/purchasing/orders/'
+    | '/purchasing/orders/$poId/receive'
+    | '/purchasing/orders/$poId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -191,14 +302,22 @@ export interface FileRouteTypes {
     | '/accounting'
     | '/admin'
     | '/approvals'
-    | '/purchasing'
     | '/sales'
     | '/login'
     | '/inventory/stock-levels'
     | '/inventory/stock-movements'
+    | '/purchasing/suppliers'
     | '/inventory'
+    | '/purchasing'
     | '/inventory/products/$productId'
+    | '/purchasing/bills/$billId'
+    | '/purchasing/bills/new'
+    | '/purchasing/orders/new'
     | '/inventory/products'
+    | '/purchasing/bills'
+    | '/purchasing/orders'
+    | '/purchasing/orders/$poId/receive'
+    | '/purchasing/orders/$poId'
   id:
     | '__root__'
     | '/_app'
@@ -215,9 +334,20 @@ export interface FileRouteTypes {
     | '/_app/inventory/products'
     | '/_app/inventory/stock-levels'
     | '/_app/inventory/stock-movements'
+    | '/_app/purchasing/bills'
+    | '/_app/purchasing/orders'
+    | '/_app/purchasing/suppliers'
     | '/_app/inventory/'
+    | '/_app/purchasing/'
     | '/_app/inventory/products/$productId'
+    | '/_app/purchasing/bills/$billId'
+    | '/_app/purchasing/bills/new'
+    | '/_app/purchasing/orders/new'
     | '/_app/inventory/products/'
+    | '/_app/purchasing/bills/'
+    | '/_app/purchasing/orders/'
+    | '/_app/purchasing/orders/$poId/receive'
+    | '/_app/purchasing/orders/$poId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -332,6 +462,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInventoryStockMovementsRouteImport
       parentRoute: typeof AppInventoryRoute
     }
+    '/_app/purchasing/': {
+      id: '/_app/purchasing/'
+      path: '/'
+      fullPath: '/purchasing/'
+      preLoaderRoute: typeof AppPurchasingIndexRouteImport
+      parentRoute: typeof AppPurchasingRoute
+    }
+    '/_app/purchasing/bills': {
+      id: '/_app/purchasing/bills'
+      path: '/bills'
+      fullPath: '/purchasing/bills'
+      preLoaderRoute: typeof AppPurchasingBillsRouteImport
+      parentRoute: typeof AppPurchasingRoute
+    }
+    '/_app/purchasing/orders': {
+      id: '/_app/purchasing/orders'
+      path: '/orders'
+      fullPath: '/purchasing/orders'
+      preLoaderRoute: typeof AppPurchasingOrdersRouteImport
+      parentRoute: typeof AppPurchasingRoute
+    }
+    '/_app/purchasing/suppliers': {
+      id: '/_app/purchasing/suppliers'
+      path: '/suppliers'
+      fullPath: '/purchasing/suppliers'
+      preLoaderRoute: typeof AppPurchasingSuppliersRouteImport
+      parentRoute: typeof AppPurchasingRoute
+    }
     '/_app/inventory/products/': {
       id: '/_app/inventory/products/'
       path: '/'
@@ -345,6 +503,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/inventory/products/$productId'
       preLoaderRoute: typeof AppInventoryProductsProductIdRouteImport
       parentRoute: typeof AppInventoryProductsRoute
+    }
+    '/_app/purchasing/bills/': {
+      id: '/_app/purchasing/bills/'
+      path: '/'
+      fullPath: '/purchasing/bills/'
+      preLoaderRoute: typeof AppPurchasingBillsIndexRouteImport
+      parentRoute: typeof AppPurchasingBillsRoute
+    }
+    '/_app/purchasing/bills/$billId': {
+      id: '/_app/purchasing/bills/$billId'
+      path: '/$billId'
+      fullPath: '/purchasing/bills/$billId'
+      preLoaderRoute: typeof AppPurchasingBillsBillIdRouteImport
+      parentRoute: typeof AppPurchasingBillsRoute
+    }
+    '/_app/purchasing/bills/new': {
+      id: '/_app/purchasing/bills/new'
+      path: '/new'
+      fullPath: '/purchasing/bills/new'
+      preLoaderRoute: typeof AppPurchasingBillsNewRouteImport
+      parentRoute: typeof AppPurchasingBillsRoute
+    }
+    '/_app/purchasing/orders/': {
+      id: '/_app/purchasing/orders/'
+      path: '/'
+      fullPath: '/purchasing/orders/'
+      preLoaderRoute: typeof AppPurchasingOrdersIndexRouteImport
+      parentRoute: typeof AppPurchasingOrdersRoute
+    }
+    '/_app/purchasing/orders/new': {
+      id: '/_app/purchasing/orders/new'
+      path: '/new'
+      fullPath: '/purchasing/orders/new'
+      preLoaderRoute: typeof AppPurchasingOrdersNewRouteImport
+      parentRoute: typeof AppPurchasingOrdersRoute
+    }
+    '/_app/purchasing/orders/$poId/': {
+      id: '/_app/purchasing/orders/$poId/'
+      path: '/$poId'
+      fullPath: '/purchasing/orders/$poId/'
+      preLoaderRoute: typeof AppPurchasingOrdersPoIdIndexRouteImport
+      parentRoute: typeof AppPurchasingOrdersRoute
+    }
+    '/_app/purchasing/orders/$poId/receive': {
+      id: '/_app/purchasing/orders/$poId/receive'
+      path: '/$poId/receive'
+      fullPath: '/purchasing/orders/$poId/receive'
+      preLoaderRoute: typeof AppPurchasingOrdersPoIdReceiveRouteImport
+      parentRoute: typeof AppPurchasingOrdersRoute
     }
   }
 }
@@ -380,13 +587,63 @@ const AppInventoryRouteWithChildren = AppInventoryRoute._addFileChildren(
   AppInventoryRouteChildren,
 )
 
+interface AppPurchasingBillsRouteChildren {
+  AppPurchasingBillsBillIdRoute: typeof AppPurchasingBillsBillIdRoute
+  AppPurchasingBillsNewRoute: typeof AppPurchasingBillsNewRoute
+  AppPurchasingBillsIndexRoute: typeof AppPurchasingBillsIndexRoute
+}
+
+const AppPurchasingBillsRouteChildren: AppPurchasingBillsRouteChildren = {
+  AppPurchasingBillsBillIdRoute: AppPurchasingBillsBillIdRoute,
+  AppPurchasingBillsNewRoute: AppPurchasingBillsNewRoute,
+  AppPurchasingBillsIndexRoute: AppPurchasingBillsIndexRoute,
+}
+
+const AppPurchasingBillsRouteWithChildren =
+  AppPurchasingBillsRoute._addFileChildren(AppPurchasingBillsRouteChildren)
+
+interface AppPurchasingOrdersRouteChildren {
+  AppPurchasingOrdersNewRoute: typeof AppPurchasingOrdersNewRoute
+  AppPurchasingOrdersIndexRoute: typeof AppPurchasingOrdersIndexRoute
+  AppPurchasingOrdersPoIdReceiveRoute: typeof AppPurchasingOrdersPoIdReceiveRoute
+  AppPurchasingOrdersPoIdIndexRoute: typeof AppPurchasingOrdersPoIdIndexRoute
+}
+
+const AppPurchasingOrdersRouteChildren: AppPurchasingOrdersRouteChildren = {
+  AppPurchasingOrdersNewRoute: AppPurchasingOrdersNewRoute,
+  AppPurchasingOrdersIndexRoute: AppPurchasingOrdersIndexRoute,
+  AppPurchasingOrdersPoIdReceiveRoute: AppPurchasingOrdersPoIdReceiveRoute,
+  AppPurchasingOrdersPoIdIndexRoute: AppPurchasingOrdersPoIdIndexRoute,
+}
+
+const AppPurchasingOrdersRouteWithChildren =
+  AppPurchasingOrdersRoute._addFileChildren(AppPurchasingOrdersRouteChildren)
+
+interface AppPurchasingRouteChildren {
+  AppPurchasingBillsRoute: typeof AppPurchasingBillsRouteWithChildren
+  AppPurchasingOrdersRoute: typeof AppPurchasingOrdersRouteWithChildren
+  AppPurchasingSuppliersRoute: typeof AppPurchasingSuppliersRoute
+  AppPurchasingIndexRoute: typeof AppPurchasingIndexRoute
+}
+
+const AppPurchasingRouteChildren: AppPurchasingRouteChildren = {
+  AppPurchasingBillsRoute: AppPurchasingBillsRouteWithChildren,
+  AppPurchasingOrdersRoute: AppPurchasingOrdersRouteWithChildren,
+  AppPurchasingSuppliersRoute: AppPurchasingSuppliersRoute,
+  AppPurchasingIndexRoute: AppPurchasingIndexRoute,
+}
+
+const AppPurchasingRouteWithChildren = AppPurchasingRoute._addFileChildren(
+  AppPurchasingRouteChildren,
+)
+
 interface AppRouteChildren {
   App403Route: typeof App403Route
   AppAccountingRoute: typeof AppAccountingRoute
   AppAdminRoute: typeof AppAdminRoute
   AppApprovalsRoute: typeof AppApprovalsRoute
   AppInventoryRoute: typeof AppInventoryRouteWithChildren
-  AppPurchasingRoute: typeof AppPurchasingRoute
+  AppPurchasingRoute: typeof AppPurchasingRouteWithChildren
   AppSalesRoute: typeof AppSalesRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -397,7 +654,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
   AppApprovalsRoute: AppApprovalsRoute,
   AppInventoryRoute: AppInventoryRouteWithChildren,
-  AppPurchasingRoute: AppPurchasingRoute,
+  AppPurchasingRoute: AppPurchasingRouteWithChildren,
   AppSalesRoute: AppSalesRoute,
   AppIndexRoute: AppIndexRoute,
 }

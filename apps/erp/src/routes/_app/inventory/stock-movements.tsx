@@ -13,7 +13,7 @@ import { PERMISSIONS, MovementTypeSchema, type StockMovementView } from '@mekong
 import { requirePermission } from '../../../shared/permissions/guards';
 import { useStockMovements } from '../../../features/inventory/queries';
 import { StockMovementsSearchSchema } from '../../../features/inventory/search-schemas';
-import { sortingToParam, paramToSorting } from '../../../features/inventory/sort-params';
+import { sortingToParam, paramToSorting } from '../../../shared/lib/sort-params';
 import { formatDate } from '../../../shared/lib/format';
 import { buildDataGridLabels, buildFilterBarLabels } from '../../../shared/lib/data-grid-labels';
 
