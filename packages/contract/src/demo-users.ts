@@ -5,6 +5,7 @@ export const PERMISSIONS = {
   inventoryRead: 'inventory:read',
   inventoryWrite: 'inventory:write',
   purchasingRead: 'purchasing:read',
+  purchasingWrite: 'purchasing:write',
   salesRead: 'sales:read',
   accountingRead: 'accounting:read',
   approvalsRead: 'approvals:read',
@@ -20,7 +21,12 @@ export const DEMO_USERS: User[] = [
     id: 'purchasing',
     name: 'Nguyễn Văn An',
     role: 'purchasing',
-    permissions: [PERMISSIONS.dashboardRead, PERMISSIONS.inventoryRead, PERMISSIONS.purchasingRead],
+    permissions: [
+      PERMISSIONS.dashboardRead,
+      PERMISSIONS.inventoryRead,
+      PERMISSIONS.purchasingRead,
+      PERMISSIONS.purchasingWrite,
+    ],
   },
   {
     id: 'warehouse',
@@ -32,7 +38,13 @@ export const DEMO_USERS: User[] = [
     id: 'accountant',
     name: 'Lê Thị Cúc',
     role: 'accountant',
-    permissions: [PERMISSIONS.dashboardRead, PERMISSIONS.inventoryRead, PERMISSIONS.accountingRead],
+    permissions: [
+      PERMISSIONS.dashboardRead,
+      PERMISSIONS.inventoryRead,
+      PERMISSIONS.accountingRead,
+      PERMISSIONS.purchasingRead,
+      PERMISSIONS.vendorBillOverrideMatch,
+    ],
   },
   {
     id: 'approver_manager',
@@ -42,6 +54,17 @@ export const DEMO_USERS: User[] = [
       PERMISSIONS.dashboardRead,
       PERMISSIONS.approvalsRead,
       PERMISSIONS.purchaseOrderApprove,
+    ],
+  },
+  {
+    id: 'approver_finance',
+    name: 'Ngô Thị Hoa',
+    role: 'approver_finance',
+    permissions: [
+      PERMISSIONS.dashboardRead,
+      PERMISSIONS.approvalsRead,
+      PERMISSIONS.purchaseOrderApprove,
+      PERMISSIONS.accountingRead,
     ],
   },
   {

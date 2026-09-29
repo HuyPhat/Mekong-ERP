@@ -7,23 +7,8 @@ import {
   warehousesStore,
 } from '../../db/store';
 import { ensureSeeded } from '../../seed';
-import { applySort, matchesSearch, paginate, parseSort, type SortSpec } from '../../list-query';
+import { applySort, matchesSearch, paginate, parseListParams } from '../../list-query';
 import { ProductSchema, ProductImportRowSchema, type Product } from '../../entities';
-
-interface ListParams {
-  page: number;
-  pageSize: number;
-  sort: SortSpec[];
-  q: string;
-}
-
-function parseListParams(url: URL, defaultSort: SortSpec[]): ListParams {
-  const page = Number(url.searchParams.get('page') ?? '1') || 1;
-  const pageSize = Number(url.searchParams.get('pageSize') ?? '50') || 50;
-  const sort = parseSort(url.searchParams.get('sort'));
-  const q = url.searchParams.get('q') ?? '';
-  return { page, pageSize, sort: sort.length > 0 ? sort : defaultSort, q };
-}
 
 export const inventoryHandlers = [
   http.get('/api/warehouses', async () => {

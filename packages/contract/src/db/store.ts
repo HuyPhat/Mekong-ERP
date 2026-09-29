@@ -1,7 +1,19 @@
 import { Collection } from './collection';
 import type { Product, StockLevel, StockMovement, Warehouse } from '../entities';
+import type { GoodsReceipt, PurchaseOrder, Supplier, VendorBill } from '../purchasing-entities';
+import type { Approval, ApprovalRule } from '../approval-entities';
+import type { AuditLogEntry } from '../audit-entities';
+import type { JournalEntry } from '../accounting-entities';
 
 export const warehousesStore = new Collection<Warehouse>('warehouses');
 export const productsStore = new Collection<Product>('products');
 export const stockLevelsStore = new Collection<StockLevel>('stockLevels');
 export const stockMovementsStore = new Collection<StockMovement>('stockMovements');
+export const suppliersStore = new Collection<Supplier>('suppliers');
+export const purchaseOrdersStore = new Collection<PurchaseOrder>('purchaseOrders');
+export const goodsReceiptsStore = new Collection<GoodsReceipt>('goodsReceipts');
+export const vendorBillsStore = new Collection<VendorBill>('vendorBills');
+export const approvalsStore = new Collection<Approval>('approvals');
+export const approvalRulesStore = new Collection<ApprovalRule>('approvalRules');
+export const auditLogStore = new Collection<AuditLogEntry>('auditLogEntries');
+export const journalEntriesStore = new Collection<JournalEntry>('journalEntries');

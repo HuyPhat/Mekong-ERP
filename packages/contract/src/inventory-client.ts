@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { request } from './client';
-import { listResponseSchema } from './list-query';
+import { buildListQuery, listResponseSchema, type ListParams } from './list-query';
 import {
   ProductSchema,
   WarehouseSchema,
@@ -9,28 +9,6 @@ import {
   type Product,
   type ProductImportRow,
 } from './entities';
-
-export interface ListParams {
-  page: number;
-  pageSize: number;
-  sort?: string;
-  q?: string;
-  filters?: Record<string, string | undefined>;
-}
-
-function buildQuery(params: ListParams): string {
-  const search = new URLSearchParams();
-  search.set('page', String(params.page));
-  search.set('pageSize', String(params.pageSize));
-  if (params.sort) search.set('sort', params.sort);
-  if (params.q) search.set('q', params.q);
-  if (params.filters) {
-    for (const [key, value] of Object.entries(params.filters)) {
-      if (value) search.set(`filter[${key}]`, value);
-    }
-  }
-  return search.toString();
-}
 
 const ProductListResponseSchema = listResponseSchema(ProductSchema);
 const StockLevelListResponseSchema = listResponseSchema(StockLevelViewSchema);
@@ -43,7 +21,7 @@ const ProductImportResponseSchema = z.object({
 });
 
 export function fetchProducts(params: ListParams) {
-  return request(`/products?${buildQuery(params)}`, ProductListResponseSchema);
+  return request(`/products?${buildListQuery(params)}`, ProductListResponseSchema);
 }
 
 export function fetchProduct(id: string) {
@@ -69,7 +47,7 @@ export function fetchWarehouses() {
 }
 
 export function fetchStockLevels(params: ListParams) {
-  return request(`/stock-levels?${buildQuery(params)}`, StockLevelListResponseSchema);
+  return request(`/stock-levels?${buildListQuery(params)}`, StockLevelListResponseSchema);
 }
 
 export function fetchStockMovements() {
