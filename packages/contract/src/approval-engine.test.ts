@@ -1,0 +1,243 @@
+import { describe, expect, it } from 'vitest';
+import {
+  resolveApprovalRoles,
+  createApprovalChain,
+  currentApprovalStep,
+  chainOutcome,
+  decideApproval,
+} from './approval-engine';
+import type { Approval, ApprovalRule } from './approval-entities';
+
+const RULES: ApprovalRule[] = [
+  {
+    id: 'r1',
+    docType: 'purchase_order',
+    minAmount: 0,
+    maxAmount: 49_999_999,
+    approverRoles: ['approver_manager'],
+  },
+  {
+    id: 'r2',
+    docType: 'purchase_order',
+    minAmount: 50_000_000,
+    maxAmount: 499_999_999,
+    approverRoles: ['approver_manager', 'approver_finance'],
+  },
+  {
+    id: 'r3',
+    docType: 'purchase_order',
+    minAmount: 500_000_000,
+    maxAmount: null,
+    approverRoles: ['approver_manager', 'approver_finance', 'approver_director'],
+  },
+];
+
+describe('resolveApprovalRoles', () => {
+  it('resolves the lowest tier for a small amount', () => {
+    expect(resolveApprovalRoles(RULES, 'purchase_order', 10_000_000)).toEqual(['approver_manager']);
+  });
+
+  it('resolves the middle tier for a mid-range amount, including its boundary', () => {
+    expect(resolveApprovalRoles(RULES, 'purchase_order', 50_000_000)).toEqual([
+      'approver_manager',
+      'approver_finance',
+    ]);
+    expect(resolveApprovalRoles(RULES, 'purchase_order', 499_999_999)).toEqual([
+      'approver_manager',
+      'approver_finance',
+    ]);
+  });
+
+  it('resolves the top tier for a large amount with no upper bound', () => {
+    expect(resolveApprovalRoles(RULES, 'purchase_order', 500_000_000)).toEqual([
+      'approver_manager',
+      'approver_finance',
+      'approver_director',
+    ]);
+    expect(resolveApprovalRoles(RULES, 'purchase_order', 10_000_000_000)).toEqual([
+      'approver_manager',
+      'approver_finance',
+      'approver_director',
+    ]);
+  });
+
+  it('returns an empty array when no rule covers the amount', () => {
+    expect(resolveApprovalRoles(RULES, 'purchase_order', -1)).toEqual([]);
+  });
+});
+
+describe('createApprovalChain', () => {
+  it('materializes one pending step per role, in sequence order', () => {
+    let counter = 0;
+    const chain = createApprovalChain(
+      'purchase_order',
+      'po-1',
+      'PO-2026-000001',
+      ['approver_manager', 'approver_finance'],
+      () => `id-${++counter}`,
+      '2026-01-01T00:00:00.000Z',
+    );
+
+    expect(chain).toEqual([
+      {
+        id: 'id-1',
+        docType: 'purchase_order',
+        docId: 'po-1',
+        docNumber: 'PO-2026-000001',
+        sequence: 1,
+        approverRole: 'approver_manager',
+        status: 'pending',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+      {
+        id: 'id-2',
+        docType: 'purchase_order',
+        docId: 'po-1',
+        docNumber: 'PO-2026-000001',
+        sequence: 2,
+        approverRole: 'approver_finance',
+        status: 'pending',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+    ]);
+  });
+
+  it('returns an empty chain for no roles', () => {
+    expect(createApprovalChain('purchase_order', 'po-1', 'PO-1', [], () => 'x', 'now')).toEqual([]);
+  });
+});
+
+function approval(overrides: Partial<Approval>): Approval {
+  return {
+    id: 'a1',
+    docType: 'purchase_order',
+    docId: 'po-1',
+    docNumber: 'PO-2026-000001',
+    sequence: 1,
+    approverRole: 'approver_manager',
+    status: 'pending',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    ...overrides,
+  };
+}
+
+describe('currentApprovalStep', () => {
+  it('returns the lowest-sequence pending step regardless of input order', () => {
+    const chain = [
+      approval({ id: 'a2', sequence: 2, status: 'pending' }),
+      approval({ id: 'a1', sequence: 1, status: 'approved' }),
+      approval({ id: 'a3', sequence: 3, status: 'pending' }),
+    ];
+    expect(currentApprovalStep(chain)?.id).toBe('a2');
+  });
+
+  it('returns undefined when every step has been decided', () => {
+    const chain = [
+      approval({ id: 'a1', sequence: 1, status: 'approved' }),
+      approval({ id: 'a2', sequence: 2, status: 'approved' }),
+    ];
+    expect(currentApprovalStep(chain)).toBeUndefined();
+  });
+});
+
+describe('chainOutcome', () => {
+  it('is "approved" once every step is approved', () => {
+    const chain = [approval({ status: 'approved' }), approval({ status: 'approved' })];
+    expect(chainOutcome(chain)).toBe('approved');
+  });
+
+  it('is "rejected" if any step was rejected, even with others still pending', () => {
+    const chain = [approval({ status: 'rejected' }), approval({ status: 'pending' })];
+    expect(chainOutcome(chain)).toBe('rejected');
+  });
+
+  it('is "changes_requested" if any step requested changes and none were rejected', () => {
+    const chain = [approval({ status: 'changes_requested' }), approval({ status: 'pending' })];
+    expect(chainOutcome(chain)).toBe('changes_requested');
+  });
+
+  it('is "pending" while any step is still undecided and nothing failed', () => {
+    const chain = [approval({ status: 'approved' }), approval({ status: 'pending' })];
+    expect(chainOutcome(chain)).toBe('pending');
+  });
+});
+
+describe('decideApproval', () => {
+  it('approving a non-final step keeps the chain pending overall', () => {
+    const chain = [
+      approval({ id: 'a1', sequence: 1, status: 'pending' }),
+      approval({ id: 'a2', sequence: 2, status: 'pending' }),
+    ];
+    const result = decideApproval(chain, 'a1', 'approved', 'user-1', '2026-01-02T00:00:00.000Z');
+
+    expect(result.outcome).toBe('pending');
+    expect(result.chain.find((step) => step.id === 'a1')).toMatchObject({
+      status: 'approved',
+      decidedBy: 'user-1',
+      decidedAt: '2026-01-02T00:00:00.000Z',
+    });
+    expect(result.chain.find((step) => step.id === 'a2')?.status).toBe('pending');
+  });
+
+  it('approving the final step resolves the chain as approved', () => {
+    const chain = [
+      approval({ id: 'a1', sequence: 1, status: 'approved' }),
+      approval({ id: 'a2', sequence: 2, status: 'pending' }),
+    ];
+    const result = decideApproval(chain, 'a2', 'approved', 'user-2', '2026-01-03T00:00:00.000Z');
+    expect(result.outcome).toBe('approved');
+  });
+
+  it('rejecting the current step halts the chain and skips the remaining steps', () => {
+    const chain = [
+      approval({ id: 'a1', sequence: 1, status: 'pending' }),
+      approval({ id: 'a2', sequence: 2, status: 'pending' }),
+      approval({ id: 'a3', sequence: 3, status: 'pending' }),
+    ];
+    const result = decideApproval(
+      chain,
+      'a1',
+      'rejected',
+      'user-1',
+      '2026-01-02T00:00:00.000Z',
+      'Price too high',
+    );
+
+    expect(result.outcome).toBe('rejected');
+    expect(result.chain.find((step) => step.id === 'a1')).toMatchObject({
+      status: 'rejected',
+      comment: 'Price too high',
+    });
+    expect(result.chain.find((step) => step.id === 'a2')?.status).toBe('skipped');
+    expect(result.chain.find((step) => step.id === 'a3')?.status).toBe('skipped');
+  });
+
+  it('a changes-requested decision also skips the remaining steps', () => {
+    const chain = [
+      approval({ id: 'a1', sequence: 1, status: 'pending' }),
+      approval({ id: 'a2', sequence: 2, status: 'pending' }),
+    ];
+    const result = decideApproval(
+      chain,
+      'a1',
+      'changes_requested',
+      'user-1',
+      '2026-01-02T00:00:00.000Z',
+    );
+    expect(result.outcome).toBe('changes_requested');
+    expect(result.chain.find((step) => step.id === 'a2')?.status).toBe('skipped');
+  });
+
+  it('throws when the approval id is not part of the chain', () => {
+    const chain = [approval({ id: 'a1' })];
+    expect(() => decideApproval(chain, 'missing', 'approved', 'user-1', 'now')).toThrow();
+  });
+
+  it('throws when deciding a step that is not the current pending one', () => {
+    const chain = [
+      approval({ id: 'a1', sequence: 1, status: 'pending' }),
+      approval({ id: 'a2', sequence: 2, status: 'pending' }),
+    ];
+    expect(() => decideApproval(chain, 'a2', 'approved', 'user-1', 'now')).toThrow();
+  });
+});
