@@ -15,27 +15,29 @@ so the whole thing runs and deploys with no real server.
 
 ## Current status
 
-Phase 3 (Procure-to-Pay) landed 2026-09-29, on top of Phase 2's DataGrid +
-Inventory and Phase 1's logged-in shell. `apps/erp` now has a full P2P
-flow: Suppliers list, Purchase Orders list + a 4-step create wizard
-(Supplier → Lines → Delivery & terms → Review, with autosaved drafts),
-PO detail (status-conditional submit/cancel/receive/create-bill actions,
-an approval-chain timeline), a partial Goods Receipt route, Vendor Bill
-create/detail with a live three-way-match table and confirm/override
-actions, an Approvals inbox (filters, per-row decisions with a
-reject/changes-requested reason dialog, bulk approve), and an Audit Log
-viewer — one PO can go create → submit → approve → receive (×2, partial)
-→ bill → match → pay → closed as a single scripted demo path, verified in
-a real browser. `packages/contract` gained the approval engine and
-three-way-match pure logic (each with real unit tests — 70 tests total in
-that package now), Supplier/PO/GRN/VendorBill/Approval/AuditLog/Journal
-entities, and seed data for 150 suppliers and 1,500 POs across every
-lifecycle status. `packages/ui` gained Toast, StatusBadge, Timeline, and a
-full FormKit (Form/FormField primitives, Input/Textarea/Select/Checkbox, a
-Wizard shell with autosave, and a `useFieldArray`-friendly line-items
-table). No Order-to-Cash, full Accounting (GL/trial balance), or Dashboard
-features yet — that starts Phase 4. Check §14 (Progress log) in
-`docs/PLAN.md` for the latest state before assuming more exists than this.
+Phase 4 (Order-to-Cash, Accounting, Dashboard, Realtime) landed 2026-09-30,
+on top of Phase 3's P2P flow, Phase 2's DataGrid + Inventory, and Phase 1's
+logged-in shell. `apps/erp` now also has a full O2C flow: Customers list,
+Quotations list + single-page create form + detail (send/accept/reject/
+convert-to-SO), Sales Orders list + detail (confirm/cancel/deliver/create-
+invoice), a partial Delivery route, and Customer Invoices list/detail/
+record-payment plus a print-ready e-invoice preview (mock only, Vietnamese
+amount-in-words, mock XML download) — one quotation can go create → send →
+accept → convert → deliver (×2, partial) → invoice → pay → closed as a
+single scripted demo path, alongside Phase 3's P2P path, verified in a real
+browser. Accounting gained real reports — Chart of Accounts, General
+Ledger, Trial Balance, AR/AP Aging — computed on-demand from journal
+entries (ADR-0010). The Dashboard route is now real: 6 KPI tiles + a
+revenue/COGS trend chart + two aging bar charts, fed by one GraphQL query.
+A WebSocket layer pushes `stock.changed`/`approval.*`/`document.posted`
+events that invalidate the relevant TanStack Query caches, toast, and flash
+the affected Stock Levels row — same-tab only (ADR-0002). `packages/contract`
+gained Customer/Quotation/SalesOrder/Delivery/CustomerInvoice/
+ChartOfAccount entities, the GL/aging pure-compute engine, and
+`vndToWords()` (95 tests total in that package now). `packages/ui` gained
+Card and KpiTile. Check §14 (Progress log) in `docs/PLAN.md` for the full
+detail, including four real bugs found and fixed this phase, before
+assuming more exists than this.
 
 ## Commands
 
@@ -146,12 +148,12 @@ settled, not defaults):
 
 ## Status of this plan
 
-Phase 3 is complete (approved 2026-09-28 via "Move on", landed 2026-09-29 —
-see `docs/PLAN.md` §14). **Phase 4 (Order-to-Cash, Accounting, Dashboard,
-Realtime) has not been asked for yet** — don't start building the
-quotation→SO→invoice flow, the GL/trial balance, GraphQL dashboards, or
-WebSocket events until the project owner explicitly says to move on, per
-the standing "ask before" rules above.
+Phase 4 is complete (approved 2026-09-29 via "Move on", landed 2026-09-30 —
+see `docs/PLAN.md` §14). **Phase 5 (Quality, docs, deploy) has not been
+asked for yet** — don't start Playwright e2e, axe/Lighthouse passes, the
+performance budget, security headers, the README/architecture write-up, or
+deployment until the project owner explicitly says to move on, per the
+standing "ask before" rules above.
 
 Known gaps carried forward rather than overstated as done:
 
@@ -171,6 +173,15 @@ Known gaps carried forward rather than overstated as done:
   bill/pay/confirm-match) attribute the audit log to the operating role
   (`purchasing`/`warehouse`/`accountant`) rather than the specific logged-in
   demo user; only approval decisions carry the real actor id.
+- From Phase 4: General Ledger/Trial Balance/AR/AP Aging (ADR-0010) recompute
+  fully from the entire journal-entry list on every request rather than
+  maintaining running balances — consistent by construction, but a real
+  scale concern if ever revisited. Realtime stays same-tab only per the
+  pre-existing ADR-0002: a mutation in one browser tab doesn't toast or
+  invalidate caches in another tab of the same browser. The dashboard's
+  GraphQL surface is intentionally exactly one query (`DashboardAggregates`,
+  PLAN.md §9 risk 4) — there is no other GraphQL endpoint to extend without
+  a deliberate decision to widen that surface.
 
 Pick these up if a future phase's work would benefit, or if asked.
 
@@ -261,3 +272,22 @@ Pick these up if a future phase's work would benefit, or if asked.
   means a test (or anything else querying by accessible role/name) has to
   target the label, not the visible placeholder text, for any field built
   this way.
+- **The app defaults to `vi`, not `en`** (per the `navigator`-detection note
+  above) — a Playwright assertion against an English string (e.g. matching a
+  KPI label or button text) will silently never match and just time out,
+  with no console or page error to point at the real cause. This produced a
+  false "the dashboard never finishes loading" alarm this phase (the page
+  had actually rendered correctly, in Vietnamese, well before the timeout).
+  Either assert against the real Vietnamese copy, or switch the language
+  toggle first, in any Phase 5 e2e spec.
+- `page.waitForFunction`'s predicate runs in the browser and can only close
+  over serializable arguments — a `RegExp` object passed directly (or
+  captured via closure) crosses that boundary as `{}`. Pass `pattern.source`
+  **and** `pattern.flags` explicitly and reconstruct `new RegExp(...)` inside
+  the predicate; passing `source` alone silently drops case-insensitivity
+  and similar flags rather than erroring.
+- A CSS `text-transform` (e.g. `uppercase` on an invoice heading) changes
+  what Playwright's `innerText` reads (it reflects rendered/layout text) but
+  not `textContent`. A regex asserting on `innerText` against such an
+  element needs to match the transformed case (or use `/i`), even though the
+  source text/props never changed case.

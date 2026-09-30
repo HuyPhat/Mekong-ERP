@@ -1,7 +1,8 @@
 # Mekong ERP — Project Plan
 
-Status: **Phase 2 complete (DataGrid + Inventory). Phase 3 not yet started.**
-Last updated: 2026-09-28
+Status: **Phase 4 complete (Order-to-Cash, Accounting, Dashboard, Realtime).
+Phase 5 not yet started.**
+Last updated: 2026-09-30
 
 This document is the durable source of truth for scope, architecture, phasing,
 risks, and open decisions. It exists so any future session (including this one
@@ -370,6 +371,9 @@ Written:
 - [**0005**](adr/0005-three-way-match-tolerance-model.md) — Three-way-match
   tolerance model: cumulative-received comparison, status priority order,
   override-with-reason gate.
+- [**0010**](adr/0010-general-ledger-and-aging-model.md) — GL/trial-balance/
+  aging computed on-demand from journal entries at read time, rather than a
+  separate running-balance store.
 
 ## 12. Open questions
 
@@ -408,10 +412,12 @@ XLSX, which is a scope/prioritization call rather than an architectural one:
 
 ## 13. Immediate next step
 
-Phase 2 is done (§14). **Phase 3 (Procure-to-Pay) has not been asked for
-yet** — per the standing "ask before" rules, work on the PO wizard,
-approval engine, Goods Receipt, Vendor Bill, three-way match, or AP
-postings will not start until the project owner explicitly says to move on.
+Phase 4 is done (§14). **Phase 5 (Quality, docs, deploy) has not been asked
+for yet** — per the standing "ask before" rules, work on Playwright e2e
+specs, axe/Lighthouse passes, the performance budget, security headers,
+README/architecture write-up + screenshots, `apps/site` real content, the
+Dockerfile, or deployment will not start until the project owner explicitly
+says to move on.
 
 ## 14. Progress log
 
@@ -648,3 +654,117 @@ table.getTotalSize()` on the `<tbody>`.
   user id there. `pnpm format:check`, `lint`, `typecheck`, `test`, and
   `build` all green across every package. Pushed to
   `claude/vibrant-mccarthy-hj07u8`.
+- **2026-09-29/30** — Project owner said to move on to Phase 4. Landed the
+  full Order-to-Cash, Accounting, Dashboard, and Realtime milestone (§6, §8
+  exit criteria): a Quotation → SO → deliver (partial) → invoice → pay path
+  now runs end to end alongside Phase 3's P2P path, with GL/trial balance/
+  AR/AP aging reports, a GraphQL-backed dashboard, and WebSocket-driven live
+  updates.
+  **Contract**: entity schemas (`Customer`, `Quotation`/`*Line`,
+  `SalesOrder`/`*Line`, `Delivery`/`*Line`, `CustomerInvoice`/`*Line` —
+  `Quotation` status deliberately never includes a derived "overdue"; that's
+  computed from `dueDate` vs. now, not stored, matching how `PurchaseOrder`
+  already treats similar derived state) and a `ChartOfAccount` entity (VAS
+  code/name/type/normal-balance); a pure, framework-agnostic `ledger.ts`
+  (`computeGeneralLedger`/`computeTrialBalance`/`computeAging`/
+  `summarizeAging`) written per new [ADR-0010](adr/0010-general-ledger-and-aging-model.md)
+  — General Ledger, Trial Balance, and AR/AP Aging are all recomputed
+  on-demand from the full `JournalEntry` list at read time rather than
+  maintained as a running-balance store, which is consistent by construction
+  but a documented "recomputes fully every request" simplification at scale;
+  a pure `vndToWords()` for the Vietnamese amount-in-words line on the
+  e-invoice preview; seed generators for 400 customers, sales-order drafts,
+  standalone (never-converted) quotation drafts, and the chart of accounts,
+  plus a `commerce.ts` orchestrator mirroring Phase 3's `procurement.ts`;
+  IndexedDB extended to 18 stores; typed clients for sales/accounting/
+  dashboard REST endpoints and a small hand-rolled `gqlRequest` GraphQL
+  client (no Apollo/urql — not in §3); a `realtime-events.ts` Zod
+  discriminated union (`stock.changed`/`approval.requested`/
+  `approval.decided`/`document.posted`) plus an MSW `ws.link` handler
+  (`broadcastEvent`); MSW REST handlers for the full sales surface (each
+  status transition posting matching journal entries and broadcasting the
+  relevant event) and accounting reports; one MSW GraphQL handler
+  (`DashboardAggregates`) aggregating revenue trend, cash position, AR/AP
+  totals + aging summaries, low-stock count, open-order counts, and pending
+  approvals — the dashboard's only GraphQL query, per §9 risk 4; Phase 3's
+  purchasing handlers gained matching `broadcastEvent` calls at
+  submit/receive/bill/pay/decide so P2P actions now also drive realtime
+  updates; a new `sales` role, `salesWrite` permission, and demo persona
+  ("Đỗ Thị Giang"). Added 25 new tests (`ledger`, `vnd-words`), 95 total in
+  `packages/contract`.
+  **`packages/ui`**: `Card`/`CardHeader`/`CardTitle`/`CardContent`/
+  `CardFooter` and `KpiTile`, and a `rowClassName` prop on `DataGrid` so a
+  row can be styled from application state (used for the realtime "just
+  changed" flash).
+  **`apps/erp`**: added `recharts` and `sass` (the project's one deliberate
+  SCSS module, for the e-invoice print stylesheet) to `apps/erp/package.json`
+  — both already named in PLAN.md §3/§6, `sass` confirmed separately as a
+  devDependency; a realtime layer (zustand store tracking recently-changed
+  row ids with auto-expiry, a hook opening the native `WebSocket` to
+  `wss://mekong.mock/events` with auto-reconnect, invalidating the relevant
+  Query cache and toasting on `approval.*`/`document.posted`) mounted once in
+  the app shell; the sales feature (query-keys/hooks/URL search schemas,
+  Customers list, Quotations list + single-page create form + detail with
+  send/accept/reject/convert-to-SO, Sales Orders list + detail with
+  confirm/cancel/deliver/create-invoice, a partial-delivery route, Customer
+  Invoices list/detail/record-payment, and a print-ready e-invoice preview
+  with a hardcoded demo seller, the Vietnamese amount-in-words line, and a
+  mock XML download); Accounting routes (Chart of Accounts, General Ledger
+  with an account picker, Trial Balance with a balanced/out-of-balance
+  badge, AR/AP Aging with bucket tiles + a shared aging-report table)
+  replacing the Phase 1 placeholder; a Dashboard route (KPI tiles for
+  revenue/gross margin/cash position/AR/AP outstanding/pending approvals,
+  plus a revenue-vs-COGS line chart and two aging bar charts, all fed by the
+  GraphQL client and using `var(--accent)`/`var(--muted-foreground)`/
+  `var(--warning)` as chart colors so dark mode needs no extra logic)
+  replacing the other Phase 1 placeholder; the Stock Levels grid wired to
+  the realtime store (row flash + a "Live" badge on `stock.changed`).
+  Four real bugs surfaced this phase, none caught by lint/typecheck/build:
+  (1) `vndToWords()` capitalized the sentence _before_ prepending the
+  negative-amount "Âm " prefix, producing "Âm Năm trăm..." instead of "Âm
+  năm trăm..." — fixed by building the full lowercase sentence including the
+  sign first, then capitalizing once; caught by its own unit test. (2) the
+  sales delivery handler computed COGS as `deliveredQty * costPrice * 0` — a
+  leftover placeholder multiplier that zeroed out every COGS posting — fixed
+  by looking up the real `costPrice` from `productsStore`; caught only by
+  the dashboard showing an implausible 100% gross margin, not by any test,
+  since the three-way-match/journal-balance tests didn't happen to cover
+  this line. (3) a systemic, every-month negative gross margin on the
+  dashboard once (2) was fixed: COGS posts at delivery (Dr632/Cr156) but
+  revenue only posts at invoicing (Dr131/Cr511), mirroring Phase 3's
+  GRN-vs-bill split exactly — correct for any one order, but `commerce.ts`'s
+  seed-outcome weights left ~30% of the whole historical snapshot sitting at
+  delivered-but-never-invoiced, which is enough unmatched COGS to drag the
+  aggregate negative across nearly every month of a snapshot meant to look
+  like a healthy, mostly-settled trading history. Fixed by rebalancing
+  `OUTCOME_WEIGHTS` toward `closed` (15% → 45%) since most orders this old
+  in a real business would have long since been paid; verified by fetching
+  `revenueTrend` directly before and after (before: COGS exceeded revenue in
+  every one of 12 months; after: revenue exceeds COGS in 11 of 12, the one
+  exception being ordinary variance, not a bug). (4) the dashboard's 6 KPI
+  tiles overflowed their card at a 6-column grid width — CSS Grid's implicit
+  `min-width: auto` on grid items blocks text wrapping — fixed by dropping to
+  a 3-column max (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`) plus
+  `min-w-0`/`break-words` on `KpiTile` itself as defense in depth; caught
+  only by a rendered screenshot, not by any headless assertion.
+  Verified in a real browser: the full O2C path as a single scripted demo
+  (quotation create → send → accept → convert to SO → deliver ×2 partial →
+  invoice → e-invoice preview → record payment → closed), all four
+  Accounting reports, the Dashboard (all 6 KPI tiles correctly populated and
+  all 12 months present on the revenue/COGS chart — an initial concern that
+  the chart looked empty past month 2 turned out to be a diagnostic-script
+  defect, asserting an English-only KPI label against this app's
+  Vietnamese-default UI, not a rendering bug; resolved by re-checking against
+  the actual rendered (Vietnamese) text and a full screenshot showing all 12
+  months with realistic variance), and the realtime pipeline (an "Approval
+  requested" toast firing after a PO submit; the Stock Levels grid flashing
+  a row and showing "Live" on a stock change) — zero console errors
+  throughout. Known, deliberate simplifications carried forward: GL/trial
+  balance/aging recompute fully from the complete journal on every request
+  (ADR-0010) rather than maintaining running balances — fine at this app's
+  seed volume, a real scale concern if ever revisited; realtime stays
+  same-tab only per the pre-existing ADR-0002 (a mutation in one browser tab
+  doesn't push a toast to another tab of the same browser). `pnpm
+format:check`, `lint`, `typecheck`, `test` (127 tests: 95 contract + 19 ui
+  - 13 erp), and `build` all green across every package. Pushed to
+    `claude/vibrant-mccarthy-hj07u8`.
