@@ -63,7 +63,7 @@ function amountText(step: ApprovalView): string {
             />
           </th>
           <th scope="col" class="px-3 py-2">{{ t('inbox.columns.document') }}</th>
-          <th scope="col" class="px-3 py-2">{{ t('inbox.columns.subject') }}</th>
+          <th scope="col" class="min-w-56 px-3 py-2">{{ t('inbox.columns.subject') }}</th>
           <th scope="col" class="px-3 py-2 text-right">{{ t('inbox.columns.amount') }}</th>
           <th scope="col" class="px-3 py-2">{{ t('inbox.columns.role') }}</th>
           <th
@@ -88,7 +88,9 @@ function amountText(step: ApprovalView): string {
             </button>
           </th>
           <th scope="col" class="px-3 py-2">{{ t('inbox.columns.status') }}</th>
-          <th scope="col" class="px-3 py-2">{{ t('inbox.columns.actions') }}</th>
+          <th scope="col" class="sticky right-0 border-l border-border bg-muted px-3 py-2">
+            {{ t('inbox.columns.actions') }}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -97,7 +99,8 @@ function amountText(step: ApprovalView): string {
           :key="step.id"
           :class="[
             'border-b border-border align-top last:border-0',
-            step.docId === props.openDocId ? 'bg-muted' : '',
+            // Painted, not transparent, so the pinned Actions cell can inherit it.
+            step.docId === props.openDocId ? 'bg-muted' : 'bg-background',
           ]"
         >
           <td class="px-3 py-2">
@@ -134,7 +137,7 @@ function amountText(step: ApprovalView): string {
               t(`status.${step.status}`)
             }}</StatusBadge>
           </td>
-          <td class="px-3 py-2">
+          <td class="sticky right-0 border-l border-border bg-inherit px-3 py-2">
             <div v-if="canDecide(props.user, step)" class="flex gap-1">
               <BaseButton
                 size="sm"

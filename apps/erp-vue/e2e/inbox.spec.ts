@@ -111,6 +111,13 @@ test.describe('in English', () => {
     await expect(panel.getByText('Purchasing Manager — Pending')).toBeVisible();
     await expect(page).toHaveURL(/open=leave_request:/);
 
+    // The panel takes a third of the width, but the list keeps its columns readable and
+    // its actions in reach: the subject isn't squeezed into a sliver, and the pinned
+    // Actions column stays on screen while the rest of the table scrolls.
+    const subject = first.getByRole('cell').nth(2);
+    expect((await subject.boundingBox())?.width ?? 0).toBeGreaterThanOrEqual(200);
+    await expect(first.getByRole('button', { name: 'Reject' })).toBeInViewport();
+
     // The address alone is enough to get back to it.
     await page.reload();
     await expect(page.getByRole('region', { name: 'Leave request' })).toBeVisible();
