@@ -37,6 +37,8 @@
     "backHome": "Về trang chủ"
   },
   "commandPalette": {
+    "title": "Bảng lệnh",
+    "description": "Chuyển nhanh tới một trang hoặc đổi cài đặt.",
     "trigger": "Tìm kiếm...",
     "placeholder": "Nhập lệnh hoặc tìm kiếm...",
     "empty": "Không có kết quả.",

@@ -60,3 +60,22 @@ test('dark theme dashboard has no axe violations', async ({ page }) => {
   await expect(page.getByText('Revenue (this month)').first()).toBeVisible();
   await expectNoViolations(page, 'dashboard (dark)');
 });
+
+// Radix doesn't warn about a dialog without a title, so an unnamed one passes
+// lint, types and the console; only asking for it by name, or axe's
+// aria-dialog-name rule, notices. These open the two dialogs the page-level
+// scans above never reach.
+test('command palette dialog is named and has no axe violations', async ({ page }) => {
+  await loginAs(page, PERSONAS.accountant);
+  await page.getByRole('button', { name: /Ctrl K/ }).click();
+  await expect(page.getByRole('dialog', { name: 'Command palette' })).toBeVisible();
+  await expectNoViolations(page, 'command palette');
+});
+
+test('searchable picker dialog is named and has no axe violations', async ({ page }) => {
+  await loginAs(page, PERSONAS.purchasing);
+  await gotoApp(page, '/purchasing/orders/new');
+  await page.getByLabel('Supplier', { exact: true }).click();
+  await expect(page.getByRole('dialog', { name: /Search suppliers/i })).toBeVisible();
+  await expectNoViolations(page, 'supplier picker');
+});

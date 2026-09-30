@@ -9,6 +9,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  DialogDescription,
+  DialogTitle,
 } from '@mekong-erp/ui';
 import { useUiStore } from '../../shared/store/ui-store';
 import { Can } from '../../shared/permissions/can';
@@ -41,6 +43,9 @@ export function CommandPalette() {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
+      {/* Without a title the dialog has no accessible name; Radix doesn't warn, axe does. */}
+      <DialogTitle className="sr-only">{t('commandPalette.title')}</DialogTitle>
+      <DialogDescription className="sr-only">{t('commandPalette.description')}</DialogDescription>
       <CommandInput placeholder={t('commandPalette.placeholder')} />
       <CommandList>
         <CommandEmpty>{t('commandPalette.empty')}</CommandEmpty>

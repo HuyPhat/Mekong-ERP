@@ -4,6 +4,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogTitle,
   Command,
   CommandInput,
   CommandList,
@@ -84,6 +85,8 @@ export const ComboboxField = forwardRef<HTMLButtonElement, ComboboxFieldProps>(
           <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
         <DialogContent className="max-w-md overflow-hidden p-0">
+          {/* Without a title the dialog has no accessible name; Radix doesn't warn, axe does. */}
+          <DialogTitle className="sr-only">{searchPlaceholder}</DialogTitle>
           <Command shouldFilter={false}>
             <CommandInput
               value={search}

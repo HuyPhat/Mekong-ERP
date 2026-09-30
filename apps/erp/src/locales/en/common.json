@@ -37,6 +37,8 @@
     "backHome": "Back to home"
   },
   "commandPalette": {
+    "title": "Command palette",
+    "description": "Jump to a page or change a setting.",
     "trigger": "Search...",
     "placeholder": "Type a command or search...",
     "empty": "No results found.",
