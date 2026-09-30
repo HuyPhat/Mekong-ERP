@@ -30,7 +30,7 @@ export * from './document-number';
 export * from './realtime-events';
 export * from './graphql-client';
 export * from './dashboard-client';
-export { ensureSeeded, resetSeed } from './seed';
+export { ensureSeeded, resetSeed, type SeedProfile } from './seed';
 export {
   DEFAULT_DEV_CONFIG,
   DevConfigSchema,

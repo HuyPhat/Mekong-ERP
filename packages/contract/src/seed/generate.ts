@@ -57,3 +57,25 @@ export function generateSeedData(approvalRules: ApprovalRule[]) {
     hrm,
   };
 }
+
+// The approvals inbox reads purchase orders (their supplier and total), leave
+// requests (their employee) and the steps between them, and nothing else. The Vue
+// inbox seeds just that: a few hundred records instead of 110,000 (ADR-0016).
+const LIGHT_PRODUCT_COUNT = 200;
+const LIGHT_SUPPLIER_COUNT = 30;
+const LIGHT_PURCHASE_ORDER_COUNT = 240;
+
+export function generateLightSeedData(approvalRules: ApprovalRule[]) {
+  const warehouses = generateWarehouses();
+  const products = generateProducts(LIGHT_PRODUCT_COUNT);
+  const suppliers = generateSuppliers(LIGHT_SUPPLIER_COUNT);
+  const poDrafts = generatePurchaseOrderDrafts(
+    LIGHT_PURCHASE_ORDER_COUNT,
+    products,
+    suppliers,
+    warehouses,
+  );
+  const procurement = generateProcurementData(poDrafts, approvalRules);
+  const hrm = generateHrmData(approvalRules);
+  return { warehouses, products, suppliers, procurement, hrm };
+}
