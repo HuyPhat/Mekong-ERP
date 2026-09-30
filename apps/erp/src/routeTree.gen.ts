@@ -16,6 +16,7 @@ import { Route as App403RouteImport } from './routes/_app/403'
 import { Route as AppAccountingRouteImport } from './routes/_app/accounting'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppApprovalsRouteImport } from './routes/_app/approvals'
+import { Route as AppHrmRouteImport } from './routes/_app/hrm'
 import { Route as AppInventoryRouteImport } from './routes/_app/inventory'
 import { Route as AppPurchasingRouteImport } from './routes/_app/purchasing'
 import { Route as AppSalesRouteImport } from './routes/_app/sales'
@@ -26,6 +27,8 @@ import { Route as AppAccountingArAgingRouteImport } from './routes/_app/accounti
 import { Route as AppAccountingChartOfAccountsRouteImport } from './routes/_app/accounting/chart-of-accounts'
 import { Route as AppAccountingGeneralLedgerRouteImport } from './routes/_app/accounting/general-ledger'
 import { Route as AppAccountingTrialBalanceRouteImport } from './routes/_app/accounting/trial-balance'
+import { Route as AppHrmIndexRouteImport } from './routes/_app/hrm/index'
+import { Route as AppHrmLeaveRouteImport } from './routes/_app/hrm/leave'
 import { Route as AppInventoryIndexRouteImport } from './routes/_app/inventory/index'
 import { Route as AppInventoryProductsRouteImport } from './routes/_app/inventory/products'
 import { Route as AppInventoryStockLevelsRouteImport } from './routes/_app/inventory/stock-levels'
@@ -39,6 +42,8 @@ import { Route as AppSalesCustomersRouteImport } from './routes/_app/sales/custo
 import { Route as AppSalesInvoicesRouteImport } from './routes/_app/sales/invoices'
 import { Route as AppSalesOrdersRouteImport } from './routes/_app/sales/orders'
 import { Route as AppSalesQuotationsRouteImport } from './routes/_app/sales/quotations'
+import { Route as AppHrmLeaveIndexRouteImport } from './routes/_app/hrm/leave/index'
+import { Route as AppHrmLeaveNewRouteImport } from './routes/_app/hrm/leave/new'
 import { Route as AppInventoryProductsIndexRouteImport } from './routes/_app/inventory/products/index'
 import { Route as AppInventoryProductsProductIdRouteImport } from './routes/_app/inventory/products/$productId'
 import { Route as AppPurchasingBillsIndexRouteImport } from './routes/_app/purchasing/bills/index'
@@ -51,6 +56,8 @@ import { Route as AppSalesOrdersIndexRouteImport } from './routes/_app/sales/ord
 import { Route as AppSalesQuotationsIndexRouteImport } from './routes/_app/sales/quotations/index'
 import { Route as AppSalesQuotationsQuotationIdRouteImport } from './routes/_app/sales/quotations/$quotationId'
 import { Route as AppSalesQuotationsNewRouteImport } from './routes/_app/sales/quotations/new'
+import { Route as AppHrmLeaveLeaveIdIndexRouteImport } from './routes/_app/hrm/leave/$leaveId/index'
+import { Route as AppHrmLeaveLeaveIdEditRouteImport } from './routes/_app/hrm/leave/$leaveId/edit'
 import { Route as AppPurchasingOrdersPoIdIndexRouteImport } from './routes/_app/purchasing/orders/$poId/index'
 import { Route as AppPurchasingOrdersPoIdReceiveRouteImport } from './routes/_app/purchasing/orders/$poId/receive'
 import { Route as AppSalesInvoicesInvoiceIdIndexRouteImport } from './routes/_app/sales/invoices/$invoiceId/index'
@@ -89,6 +96,11 @@ const AppAdminRoute = AppAdminRouteImport.update({
 const AppApprovalsRoute = AppApprovalsRouteImport.update({
   id: '/approvals',
   path: '/approvals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHrmRoute = AppHrmRouteImport.update({
+  id: '/hrm',
+  path: '/hrm',
   getParentRoute: () => AppRoute,
 } as any)
 const AppInventoryRoute = AppInventoryRouteImport.update({
@@ -144,6 +156,16 @@ const AppAccountingTrialBalanceRoute =
     path: '/trial-balance',
     getParentRoute: () => AppAccountingRoute,
   } as any)
+const AppHrmIndexRoute = AppHrmIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppHrmRoute,
+} as any)
+const AppHrmLeaveRoute = AppHrmLeaveRouteImport.update({
+  id: '/leave',
+  path: '/leave',
+  getParentRoute: () => AppHrmRoute,
+} as any)
 const AppInventoryIndexRoute = AppInventoryIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -210,6 +232,16 @@ const AppSalesQuotationsRoute = AppSalesQuotationsRouteImport.update({
   path: '/quotations',
   getParentRoute: () => AppSalesRoute,
 } as any)
+const AppHrmLeaveIndexRoute = AppHrmLeaveIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppHrmLeaveRoute,
+} as any)
+const AppHrmLeaveNewRoute = AppHrmLeaveNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppHrmLeaveRoute,
+} as any)
 const AppInventoryProductsIndexRoute =
   AppInventoryProductsIndexRouteImport.update({
     id: '/',
@@ -275,6 +307,16 @@ const AppSalesQuotationsNewRoute = AppSalesQuotationsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppSalesQuotationsRoute,
 } as any)
+const AppHrmLeaveLeaveIdIndexRoute = AppHrmLeaveLeaveIdIndexRouteImport.update({
+  id: '/$leaveId/',
+  path: '/$leaveId/',
+  getParentRoute: () => AppHrmLeaveRoute,
+} as any)
+const AppHrmLeaveLeaveIdEditRoute = AppHrmLeaveLeaveIdEditRouteImport.update({
+  id: '/$leaveId/edit',
+  path: '/$leaveId/edit',
+  getParentRoute: () => AppHrmLeaveRoute,
+} as any)
 const AppPurchasingOrdersPoIdIndexRoute =
   AppPurchasingOrdersPoIdIndexRouteImport.update({
     id: '/$poId/',
@@ -317,6 +359,7 @@ export interface FileRoutesByFullPath {
   '/accounting': typeof AppAccountingRouteWithChildren
   '/admin': typeof AppAdminRoute
   '/approvals': typeof AppApprovalsRoute
+  '/hrm': typeof AppHrmRouteWithChildren
   '/inventory': typeof AppInventoryRouteWithChildren
   '/purchasing': typeof AppPurchasingRouteWithChildren
   '/sales': typeof AppSalesRouteWithChildren
@@ -326,6 +369,7 @@ export interface FileRoutesByFullPath {
   '/accounting/chart-of-accounts': typeof AppAccountingChartOfAccountsRoute
   '/accounting/general-ledger': typeof AppAccountingGeneralLedgerRoute
   '/accounting/trial-balance': typeof AppAccountingTrialBalanceRoute
+  '/hrm/leave': typeof AppHrmLeaveRouteWithChildren
   '/inventory/products': typeof AppInventoryProductsRouteWithChildren
   '/inventory/stock-levels': typeof AppInventoryStockLevelsRoute
   '/inventory/stock-movements': typeof AppInventoryStockMovementsRoute
@@ -337,24 +381,29 @@ export interface FileRoutesByFullPath {
   '/sales/orders': typeof AppSalesOrdersRouteWithChildren
   '/sales/quotations': typeof AppSalesQuotationsRouteWithChildren
   '/accounting/': typeof AppAccountingIndexRoute
+  '/hrm/': typeof AppHrmIndexRoute
   '/inventory/': typeof AppInventoryIndexRoute
   '/purchasing/': typeof AppPurchasingIndexRoute
   '/sales/': typeof AppSalesIndexRoute
+  '/hrm/leave/new': typeof AppHrmLeaveNewRoute
   '/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
   '/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
   '/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
   '/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
   '/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRoute
   '/sales/quotations/new': typeof AppSalesQuotationsNewRoute
+  '/hrm/leave/': typeof AppHrmLeaveIndexRoute
   '/inventory/products/': typeof AppInventoryProductsIndexRoute
   '/purchasing/bills/': typeof AppPurchasingBillsIndexRoute
   '/purchasing/orders/': typeof AppPurchasingOrdersIndexRoute
   '/sales/invoices/': typeof AppSalesInvoicesIndexRoute
   '/sales/orders/': typeof AppSalesOrdersIndexRoute
   '/sales/quotations/': typeof AppSalesQuotationsIndexRoute
+  '/hrm/leave/$leaveId/edit': typeof AppHrmLeaveLeaveIdEditRoute
   '/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
   '/sales/invoices/$invoiceId/preview': typeof AppSalesInvoicesInvoiceIdPreviewRoute
   '/sales/orders/$soId/deliver': typeof AppSalesOrdersSoIdDeliverRoute
+  '/hrm/leave/$leaveId/': typeof AppHrmLeaveLeaveIdIndexRoute
   '/purchasing/orders/$poId/': typeof AppPurchasingOrdersPoIdIndexRoute
   '/sales/invoices/$invoiceId/': typeof AppSalesInvoicesInvoiceIdIndexRoute
   '/sales/orders/$soId/': typeof AppSalesOrdersSoIdIndexRoute
@@ -375,24 +424,29 @@ export interface FileRoutesByTo {
   '/purchasing/suppliers': typeof AppPurchasingSuppliersRoute
   '/sales/customers': typeof AppSalesCustomersRoute
   '/accounting': typeof AppAccountingIndexRoute
+  '/hrm': typeof AppHrmIndexRoute
   '/inventory': typeof AppInventoryIndexRoute
   '/purchasing': typeof AppPurchasingIndexRoute
   '/sales': typeof AppSalesIndexRoute
+  '/hrm/leave/new': typeof AppHrmLeaveNewRoute
   '/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
   '/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
   '/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
   '/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
   '/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRoute
   '/sales/quotations/new': typeof AppSalesQuotationsNewRoute
+  '/hrm/leave': typeof AppHrmLeaveIndexRoute
   '/inventory/products': typeof AppInventoryProductsIndexRoute
   '/purchasing/bills': typeof AppPurchasingBillsIndexRoute
   '/purchasing/orders': typeof AppPurchasingOrdersIndexRoute
   '/sales/invoices': typeof AppSalesInvoicesIndexRoute
   '/sales/orders': typeof AppSalesOrdersIndexRoute
   '/sales/quotations': typeof AppSalesQuotationsIndexRoute
+  '/hrm/leave/$leaveId/edit': typeof AppHrmLeaveLeaveIdEditRoute
   '/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
   '/sales/invoices/$invoiceId/preview': typeof AppSalesInvoicesInvoiceIdPreviewRoute
   '/sales/orders/$soId/deliver': typeof AppSalesOrdersSoIdDeliverRoute
+  '/hrm/leave/$leaveId': typeof AppHrmLeaveLeaveIdIndexRoute
   '/purchasing/orders/$poId': typeof AppPurchasingOrdersPoIdIndexRoute
   '/sales/invoices/$invoiceId': typeof AppSalesInvoicesInvoiceIdIndexRoute
   '/sales/orders/$soId': typeof AppSalesOrdersSoIdIndexRoute
@@ -405,6 +459,7 @@ export interface FileRoutesById {
   '/_app/accounting': typeof AppAccountingRouteWithChildren
   '/_app/admin': typeof AppAdminRoute
   '/_app/approvals': typeof AppApprovalsRoute
+  '/_app/hrm': typeof AppHrmRouteWithChildren
   '/_app/inventory': typeof AppInventoryRouteWithChildren
   '/_app/purchasing': typeof AppPurchasingRouteWithChildren
   '/_app/sales': typeof AppSalesRouteWithChildren
@@ -415,6 +470,7 @@ export interface FileRoutesById {
   '/_app/accounting/chart-of-accounts': typeof AppAccountingChartOfAccountsRoute
   '/_app/accounting/general-ledger': typeof AppAccountingGeneralLedgerRoute
   '/_app/accounting/trial-balance': typeof AppAccountingTrialBalanceRoute
+  '/_app/hrm/leave': typeof AppHrmLeaveRouteWithChildren
   '/_app/inventory/products': typeof AppInventoryProductsRouteWithChildren
   '/_app/inventory/stock-levels': typeof AppInventoryStockLevelsRoute
   '/_app/inventory/stock-movements': typeof AppInventoryStockMovementsRoute
@@ -426,24 +482,29 @@ export interface FileRoutesById {
   '/_app/sales/orders': typeof AppSalesOrdersRouteWithChildren
   '/_app/sales/quotations': typeof AppSalesQuotationsRouteWithChildren
   '/_app/accounting/': typeof AppAccountingIndexRoute
+  '/_app/hrm/': typeof AppHrmIndexRoute
   '/_app/inventory/': typeof AppInventoryIndexRoute
   '/_app/purchasing/': typeof AppPurchasingIndexRoute
   '/_app/sales/': typeof AppSalesIndexRoute
+  '/_app/hrm/leave/new': typeof AppHrmLeaveNewRoute
   '/_app/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
   '/_app/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
   '/_app/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
   '/_app/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
   '/_app/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRoute
   '/_app/sales/quotations/new': typeof AppSalesQuotationsNewRoute
+  '/_app/hrm/leave/': typeof AppHrmLeaveIndexRoute
   '/_app/inventory/products/': typeof AppInventoryProductsIndexRoute
   '/_app/purchasing/bills/': typeof AppPurchasingBillsIndexRoute
   '/_app/purchasing/orders/': typeof AppPurchasingOrdersIndexRoute
   '/_app/sales/invoices/': typeof AppSalesInvoicesIndexRoute
   '/_app/sales/orders/': typeof AppSalesOrdersIndexRoute
   '/_app/sales/quotations/': typeof AppSalesQuotationsIndexRoute
+  '/_app/hrm/leave/$leaveId/edit': typeof AppHrmLeaveLeaveIdEditRoute
   '/_app/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
   '/_app/sales/invoices/$invoiceId/preview': typeof AppSalesInvoicesInvoiceIdPreviewRoute
   '/_app/sales/orders/$soId/deliver': typeof AppSalesOrdersSoIdDeliverRoute
+  '/_app/hrm/leave/$leaveId/': typeof AppHrmLeaveLeaveIdIndexRoute
   '/_app/purchasing/orders/$poId/': typeof AppPurchasingOrdersPoIdIndexRoute
   '/_app/sales/invoices/$invoiceId/': typeof AppSalesInvoicesInvoiceIdIndexRoute
   '/_app/sales/orders/$soId/': typeof AppSalesOrdersSoIdIndexRoute
@@ -456,6 +517,7 @@ export interface FileRouteTypes {
     | '/accounting'
     | '/admin'
     | '/approvals'
+    | '/hrm'
     | '/inventory'
     | '/purchasing'
     | '/sales'
@@ -465,6 +527,7 @@ export interface FileRouteTypes {
     | '/accounting/chart-of-accounts'
     | '/accounting/general-ledger'
     | '/accounting/trial-balance'
+    | '/hrm/leave'
     | '/inventory/products'
     | '/inventory/stock-levels'
     | '/inventory/stock-movements'
@@ -476,24 +539,29 @@ export interface FileRouteTypes {
     | '/sales/orders'
     | '/sales/quotations'
     | '/accounting/'
+    | '/hrm/'
     | '/inventory/'
     | '/purchasing/'
     | '/sales/'
+    | '/hrm/leave/new'
     | '/inventory/products/$productId'
     | '/purchasing/bills/$billId'
     | '/purchasing/bills/new'
     | '/purchasing/orders/new'
     | '/sales/quotations/$quotationId'
     | '/sales/quotations/new'
+    | '/hrm/leave/'
     | '/inventory/products/'
     | '/purchasing/bills/'
     | '/purchasing/orders/'
     | '/sales/invoices/'
     | '/sales/orders/'
     | '/sales/quotations/'
+    | '/hrm/leave/$leaveId/edit'
     | '/purchasing/orders/$poId/receive'
     | '/sales/invoices/$invoiceId/preview'
     | '/sales/orders/$soId/deliver'
+    | '/hrm/leave/$leaveId/'
     | '/purchasing/orders/$poId/'
     | '/sales/invoices/$invoiceId/'
     | '/sales/orders/$soId/'
@@ -514,24 +582,29 @@ export interface FileRouteTypes {
     | '/purchasing/suppliers'
     | '/sales/customers'
     | '/accounting'
+    | '/hrm'
     | '/inventory'
     | '/purchasing'
     | '/sales'
+    | '/hrm/leave/new'
     | '/inventory/products/$productId'
     | '/purchasing/bills/$billId'
     | '/purchasing/bills/new'
     | '/purchasing/orders/new'
     | '/sales/quotations/$quotationId'
     | '/sales/quotations/new'
+    | '/hrm/leave'
     | '/inventory/products'
     | '/purchasing/bills'
     | '/purchasing/orders'
     | '/sales/invoices'
     | '/sales/orders'
     | '/sales/quotations'
+    | '/hrm/leave/$leaveId/edit'
     | '/purchasing/orders/$poId/receive'
     | '/sales/invoices/$invoiceId/preview'
     | '/sales/orders/$soId/deliver'
+    | '/hrm/leave/$leaveId'
     | '/purchasing/orders/$poId'
     | '/sales/invoices/$invoiceId'
     | '/sales/orders/$soId'
@@ -543,6 +616,7 @@ export interface FileRouteTypes {
     | '/_app/accounting'
     | '/_app/admin'
     | '/_app/approvals'
+    | '/_app/hrm'
     | '/_app/inventory'
     | '/_app/purchasing'
     | '/_app/sales'
@@ -553,6 +627,7 @@ export interface FileRouteTypes {
     | '/_app/accounting/chart-of-accounts'
     | '/_app/accounting/general-ledger'
     | '/_app/accounting/trial-balance'
+    | '/_app/hrm/leave'
     | '/_app/inventory/products'
     | '/_app/inventory/stock-levels'
     | '/_app/inventory/stock-movements'
@@ -564,24 +639,29 @@ export interface FileRouteTypes {
     | '/_app/sales/orders'
     | '/_app/sales/quotations'
     | '/_app/accounting/'
+    | '/_app/hrm/'
     | '/_app/inventory/'
     | '/_app/purchasing/'
     | '/_app/sales/'
+    | '/_app/hrm/leave/new'
     | '/_app/inventory/products/$productId'
     | '/_app/purchasing/bills/$billId'
     | '/_app/purchasing/bills/new'
     | '/_app/purchasing/orders/new'
     | '/_app/sales/quotations/$quotationId'
     | '/_app/sales/quotations/new'
+    | '/_app/hrm/leave/'
     | '/_app/inventory/products/'
     | '/_app/purchasing/bills/'
     | '/_app/purchasing/orders/'
     | '/_app/sales/invoices/'
     | '/_app/sales/orders/'
     | '/_app/sales/quotations/'
+    | '/_app/hrm/leave/$leaveId/edit'
     | '/_app/purchasing/orders/$poId/receive'
     | '/_app/sales/invoices/$invoiceId/preview'
     | '/_app/sales/orders/$soId/deliver'
+    | '/_app/hrm/leave/$leaveId/'
     | '/_app/purchasing/orders/$poId/'
     | '/_app/sales/invoices/$invoiceId/'
     | '/_app/sales/orders/$soId/'
@@ -641,6 +721,13 @@ declare module '@tanstack/react-router' {
       path: '/approvals'
       fullPath: '/approvals'
       preLoaderRoute: typeof AppApprovalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/hrm': {
+      id: '/_app/hrm'
+      path: '/hrm'
+      fullPath: '/hrm'
+      preLoaderRoute: typeof AppHrmRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/inventory': {
@@ -712,6 +799,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/accounting/trial-balance'
       preLoaderRoute: typeof AppAccountingTrialBalanceRouteImport
       parentRoute: typeof AppAccountingRoute
+    }
+    '/_app/hrm/': {
+      id: '/_app/hrm/'
+      path: '/'
+      fullPath: '/hrm/'
+      preLoaderRoute: typeof AppHrmIndexRouteImport
+      parentRoute: typeof AppHrmRoute
+    }
+    '/_app/hrm/leave': {
+      id: '/_app/hrm/leave'
+      path: '/leave'
+      fullPath: '/hrm/leave'
+      preLoaderRoute: typeof AppHrmLeaveRouteImport
+      parentRoute: typeof AppHrmRoute
     }
     '/_app/inventory/': {
       id: '/_app/inventory/'
@@ -804,6 +905,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSalesQuotationsRouteImport
       parentRoute: typeof AppSalesRoute
     }
+    '/_app/hrm/leave/': {
+      id: '/_app/hrm/leave/'
+      path: '/'
+      fullPath: '/hrm/leave/'
+      preLoaderRoute: typeof AppHrmLeaveIndexRouteImport
+      parentRoute: typeof AppHrmLeaveRoute
+    }
+    '/_app/hrm/leave/new': {
+      id: '/_app/hrm/leave/new'
+      path: '/new'
+      fullPath: '/hrm/leave/new'
+      preLoaderRoute: typeof AppHrmLeaveNewRouteImport
+      parentRoute: typeof AppHrmLeaveRoute
+    }
     '/_app/inventory/products/': {
       id: '/_app/inventory/products/'
       path: '/'
@@ -888,6 +1003,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSalesQuotationsNewRouteImport
       parentRoute: typeof AppSalesQuotationsRoute
     }
+    '/_app/hrm/leave/$leaveId/': {
+      id: '/_app/hrm/leave/$leaveId/'
+      path: '/$leaveId'
+      fullPath: '/hrm/leave/$leaveId/'
+      preLoaderRoute: typeof AppHrmLeaveLeaveIdIndexRouteImport
+      parentRoute: typeof AppHrmLeaveRoute
+    }
+    '/_app/hrm/leave/$leaveId/edit': {
+      id: '/_app/hrm/leave/$leaveId/edit'
+      path: '/$leaveId/edit'
+      fullPath: '/hrm/leave/$leaveId/edit'
+      preLoaderRoute: typeof AppHrmLeaveLeaveIdEditRouteImport
+      parentRoute: typeof AppHrmLeaveRoute
+    }
     '/_app/purchasing/orders/$poId/': {
       id: '/_app/purchasing/orders/$poId/'
       path: '/$poId'
@@ -954,6 +1083,37 @@ const AppAccountingRouteChildren: AppAccountingRouteChildren = {
 const AppAccountingRouteWithChildren = AppAccountingRoute._addFileChildren(
   AppAccountingRouteChildren,
 )
+
+interface AppHrmLeaveRouteChildren {
+  AppHrmLeaveNewRoute: typeof AppHrmLeaveNewRoute
+  AppHrmLeaveIndexRoute: typeof AppHrmLeaveIndexRoute
+  AppHrmLeaveLeaveIdEditRoute: typeof AppHrmLeaveLeaveIdEditRoute
+  AppHrmLeaveLeaveIdIndexRoute: typeof AppHrmLeaveLeaveIdIndexRoute
+}
+
+const AppHrmLeaveRouteChildren: AppHrmLeaveRouteChildren = {
+  AppHrmLeaveNewRoute: AppHrmLeaveNewRoute,
+  AppHrmLeaveIndexRoute: AppHrmLeaveIndexRoute,
+  AppHrmLeaveLeaveIdEditRoute: AppHrmLeaveLeaveIdEditRoute,
+  AppHrmLeaveLeaveIdIndexRoute: AppHrmLeaveLeaveIdIndexRoute,
+}
+
+const AppHrmLeaveRouteWithChildren = AppHrmLeaveRoute._addFileChildren(
+  AppHrmLeaveRouteChildren,
+)
+
+interface AppHrmRouteChildren {
+  AppHrmLeaveRoute: typeof AppHrmLeaveRouteWithChildren
+  AppHrmIndexRoute: typeof AppHrmIndexRoute
+}
+
+const AppHrmRouteChildren: AppHrmRouteChildren = {
+  AppHrmLeaveRoute: AppHrmLeaveRouteWithChildren,
+  AppHrmIndexRoute: AppHrmIndexRoute,
+}
+
+const AppHrmRouteWithChildren =
+  AppHrmRoute._addFileChildren(AppHrmRouteChildren)
 
 interface AppInventoryProductsRouteChildren {
   AppInventoryProductsProductIdRoute: typeof AppInventoryProductsProductIdRoute
@@ -1107,6 +1267,7 @@ interface AppRouteChildren {
   AppAccountingRoute: typeof AppAccountingRouteWithChildren
   AppAdminRoute: typeof AppAdminRoute
   AppApprovalsRoute: typeof AppApprovalsRoute
+  AppHrmRoute: typeof AppHrmRouteWithChildren
   AppInventoryRoute: typeof AppInventoryRouteWithChildren
   AppPurchasingRoute: typeof AppPurchasingRouteWithChildren
   AppSalesRoute: typeof AppSalesRouteWithChildren
@@ -1118,6 +1279,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAccountingRoute: AppAccountingRouteWithChildren,
   AppAdminRoute: AppAdminRoute,
   AppApprovalsRoute: AppApprovalsRoute,
+  AppHrmRoute: AppHrmRouteWithChildren,
   AppInventoryRoute: AppInventoryRouteWithChildren,
   AppPurchasingRoute: AppPurchasingRouteWithChildren,
   AppSalesRoute: AppSalesRouteWithChildren,

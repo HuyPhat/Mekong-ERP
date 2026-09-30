@@ -178,8 +178,13 @@ function ApprovalsInboxPage() {
                   {info.getValue()}
                 </Link>
               ) : (
-                // Leave requests get a detail link once the HR screens exist (Phase 6.4).
-                <span>{info.getValue()}</span>
+                <Link
+                  to="/hrm/leave/$leaveId"
+                  params={{ leaveId: approval.docId }}
+                  className="text-foreground hover:underline"
+                >
+                  {info.getValue()}
+                </Link>
               )}
               <span className="text-xs text-muted-foreground">
                 {t(`approvals.docTypes.${approval.docType}`)}
@@ -356,6 +361,7 @@ function ApprovalsInboxPage() {
             value={reasonText}
             onChange={(event) => setReasonText(event.target.value)}
             placeholder={t('approvals.reasonPlaceholder')}
+            aria-label={t('approvals.reasonLabel')}
           />
           <div className="mt-4 flex justify-end gap-2">
             <Button variant="outline" onClick={() => setReasonTarget(null)}>

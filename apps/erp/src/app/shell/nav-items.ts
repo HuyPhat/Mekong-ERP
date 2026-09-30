@@ -6,6 +6,7 @@ import {
   Receipt,
   Calculator,
   ClipboardCheck,
+  Users,
   ShieldCheck,
 } from 'lucide-react';
 import { PERMISSIONS } from '@mekong-erp/contract';
@@ -43,6 +44,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Calculator,
     permission: PERMISSIONS.accountingRead,
   },
+  { to: '/hrm', labelKey: 'nav.hrm', icon: Users, permission: PERMISSIONS.hrmRead },
   {
     to: '/approvals',
     labelKey: 'nav.approvals',

@@ -8,6 +8,7 @@
     "purchasing": "Purchasing",
     "sales": "Sales",
     "accounting": "Accounting",
+    "hrm": "HR",
     "approvals": "Approvals",
     "admin": "Admin"
   },
@@ -325,6 +326,122 @@
       }
     }
   },
+  "hrm": {
+    "tabs": {
+      "leave": "Leave requests"
+    },
+    "departments": {
+      "purchasing": "Purchasing",
+      "warehouse": "Warehouse",
+      "sales": "Sales",
+      "accounting": "Accounting",
+      "management": "Management"
+    },
+    "leave": {
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "daysUnit_one": "day",
+      "daysUnit_other": "days",
+      "newButton": "New request",
+      "searchPlaceholder": "Search by number or employee…",
+      "emptyMine": "You have no leave requests yet.",
+      "emptyAll": "No leave requests match these filters.",
+      "scope": {
+        "label": "Whose requests",
+        "mine": "My requests",
+        "all": "Everyone"
+      },
+      "balance": {
+        "allowance": "Annual allowance {{year}}",
+        "used": "Taken",
+        "pending": "Awaiting approval",
+        "remaining": "Remaining"
+      },
+      "columns": {
+        "number": "Request",
+        "employee": "Employee",
+        "type": "Type",
+        "period": "Dates",
+        "days": "Working days",
+        "status": "Status",
+        "submittedAt": "Submitted"
+      },
+      "type": {
+        "annual": "Annual leave",
+        "sick": "Sick leave",
+        "unpaid": "Unpaid leave",
+        "special": "Special leave"
+      },
+      "status": {
+        "pending_approval": "Awaiting approval",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "changes_requested": "Changes requested",
+        "cancelled": "Cancelled"
+      },
+      "form": {
+        "title": "New leave request",
+        "reviseTitle": "Edit {{number}} and resubmit",
+        "loading": "Loading…",
+        "noEmployee": "This login has no employee record, so it can't request leave.",
+        "typeLabel": "Type of leave",
+        "startDateLabel": "First day",
+        "endDateLabel": "Last day",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "What is the leave for?",
+        "submitButton": "Submit request",
+        "resubmitButton": "Resubmit",
+        "submitting": "Submitting…",
+        "cancelButton": "Cancel",
+        "submitSuccess": "Leave request submitted",
+        "resubmitSuccess": "Leave request resubmitted",
+        "preview": {
+          "pickDates": "Pick the first and last day to see how many working days it is.",
+          "days_one": "{{count}} working day",
+          "days_other": "{{count}} working days",
+          "daysNote": "(weekends and public holidays aren't counted)",
+          "balance": "Annual leave {{year}}: {{remaining}} of {{allowance}} days left, {{after}} after this request.",
+          "notEnough": "Not enough annual leave: this request needs {{days}} days but {{remaining}} remain for {{year}}.",
+          "noAllowance": "This type of leave doesn't use your annual allowance."
+        },
+        "errors": {
+          "startRequired": "Pick the first day.",
+          "endRequired": "Pick the last day.",
+          "reasonRequired": "Enter a reason.",
+          "reasonTooLong": "Keep the reason under 500 characters.",
+          "endBeforeStart": "The last day can't be before the first day.",
+          "twoYears": "Leave that runs into a new year needs two requests, one per year.",
+          "noWorkingDays": "These dates have no working days: they are weekends or public holidays.",
+          "overlap": "These dates overlap {{number}}. Change the dates or cancel that request first.",
+          "insufficientBalance": "You don't have enough annual leave left for these dates.",
+          "noApprovalRule": "No approval rule covers this length of leave."
+        }
+      },
+      "detail": {
+        "loading": "Loading…",
+        "notFound": "This leave request doesn't exist.",
+        "backToList": "← Leave requests",
+        "employeeLabel": "Employee",
+        "departmentLabel": "Department",
+        "typeLabel": "Type",
+        "periodLabel": "Dates",
+        "daysLabel": "Working days",
+        "submittedLabel": "Submitted",
+        "reasonLabel": "Reason",
+        "timelineTitle": "Approval history",
+        "reviseButton": "Edit and resubmit",
+        "reviewButton": "Review in approvals inbox",
+        "cancelButton": "Cancel request",
+        "cancelling": "Cancelling…",
+        "cancelSuccess": "Leave request cancelled",
+        "changesRequestedHint": "Your approver asked for changes. Edit the request and resubmit it: it keeps its number and goes through approval again."
+      },
+      "edit": {
+        "notEditable": "Only a request that was sent back for changes can be edited.",
+        "backToRequest": "← Back to the request"
+      }
+    }
+  },
   "approvals": {
     "title": "Approvals inbox",
     "columns": {
@@ -383,7 +500,11 @@
       "entityTypeFilterLabel": "Entity type",
       "entityTypes": {
         "purchase_order": "Purchase order",
-        "vendor_bill": "Vendor bill"
+        "vendor_bill": "Vendor bill",
+        "quotation": "Quotation",
+        "sales_order": "Sales order",
+        "customer_invoice": "Customer invoice",
+        "leave_request": "Leave request"
       }
     }
   },

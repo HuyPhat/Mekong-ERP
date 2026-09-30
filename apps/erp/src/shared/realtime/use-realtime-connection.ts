@@ -59,7 +59,13 @@ export function useRealtimeConnection(): void {
         }
         case 'approval.decided': {
           void queryClient.invalidateQueries({ queryKey: ['approvals'] });
-          void queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
+          if (event.docType === 'leave_request') {
+            // A decision moves the request's status and the requester's balance.
+            void queryClient.invalidateQueries({ queryKey: ['leave-requests'] });
+            void queryClient.invalidateQueries({ queryKey: ['leave-balance'] });
+          } else {
+            void queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
+          }
           toast({
             title: t(`realtime.approvalDecided.${event.decision}`),
             description: event.docNumber,

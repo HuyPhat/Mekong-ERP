@@ -69,6 +69,7 @@ export const PERSONAS = {
   accountant: 'Lê Thị Cúc',
   sales: 'Đỗ Thị Giang',
   manager: 'Phạm Văn Đức',
+  director: 'Hoàng Thị Em',
 } as const;
 
 /**

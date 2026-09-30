@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDate, formatNumber, formatVnd } from './format';
+import { formatDate, formatDateOnly, formatNumber, formatVnd } from './format';
 
 const NO_BREAK_SPACE = String.fromCharCode(0xa0);
 
@@ -37,5 +37,24 @@ describe('formatDate', () => {
     const fromTimestamp = formatDate(new Date(iso).getTime());
     expect(fromString).toBe(fromDate);
     expect(fromTimestamp).toBe(fromDate);
+  });
+});
+
+describe('formatDateOnly', () => {
+  it('formats a calendar date the way formatDate does, day first', () => {
+    expect(formatDateOnly('2027-03-01')).toBe('1/3/2027');
+    expect(formatDateOnly('2027-12-31')).toBe('31/12/2027');
+  });
+
+  // The day must be the one written, in any time zone: `new Date('2027-03-01')` is
+  // midnight UTC and reads as 28 February for a viewer in the Americas. The suite is
+  // also run under such a zone (TZ=America/Los_Angeles) to see this bite.
+  it("never moves the day, whatever the viewer's time zone", () => {
+    expect(formatDateOnly('2027-01-01')).toBe('1/1/2027');
+  });
+
+  it('hands back anything that is not a yyyy-mm-dd date unchanged', () => {
+    expect(formatDateOnly('')).toBe('');
+    expect(formatDateOnly('1/3/2027')).toBe('1/3/2027');
   });
 });

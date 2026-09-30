@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
+import { freeWeek } from './dates';
 import { test, expect, loginAs, gotoApp, startApp, PERSONAS } from './fixtures';
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
@@ -39,6 +40,8 @@ const PAGES: {
     path: '/accounting/trial-balance',
     ready: 'Balanced',
   },
+  { label: 'my leave requests', persona: 'purchasing', path: '/hrm/leave', ready: 'Remaining' },
+  { label: 'everyone’s leave', persona: 'manager', path: '/hrm/leave?scope=all', ready: 'grid' },
 ];
 
 for (const entry of PAGES) {
@@ -78,4 +81,27 @@ test('searchable picker dialog is named and has no axe violations', async ({ pag
   await page.getByLabel('Supplier', { exact: true }).click();
   await expect(page.getByRole('dialog', { name: /Search suppliers/i })).toBeVisible();
   await expectNoViolations(page, 'supplier picker');
+});
+
+// The request form and a request's page are reached from the list, and only show
+// their preview panel and history once there is something to preview or show.
+test('leave request form, with its preview, has no axe violations', async ({ page }) => {
+  const week = freeWeek(0);
+  await loginAs(page, PERSONAS.purchasing);
+  await gotoApp(page, '/hrm/leave/new');
+  await page.getByLabel('First day').fill(week.mon);
+  await page.getByLabel('Last day').fill(week.fri);
+  await expect(page.getByText('5 working days')).toBeVisible();
+  await expectNoViolations(page, 'leave request form');
+});
+
+test('leave request page has no axe violations', async ({ page }) => {
+  await loginAs(page, PERSONAS.purchasing);
+  await gotoApp(page, '/hrm/leave');
+  await page
+    .getByRole('link', { name: /^LV-\d{4}-\d+$/ })
+    .first()
+    .click();
+  await expect(page.getByText('Approval history')).toBeVisible();
+  await expectNoViolations(page, 'leave request');
 });

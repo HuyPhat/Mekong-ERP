@@ -24,7 +24,14 @@ export const Route = createFileRoute('/_app/admin')({
   component: AuditLogPage,
 });
 
-const ENTITY_TYPES = ['purchase_order', 'vendor_bill'] as const;
+const ENTITY_TYPES = [
+  'purchase_order',
+  'vendor_bill',
+  'quotation',
+  'sales_order',
+  'customer_invoice',
+  'leave_request',
+] as const;
 
 const columnHelper = createDataGridColumnHelper<AuditLogEntry>();
 

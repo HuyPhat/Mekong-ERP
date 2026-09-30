@@ -8,6 +8,7 @@
     "purchasing": "Mua hàng",
     "sales": "Bán hàng",
     "accounting": "Kế toán",
+    "hrm": "Nhân sự",
     "approvals": "Phê duyệt",
     "admin": "Quản trị"
   },
@@ -325,6 +326,119 @@
       }
     }
   },
+  "hrm": {
+    "tabs": {
+      "leave": "Đơn nghỉ phép"
+    },
+    "departments": {
+      "purchasing": "Mua hàng",
+      "warehouse": "Kho",
+      "sales": "Kinh doanh",
+      "accounting": "Kế toán",
+      "management": "Ban giám đốc"
+    },
+    "leave": {
+      "days_other": "{{count}} ngày",
+      "daysUnit_other": "ngày",
+      "newButton": "Tạo đơn",
+      "searchPlaceholder": "Tìm theo số đơn hoặc nhân viên…",
+      "emptyMine": "Bạn chưa có đơn nghỉ phép nào.",
+      "emptyAll": "Không có đơn nghỉ phép nào khớp bộ lọc.",
+      "scope": {
+        "label": "Đơn của ai",
+        "mine": "Đơn của tôi",
+        "all": "Tất cả nhân viên"
+      },
+      "balance": {
+        "allowance": "Phép năm {{year}}",
+        "used": "Đã nghỉ",
+        "pending": "Chờ duyệt",
+        "remaining": "Còn lại"
+      },
+      "columns": {
+        "number": "Số đơn",
+        "employee": "Nhân viên",
+        "type": "Loại phép",
+        "period": "Thời gian nghỉ",
+        "days": "Ngày làm việc",
+        "status": "Trạng thái",
+        "submittedAt": "Ngày gửi"
+      },
+      "type": {
+        "annual": "Phép năm",
+        "sick": "Nghỉ ốm",
+        "unpaid": "Nghỉ không lương",
+        "special": "Nghỉ việc riêng"
+      },
+      "status": {
+        "pending_approval": "Chờ duyệt",
+        "approved": "Đã duyệt",
+        "rejected": "Bị từ chối",
+        "changes_requested": "Yêu cầu chỉnh sửa",
+        "cancelled": "Đã hủy"
+      },
+      "form": {
+        "title": "Tạo đơn nghỉ phép",
+        "reviseTitle": "Chỉnh sửa {{number}} và gửi lại",
+        "loading": "Đang tải…",
+        "noEmployee": "Tài khoản này chưa có hồ sơ nhân viên nên không thể xin nghỉ phép.",
+        "typeLabel": "Loại nghỉ phép",
+        "startDateLabel": "Ngày bắt đầu",
+        "endDateLabel": "Ngày kết thúc",
+        "reasonLabel": "Lý do",
+        "reasonPlaceholder": "Bạn nghỉ vì lý do gì?",
+        "submitButton": "Gửi đơn",
+        "resubmitButton": "Gửi lại",
+        "submitting": "Đang gửi…",
+        "cancelButton": "Hủy",
+        "submitSuccess": "Đã gửi đơn nghỉ phép",
+        "resubmitSuccess": "Đã gửi lại đơn nghỉ phép",
+        "preview": {
+          "pickDates": "Chọn ngày bắt đầu và kết thúc để xem số ngày làm việc.",
+          "days_other": "{{count}} ngày làm việc",
+          "daysNote": "(không tính cuối tuần và ngày lễ)",
+          "balance": "Phép năm {{year}}: còn {{remaining}}/{{allowance}} ngày, còn {{after}} ngày sau đơn này.",
+          "notEnough": "Không đủ phép năm: đơn này cần {{days}} ngày nhưng năm {{year}} chỉ còn {{remaining}} ngày.",
+          "noAllowance": "Loại nghỉ này không trừ vào phép năm."
+        },
+        "errors": {
+          "startRequired": "Chọn ngày bắt đầu.",
+          "endRequired": "Chọn ngày kết thúc.",
+          "reasonRequired": "Vui lòng nhập lý do.",
+          "reasonTooLong": "Lý do không quá 500 ký tự.",
+          "endBeforeStart": "Ngày kết thúc không thể trước ngày bắt đầu.",
+          "twoYears": "Kỳ nghỉ kéo sang năm mới cần tách thành hai đơn, mỗi năm một đơn.",
+          "noWorkingDays": "Khoảng ngày này không có ngày làm việc: toàn cuối tuần hoặc ngày lễ.",
+          "overlap": "Khoảng ngày này trùng với đơn {{number}}. Hãy đổi ngày hoặc hủy đơn đó trước.",
+          "insufficientBalance": "Bạn không còn đủ phép năm cho khoảng ngày này.",
+          "noApprovalRule": "Không có quy tắc duyệt nào áp dụng cho số ngày nghỉ này."
+        }
+      },
+      "detail": {
+        "loading": "Đang tải…",
+        "notFound": "Không tìm thấy đơn nghỉ phép này.",
+        "backToList": "← Đơn nghỉ phép",
+        "employeeLabel": "Nhân viên",
+        "departmentLabel": "Phòng ban",
+        "typeLabel": "Loại phép",
+        "periodLabel": "Thời gian nghỉ",
+        "daysLabel": "Ngày làm việc",
+        "submittedLabel": "Ngày gửi",
+        "reasonLabel": "Lý do",
+        "timelineTitle": "Lịch sử phê duyệt",
+        "reviseButton": "Chỉnh sửa và gửi lại",
+        "reviewButton": "Duyệt trong hộp thư phê duyệt",
+        "cancelButton": "Hủy đơn",
+        "cancelling": "Đang hủy…",
+        "cancelSuccess": "Đã hủy đơn nghỉ phép",
+        "changesRequestedHint": "Người duyệt yêu cầu chỉnh sửa. Hãy sửa đơn rồi gửi lại: đơn giữ nguyên số và được duyệt lại từ đầu."
+      },
+      "edit": {
+        "notEditable": "Chỉ đơn bị yêu cầu chỉnh sửa mới sửa được.",
+        "backToRequest": "← Quay lại đơn"
+      }
+    }
+  },
   "approvals": {
     "title": "Hộp thư phê duyệt",
     "columns": {
@@ -382,7 +496,11 @@
       "entityTypeFilterLabel": "Loại đối tượng",
       "entityTypes": {
         "purchase_order": "Đơn mua hàng",
-        "vendor_bill": "Hóa đơn nhà cung cấp"
+        "vendor_bill": "Hóa đơn nhà cung cấp",
+        "quotation": "Báo giá",
+        "sales_order": "Đơn bán hàng",
+        "customer_invoice": "Hóa đơn bán hàng",
+        "leave_request": "Đơn nghỉ phép"
       }
     }
   },
