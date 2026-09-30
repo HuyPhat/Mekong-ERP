@@ -4,20 +4,34 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/styles/tokens.css"
   },
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build -o storybook-static",
+    "test:stories": "storybook build -o storybook-static && playwright test"
   },
   "devDependencies": {
     "@mekong-erp/config": "workspace:*",
+    "@storybook/addon-a11y": "10.6.1",
+    "@storybook/addon-docs": "10.6.1",
+    "@storybook/react-vite": "10.6.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.3",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "react": "^19.3.0",
-    "typescript": "^6.0.3"
+    "react-dom": "^19.3.0",
+    "storybook": "10.6.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.1"
   },
   "peerDependencies": {
     "react": "^19.0.0"

@@ -23,6 +23,14 @@ export const base = tseslint.config(
     },
   },
   {
-    ignores: ['dist/**', 'build/**', '.next/**', 'out/**', '.turbo/**', 'coverage/**'],
+    ignores: [
+      'dist/**',
+      'build/**',
+      '.next/**',
+      'out/**',
+      '.turbo/**',
+      'coverage/**',
+      'storybook-static/**',
+    ],
   },
 );

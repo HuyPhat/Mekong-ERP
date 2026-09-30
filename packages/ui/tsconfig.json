@@ -2,9 +2,9 @@
   "extends": "../config/typescript/base.json",
   "compilerOptions": {
     "noEmit": true,
-    "rootDir": "src",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["node"]
   },
-  "include": ["src", "eslint.config.js"]
+  "include": ["src", ".storybook", "e2e", "playwright.config.ts", "eslint.config.js"]
 }

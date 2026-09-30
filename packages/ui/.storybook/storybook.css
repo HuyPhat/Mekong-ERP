@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+/* The same palette and theme the apps use, so a story looks like the product. */
+@import '../src/styles/tokens.css';
+
+@source '../src';

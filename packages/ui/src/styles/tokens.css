@@ -1,0 +1,69 @@
+/* Design tokens shared by apps/erp, Storybook and the Vue inbox: the light and
+   dark palettes, the Tailwind theme that exposes them as utilities, and the
+   base body colours. A consumer imports Tailwind first, then this file. */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+}
+
+:root {
+  /* Accent/status colours are chosen so text on white and on a 10% tint of
+     themselves (badges) is >= 4.5:1 (WCAG AA); values stay inside sRGB so
+     browsers don't gamut-map them to something with lower contrast. */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --border: oklch(0.9 0 0);
+  --accent: oklch(0.48 0.08 200);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.5 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.47 0.146 145);
+  --warning: oklch(0.49 0.1 80);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.97 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --border: oklch(0.3 0 0);
+  --accent: oklch(0.65 0.14 200);
+  --accent-foreground: oklch(0.1 0 0);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.1 0 0);
+  --success: oklch(0.7 0.15 145);
+  --warning: oklch(0.75 0.17 80);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Realtime "row flash" (PLAN.md §10 — WebSocket-driven live reporting tables). */
+@keyframes row-flash {
+  from {
+    background-color: color-mix(in oklch, var(--success) 35%, transparent);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.row-flash {
+  animation: row-flash 1.8s ease-out;
+}
