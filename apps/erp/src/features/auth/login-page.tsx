@@ -17,7 +17,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-8 bg-background px-4 text-foreground">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-background px-4 text-foreground">
       <div className="text-center">
         <h1 className="text-2xl font-bold">{t('app.name')}</h1>
         <p className="mt-1 text-muted-foreground">{t('auth.loginTitle')}</p>
@@ -37,6 +37,6 @@ export function LoginPage() {
           </button>
         ))}
       </div>
-    </div>
+    </main>
   );
 }
