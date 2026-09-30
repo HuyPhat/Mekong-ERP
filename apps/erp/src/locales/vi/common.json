@@ -363,7 +363,9 @@
     "reasonRequired": "Vui lòng nhập ghi chú.",
     "selfDecision": "Bạn không thể tự duyệt đơn nghỉ phép của mình.",
     "bulkApprove": "Duyệt các mục đã chọn",
-    "bulkApproveConfirm": "Duyệt tất cả chứng từ đã chọn?"
+    "bulkApproveConfirm": "Duyệt tất cả chứng từ đã chọn?",
+    "timelineStep": "{{role}} — {{status}}",
+    "timelineRound": "Lần gửi {{round}} · {{label}}"
   },
   "admin": {
     "auditLog": {

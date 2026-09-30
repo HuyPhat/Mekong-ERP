@@ -137,4 +137,13 @@ test('a purchase order sent back for changes can be resubmitted and approved', a
 
   const order = await api<{ status: string }>(page, 'GET', `/purchase-orders/${id}`);
   expect(order.json.status).toBe('approved');
+
+  // The history keeps both rounds, each together and oldest first.
+  await gotoApp(page, `/purchasing/orders/${id}`);
+  await expectStatus(page, 'Approved');
+  const history = page.getByRole('list').filter({ hasText: 'Submission 1' });
+  await expect(
+    history.getByText('Submission 1 · Purchasing Manager — Changes requested'),
+  ).toBeVisible();
+  await expect(history.getByText('Submission 2 · Purchasing Manager — Approved')).toBeVisible();
 });

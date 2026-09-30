@@ -1,14 +1,7 @@
 import { useMemo } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import {
-  Timeline,
-  StatusBadge,
-  Button,
-  MoneyCell,
-  toast,
-  type TimelineEntry,
-} from '@mekong-erp/ui';
+import { Timeline, StatusBadge, Button, MoneyCell, toast } from '@mekong-erp/ui';
 import { PERMISSIONS } from '@mekong-erp/contract';
 import { requirePermission } from '../../../../../shared/permissions/guards';
 import { useCan } from '../../../../../shared/permissions/use-can';
@@ -22,11 +15,8 @@ import {
   useSubmitPurchaseOrder,
   useCancelPurchaseOrder,
 } from '../../../../../features/purchasing/queries';
-import {
-  poStatusLabel,
-  poStatusTone,
-  approvalStatusTone,
-} from '../../../../../features/purchasing/status';
+import { poStatusLabel, poStatusTone } from '../../../../../features/purchasing/status';
+import { approvalTimelineEntries } from '../../../../../features/purchasing/approval-timeline';
 
 export const Route = createFileRoute('/_app/purchasing/orders/$poId/')({
   beforeLoad: ({ context }) => requirePermission(context.queryClient, PERMISSIONS.purchasingRead),
@@ -53,16 +43,10 @@ function PurchaseOrderDetailPage() {
     return map;
   }, [productsData]);
 
-  const timelineEntries: TimelineEntry[] = useMemo(() => {
-    const approvals = [...(approvalsData?.data ?? [])].sort((a, b) => a.sequence - b.sequence);
-    return approvals.map((approval) => ({
-      id: approval.id,
-      title: `${approval.approverRole} — ${t(`approvals.status.${approval.status}`)}`,
-      timestampLabel: formatDate(approval.decidedAt ?? approval.createdAt),
-      ...(approval.comment ? { description: approval.comment } : {}),
-      tone: approvalStatusTone(approval.status),
-    }));
-  }, [approvalsData, t]);
+  const timelineEntries = useMemo(
+    () => approvalTimelineEntries(approvalsData?.data ?? [], t),
+    [approvalsData, t],
+  );
 
   if (isLoading) {
     return <p className="text-muted-foreground">{t('purchasing.orders.detail.loading')}</p>;

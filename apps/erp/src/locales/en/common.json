@@ -364,7 +364,9 @@
     "reasonRequired": "A comment is required.",
     "selfDecision": "You can't decide your own leave request.",
     "bulkApprove": "Approve selected",
-    "bulkApproveConfirm": "Approve all selected documents?"
+    "bulkApproveConfirm": "Approve all selected documents?",
+    "timelineStep": "{{role}} — {{status}}",
+    "timelineRound": "Submission {{round}} · {{label}}"
   },
   "admin": {
     "auditLog": {
