@@ -20,6 +20,12 @@ import { Route as AppInventoryRouteImport } from './routes/_app/inventory'
 import { Route as AppPurchasingRouteImport } from './routes/_app/purchasing'
 import { Route as AppSalesRouteImport } from './routes/_app/sales'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AppAccountingIndexRouteImport } from './routes/_app/accounting/index'
+import { Route as AppAccountingApAgingRouteImport } from './routes/_app/accounting/ap-aging'
+import { Route as AppAccountingArAgingRouteImport } from './routes/_app/accounting/ar-aging'
+import { Route as AppAccountingChartOfAccountsRouteImport } from './routes/_app/accounting/chart-of-accounts'
+import { Route as AppAccountingGeneralLedgerRouteImport } from './routes/_app/accounting/general-ledger'
+import { Route as AppAccountingTrialBalanceRouteImport } from './routes/_app/accounting/trial-balance'
 import { Route as AppInventoryIndexRouteImport } from './routes/_app/inventory/index'
 import { Route as AppInventoryProductsRouteImport } from './routes/_app/inventory/products'
 import { Route as AppInventoryStockLevelsRouteImport } from './routes/_app/inventory/stock-levels'
@@ -28,6 +34,11 @@ import { Route as AppPurchasingIndexRouteImport } from './routes/_app/purchasing
 import { Route as AppPurchasingBillsRouteImport } from './routes/_app/purchasing/bills'
 import { Route as AppPurchasingOrdersRouteImport } from './routes/_app/purchasing/orders'
 import { Route as AppPurchasingSuppliersRouteImport } from './routes/_app/purchasing/suppliers'
+import { Route as AppSalesIndexRouteImport } from './routes/_app/sales/index'
+import { Route as AppSalesCustomersRouteImport } from './routes/_app/sales/customers'
+import { Route as AppSalesInvoicesRouteImport } from './routes/_app/sales/invoices'
+import { Route as AppSalesOrdersRouteImport } from './routes/_app/sales/orders'
+import { Route as AppSalesQuotationsRouteImport } from './routes/_app/sales/quotations'
 import { Route as AppInventoryProductsIndexRouteImport } from './routes/_app/inventory/products/index'
 import { Route as AppInventoryProductsProductIdRouteImport } from './routes/_app/inventory/products/$productId'
 import { Route as AppPurchasingBillsIndexRouteImport } from './routes/_app/purchasing/bills/index'
@@ -35,8 +46,17 @@ import { Route as AppPurchasingBillsBillIdRouteImport } from './routes/_app/purc
 import { Route as AppPurchasingBillsNewRouteImport } from './routes/_app/purchasing/bills/new'
 import { Route as AppPurchasingOrdersIndexRouteImport } from './routes/_app/purchasing/orders/index'
 import { Route as AppPurchasingOrdersNewRouteImport } from './routes/_app/purchasing/orders/new'
+import { Route as AppSalesInvoicesIndexRouteImport } from './routes/_app/sales/invoices/index'
+import { Route as AppSalesOrdersIndexRouteImport } from './routes/_app/sales/orders/index'
+import { Route as AppSalesQuotationsIndexRouteImport } from './routes/_app/sales/quotations/index'
+import { Route as AppSalesQuotationsQuotationIdRouteImport } from './routes/_app/sales/quotations/$quotationId'
+import { Route as AppSalesQuotationsNewRouteImport } from './routes/_app/sales/quotations/new'
 import { Route as AppPurchasingOrdersPoIdIndexRouteImport } from './routes/_app/purchasing/orders/$poId/index'
 import { Route as AppPurchasingOrdersPoIdReceiveRouteImport } from './routes/_app/purchasing/orders/$poId/receive'
+import { Route as AppSalesInvoicesInvoiceIdIndexRouteImport } from './routes/_app/sales/invoices/$invoiceId/index'
+import { Route as AppSalesInvoicesInvoiceIdPreviewRouteImport } from './routes/_app/sales/invoices/$invoiceId/preview'
+import { Route as AppSalesOrdersSoIdIndexRouteImport } from './routes/_app/sales/orders/$soId/index'
+import { Route as AppSalesOrdersSoIdDeliverRouteImport } from './routes/_app/sales/orders/$soId/deliver'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -91,6 +111,39 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppAccountingIndexRoute = AppAccountingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAccountingRoute,
+} as any)
+const AppAccountingApAgingRoute = AppAccountingApAgingRouteImport.update({
+  id: '/ap-aging',
+  path: '/ap-aging',
+  getParentRoute: () => AppAccountingRoute,
+} as any)
+const AppAccountingArAgingRoute = AppAccountingArAgingRouteImport.update({
+  id: '/ar-aging',
+  path: '/ar-aging',
+  getParentRoute: () => AppAccountingRoute,
+} as any)
+const AppAccountingChartOfAccountsRoute =
+  AppAccountingChartOfAccountsRouteImport.update({
+    id: '/chart-of-accounts',
+    path: '/chart-of-accounts',
+    getParentRoute: () => AppAccountingRoute,
+  } as any)
+const AppAccountingGeneralLedgerRoute =
+  AppAccountingGeneralLedgerRouteImport.update({
+    id: '/general-ledger',
+    path: '/general-ledger',
+    getParentRoute: () => AppAccountingRoute,
+  } as any)
+const AppAccountingTrialBalanceRoute =
+  AppAccountingTrialBalanceRouteImport.update({
+    id: '/trial-balance',
+    path: '/trial-balance',
+    getParentRoute: () => AppAccountingRoute,
+  } as any)
 const AppInventoryIndexRoute = AppInventoryIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -132,6 +185,31 @@ const AppPurchasingSuppliersRoute = AppPurchasingSuppliersRouteImport.update({
   path: '/suppliers',
   getParentRoute: () => AppPurchasingRoute,
 } as any)
+const AppSalesIndexRoute = AppSalesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppSalesRoute,
+} as any)
+const AppSalesCustomersRoute = AppSalesCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AppSalesRoute,
+} as any)
+const AppSalesInvoicesRoute = AppSalesInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
+  getParentRoute: () => AppSalesRoute,
+} as any)
+const AppSalesOrdersRoute = AppSalesOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AppSalesRoute,
+} as any)
+const AppSalesQuotationsRoute = AppSalesQuotationsRouteImport.update({
+  id: '/quotations',
+  path: '/quotations',
+  getParentRoute: () => AppSalesRoute,
+} as any)
 const AppInventoryProductsIndexRoute =
   AppInventoryProductsIndexRouteImport.update({
     id: '/',
@@ -171,6 +249,32 @@ const AppPurchasingOrdersNewRoute = AppPurchasingOrdersNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppPurchasingOrdersRoute,
 } as any)
+const AppSalesInvoicesIndexRoute = AppSalesInvoicesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppSalesInvoicesRoute,
+} as any)
+const AppSalesOrdersIndexRoute = AppSalesOrdersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppSalesOrdersRoute,
+} as any)
+const AppSalesQuotationsIndexRoute = AppSalesQuotationsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppSalesQuotationsRoute,
+} as any)
+const AppSalesQuotationsQuotationIdRoute =
+  AppSalesQuotationsQuotationIdRouteImport.update({
+    id: '/$quotationId',
+    path: '/$quotationId',
+    getParentRoute: () => AppSalesQuotationsRoute,
+  } as any)
+const AppSalesQuotationsNewRoute = AppSalesQuotationsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppSalesQuotationsRoute,
+} as any)
 const AppPurchasingOrdersPoIdIndexRoute =
   AppPurchasingOrdersPoIdIndexRouteImport.update({
     id: '/$poId/',
@@ -183,88 +287,166 @@ const AppPurchasingOrdersPoIdReceiveRoute =
     path: '/$poId/receive',
     getParentRoute: () => AppPurchasingOrdersRoute,
   } as any)
+const AppSalesInvoicesInvoiceIdIndexRoute =
+  AppSalesInvoicesInvoiceIdIndexRouteImport.update({
+    id: '/$invoiceId/',
+    path: '/$invoiceId/',
+    getParentRoute: () => AppSalesInvoicesRoute,
+  } as any)
+const AppSalesInvoicesInvoiceIdPreviewRoute =
+  AppSalesInvoicesInvoiceIdPreviewRouteImport.update({
+    id: '/$invoiceId/preview',
+    path: '/$invoiceId/preview',
+    getParentRoute: () => AppSalesInvoicesRoute,
+  } as any)
+const AppSalesOrdersSoIdIndexRoute = AppSalesOrdersSoIdIndexRouteImport.update({
+  id: '/$soId/',
+  path: '/$soId/',
+  getParentRoute: () => AppSalesOrdersRoute,
+} as any)
+const AppSalesOrdersSoIdDeliverRoute =
+  AppSalesOrdersSoIdDeliverRouteImport.update({
+    id: '/$soId/deliver',
+    path: '/$soId/deliver',
+    getParentRoute: () => AppSalesOrdersRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/403': typeof App403Route
-  '/accounting': typeof AppAccountingRoute
+  '/accounting': typeof AppAccountingRouteWithChildren
   '/admin': typeof AppAdminRoute
   '/approvals': typeof AppApprovalsRoute
   '/inventory': typeof AppInventoryRouteWithChildren
   '/purchasing': typeof AppPurchasingRouteWithChildren
-  '/sales': typeof AppSalesRoute
+  '/sales': typeof AppSalesRouteWithChildren
   '/login': typeof AuthLoginRoute
+  '/accounting/ap-aging': typeof AppAccountingApAgingRoute
+  '/accounting/ar-aging': typeof AppAccountingArAgingRoute
+  '/accounting/chart-of-accounts': typeof AppAccountingChartOfAccountsRoute
+  '/accounting/general-ledger': typeof AppAccountingGeneralLedgerRoute
+  '/accounting/trial-balance': typeof AppAccountingTrialBalanceRoute
   '/inventory/products': typeof AppInventoryProductsRouteWithChildren
   '/inventory/stock-levels': typeof AppInventoryStockLevelsRoute
   '/inventory/stock-movements': typeof AppInventoryStockMovementsRoute
   '/purchasing/bills': typeof AppPurchasingBillsRouteWithChildren
   '/purchasing/orders': typeof AppPurchasingOrdersRouteWithChildren
   '/purchasing/suppliers': typeof AppPurchasingSuppliersRoute
+  '/sales/customers': typeof AppSalesCustomersRoute
+  '/sales/invoices': typeof AppSalesInvoicesRouteWithChildren
+  '/sales/orders': typeof AppSalesOrdersRouteWithChildren
+  '/sales/quotations': typeof AppSalesQuotationsRouteWithChildren
+  '/accounting/': typeof AppAccountingIndexRoute
   '/inventory/': typeof AppInventoryIndexRoute
   '/purchasing/': typeof AppPurchasingIndexRoute
+  '/sales/': typeof AppSalesIndexRoute
   '/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
   '/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
   '/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
   '/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
+  '/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRoute
+  '/sales/quotations/new': typeof AppSalesQuotationsNewRoute
   '/inventory/products/': typeof AppInventoryProductsIndexRoute
   '/purchasing/bills/': typeof AppPurchasingBillsIndexRoute
   '/purchasing/orders/': typeof AppPurchasingOrdersIndexRoute
+  '/sales/invoices/': typeof AppSalesInvoicesIndexRoute
+  '/sales/orders/': typeof AppSalesOrdersIndexRoute
+  '/sales/quotations/': typeof AppSalesQuotationsIndexRoute
   '/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
+  '/sales/invoices/$invoiceId/preview': typeof AppSalesInvoicesInvoiceIdPreviewRoute
+  '/sales/orders/$soId/deliver': typeof AppSalesOrdersSoIdDeliverRoute
   '/purchasing/orders/$poId/': typeof AppPurchasingOrdersPoIdIndexRoute
+  '/sales/invoices/$invoiceId/': typeof AppSalesInvoicesInvoiceIdIndexRoute
+  '/sales/orders/$soId/': typeof AppSalesOrdersSoIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/403': typeof App403Route
-  '/accounting': typeof AppAccountingRoute
   '/admin': typeof AppAdminRoute
   '/approvals': typeof AppApprovalsRoute
-  '/sales': typeof AppSalesRoute
   '/login': typeof AuthLoginRoute
+  '/accounting/ap-aging': typeof AppAccountingApAgingRoute
+  '/accounting/ar-aging': typeof AppAccountingArAgingRoute
+  '/accounting/chart-of-accounts': typeof AppAccountingChartOfAccountsRoute
+  '/accounting/general-ledger': typeof AppAccountingGeneralLedgerRoute
+  '/accounting/trial-balance': typeof AppAccountingTrialBalanceRoute
   '/inventory/stock-levels': typeof AppInventoryStockLevelsRoute
   '/inventory/stock-movements': typeof AppInventoryStockMovementsRoute
   '/purchasing/suppliers': typeof AppPurchasingSuppliersRoute
+  '/sales/customers': typeof AppSalesCustomersRoute
+  '/accounting': typeof AppAccountingIndexRoute
   '/inventory': typeof AppInventoryIndexRoute
   '/purchasing': typeof AppPurchasingIndexRoute
+  '/sales': typeof AppSalesIndexRoute
   '/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
   '/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
   '/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
   '/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
+  '/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRoute
+  '/sales/quotations/new': typeof AppSalesQuotationsNewRoute
   '/inventory/products': typeof AppInventoryProductsIndexRoute
   '/purchasing/bills': typeof AppPurchasingBillsIndexRoute
   '/purchasing/orders': typeof AppPurchasingOrdersIndexRoute
+  '/sales/invoices': typeof AppSalesInvoicesIndexRoute
+  '/sales/orders': typeof AppSalesOrdersIndexRoute
+  '/sales/quotations': typeof AppSalesQuotationsIndexRoute
   '/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
+  '/sales/invoices/$invoiceId/preview': typeof AppSalesInvoicesInvoiceIdPreviewRoute
+  '/sales/orders/$soId/deliver': typeof AppSalesOrdersSoIdDeliverRoute
   '/purchasing/orders/$poId': typeof AppPurchasingOrdersPoIdIndexRoute
+  '/sales/invoices/$invoiceId': typeof AppSalesInvoicesInvoiceIdIndexRoute
+  '/sales/orders/$soId': typeof AppSalesOrdersSoIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
   '/_app/403': typeof App403Route
-  '/_app/accounting': typeof AppAccountingRoute
+  '/_app/accounting': typeof AppAccountingRouteWithChildren
   '/_app/admin': typeof AppAdminRoute
   '/_app/approvals': typeof AppApprovalsRoute
   '/_app/inventory': typeof AppInventoryRouteWithChildren
   '/_app/purchasing': typeof AppPurchasingRouteWithChildren
-  '/_app/sales': typeof AppSalesRoute
+  '/_app/sales': typeof AppSalesRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/accounting/ap-aging': typeof AppAccountingApAgingRoute
+  '/_app/accounting/ar-aging': typeof AppAccountingArAgingRoute
+  '/_app/accounting/chart-of-accounts': typeof AppAccountingChartOfAccountsRoute
+  '/_app/accounting/general-ledger': typeof AppAccountingGeneralLedgerRoute
+  '/_app/accounting/trial-balance': typeof AppAccountingTrialBalanceRoute
   '/_app/inventory/products': typeof AppInventoryProductsRouteWithChildren
   '/_app/inventory/stock-levels': typeof AppInventoryStockLevelsRoute
   '/_app/inventory/stock-movements': typeof AppInventoryStockMovementsRoute
   '/_app/purchasing/bills': typeof AppPurchasingBillsRouteWithChildren
   '/_app/purchasing/orders': typeof AppPurchasingOrdersRouteWithChildren
   '/_app/purchasing/suppliers': typeof AppPurchasingSuppliersRoute
+  '/_app/sales/customers': typeof AppSalesCustomersRoute
+  '/_app/sales/invoices': typeof AppSalesInvoicesRouteWithChildren
+  '/_app/sales/orders': typeof AppSalesOrdersRouteWithChildren
+  '/_app/sales/quotations': typeof AppSalesQuotationsRouteWithChildren
+  '/_app/accounting/': typeof AppAccountingIndexRoute
   '/_app/inventory/': typeof AppInventoryIndexRoute
   '/_app/purchasing/': typeof AppPurchasingIndexRoute
+  '/_app/sales/': typeof AppSalesIndexRoute
   '/_app/inventory/products/$productId': typeof AppInventoryProductsProductIdRoute
   '/_app/purchasing/bills/$billId': typeof AppPurchasingBillsBillIdRoute
   '/_app/purchasing/bills/new': typeof AppPurchasingBillsNewRoute
   '/_app/purchasing/orders/new': typeof AppPurchasingOrdersNewRoute
+  '/_app/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRoute
+  '/_app/sales/quotations/new': typeof AppSalesQuotationsNewRoute
   '/_app/inventory/products/': typeof AppInventoryProductsIndexRoute
   '/_app/purchasing/bills/': typeof AppPurchasingBillsIndexRoute
   '/_app/purchasing/orders/': typeof AppPurchasingOrdersIndexRoute
+  '/_app/sales/invoices/': typeof AppSalesInvoicesIndexRoute
+  '/_app/sales/orders/': typeof AppSalesOrdersIndexRoute
+  '/_app/sales/quotations/': typeof AppSalesQuotationsIndexRoute
   '/_app/purchasing/orders/$poId/receive': typeof AppPurchasingOrdersPoIdReceiveRoute
+  '/_app/sales/invoices/$invoiceId/preview': typeof AppSalesInvoicesInvoiceIdPreviewRoute
+  '/_app/sales/orders/$soId/deliver': typeof AppSalesOrdersSoIdDeliverRoute
   '/_app/purchasing/orders/$poId/': typeof AppPurchasingOrdersPoIdIndexRoute
+  '/_app/sales/invoices/$invoiceId/': typeof AppSalesInvoicesInvoiceIdIndexRoute
+  '/_app/sales/orders/$soId/': typeof AppSalesOrdersSoIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -278,46 +460,81 @@ export interface FileRouteTypes {
     | '/purchasing'
     | '/sales'
     | '/login'
+    | '/accounting/ap-aging'
+    | '/accounting/ar-aging'
+    | '/accounting/chart-of-accounts'
+    | '/accounting/general-ledger'
+    | '/accounting/trial-balance'
     | '/inventory/products'
     | '/inventory/stock-levels'
     | '/inventory/stock-movements'
     | '/purchasing/bills'
     | '/purchasing/orders'
     | '/purchasing/suppliers'
+    | '/sales/customers'
+    | '/sales/invoices'
+    | '/sales/orders'
+    | '/sales/quotations'
+    | '/accounting/'
     | '/inventory/'
     | '/purchasing/'
+    | '/sales/'
     | '/inventory/products/$productId'
     | '/purchasing/bills/$billId'
     | '/purchasing/bills/new'
     | '/purchasing/orders/new'
+    | '/sales/quotations/$quotationId'
+    | '/sales/quotations/new'
     | '/inventory/products/'
     | '/purchasing/bills/'
     | '/purchasing/orders/'
+    | '/sales/invoices/'
+    | '/sales/orders/'
+    | '/sales/quotations/'
     | '/purchasing/orders/$poId/receive'
+    | '/sales/invoices/$invoiceId/preview'
+    | '/sales/orders/$soId/deliver'
     | '/purchasing/orders/$poId/'
+    | '/sales/invoices/$invoiceId/'
+    | '/sales/orders/$soId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/403'
-    | '/accounting'
     | '/admin'
     | '/approvals'
-    | '/sales'
     | '/login'
+    | '/accounting/ap-aging'
+    | '/accounting/ar-aging'
+    | '/accounting/chart-of-accounts'
+    | '/accounting/general-ledger'
+    | '/accounting/trial-balance'
     | '/inventory/stock-levels'
     | '/inventory/stock-movements'
     | '/purchasing/suppliers'
+    | '/sales/customers'
+    | '/accounting'
     | '/inventory'
     | '/purchasing'
+    | '/sales'
     | '/inventory/products/$productId'
     | '/purchasing/bills/$billId'
     | '/purchasing/bills/new'
     | '/purchasing/orders/new'
+    | '/sales/quotations/$quotationId'
+    | '/sales/quotations/new'
     | '/inventory/products'
     | '/purchasing/bills'
     | '/purchasing/orders'
+    | '/sales/invoices'
+    | '/sales/orders'
+    | '/sales/quotations'
     | '/purchasing/orders/$poId/receive'
+    | '/sales/invoices/$invoiceId/preview'
+    | '/sales/orders/$soId/deliver'
     | '/purchasing/orders/$poId'
+    | '/sales/invoices/$invoiceId'
+    | '/sales/orders/$soId'
   id:
     | '__root__'
     | '/_app'
@@ -331,23 +548,43 @@ export interface FileRouteTypes {
     | '/_app/sales'
     | '/_auth/login'
     | '/_app/'
+    | '/_app/accounting/ap-aging'
+    | '/_app/accounting/ar-aging'
+    | '/_app/accounting/chart-of-accounts'
+    | '/_app/accounting/general-ledger'
+    | '/_app/accounting/trial-balance'
     | '/_app/inventory/products'
     | '/_app/inventory/stock-levels'
     | '/_app/inventory/stock-movements'
     | '/_app/purchasing/bills'
     | '/_app/purchasing/orders'
     | '/_app/purchasing/suppliers'
+    | '/_app/sales/customers'
+    | '/_app/sales/invoices'
+    | '/_app/sales/orders'
+    | '/_app/sales/quotations'
+    | '/_app/accounting/'
     | '/_app/inventory/'
     | '/_app/purchasing/'
+    | '/_app/sales/'
     | '/_app/inventory/products/$productId'
     | '/_app/purchasing/bills/$billId'
     | '/_app/purchasing/bills/new'
     | '/_app/purchasing/orders/new'
+    | '/_app/sales/quotations/$quotationId'
+    | '/_app/sales/quotations/new'
     | '/_app/inventory/products/'
     | '/_app/purchasing/bills/'
     | '/_app/purchasing/orders/'
+    | '/_app/sales/invoices/'
+    | '/_app/sales/orders/'
+    | '/_app/sales/quotations/'
     | '/_app/purchasing/orders/$poId/receive'
+    | '/_app/sales/invoices/$invoiceId/preview'
+    | '/_app/sales/orders/$soId/deliver'
     | '/_app/purchasing/orders/$poId/'
+    | '/_app/sales/invoices/$invoiceId/'
+    | '/_app/sales/orders/$soId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -434,6 +671,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_app/accounting/': {
+      id: '/_app/accounting/'
+      path: '/'
+      fullPath: '/accounting/'
+      preLoaderRoute: typeof AppAccountingIndexRouteImport
+      parentRoute: typeof AppAccountingRoute
+    }
+    '/_app/accounting/ap-aging': {
+      id: '/_app/accounting/ap-aging'
+      path: '/ap-aging'
+      fullPath: '/accounting/ap-aging'
+      preLoaderRoute: typeof AppAccountingApAgingRouteImport
+      parentRoute: typeof AppAccountingRoute
+    }
+    '/_app/accounting/ar-aging': {
+      id: '/_app/accounting/ar-aging'
+      path: '/ar-aging'
+      fullPath: '/accounting/ar-aging'
+      preLoaderRoute: typeof AppAccountingArAgingRouteImport
+      parentRoute: typeof AppAccountingRoute
+    }
+    '/_app/accounting/chart-of-accounts': {
+      id: '/_app/accounting/chart-of-accounts'
+      path: '/chart-of-accounts'
+      fullPath: '/accounting/chart-of-accounts'
+      preLoaderRoute: typeof AppAccountingChartOfAccountsRouteImport
+      parentRoute: typeof AppAccountingRoute
+    }
+    '/_app/accounting/general-ledger': {
+      id: '/_app/accounting/general-ledger'
+      path: '/general-ledger'
+      fullPath: '/accounting/general-ledger'
+      preLoaderRoute: typeof AppAccountingGeneralLedgerRouteImport
+      parentRoute: typeof AppAccountingRoute
+    }
+    '/_app/accounting/trial-balance': {
+      id: '/_app/accounting/trial-balance'
+      path: '/trial-balance'
+      fullPath: '/accounting/trial-balance'
+      preLoaderRoute: typeof AppAccountingTrialBalanceRouteImport
+      parentRoute: typeof AppAccountingRoute
+    }
     '/_app/inventory/': {
       id: '/_app/inventory/'
       path: '/'
@@ -490,6 +769,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPurchasingSuppliersRouteImport
       parentRoute: typeof AppPurchasingRoute
     }
+    '/_app/sales/': {
+      id: '/_app/sales/'
+      path: '/'
+      fullPath: '/sales/'
+      preLoaderRoute: typeof AppSalesIndexRouteImport
+      parentRoute: typeof AppSalesRoute
+    }
+    '/_app/sales/customers': {
+      id: '/_app/sales/customers'
+      path: '/customers'
+      fullPath: '/sales/customers'
+      preLoaderRoute: typeof AppSalesCustomersRouteImport
+      parentRoute: typeof AppSalesRoute
+    }
+    '/_app/sales/invoices': {
+      id: '/_app/sales/invoices'
+      path: '/invoices'
+      fullPath: '/sales/invoices'
+      preLoaderRoute: typeof AppSalesInvoicesRouteImport
+      parentRoute: typeof AppSalesRoute
+    }
+    '/_app/sales/orders': {
+      id: '/_app/sales/orders'
+      path: '/orders'
+      fullPath: '/sales/orders'
+      preLoaderRoute: typeof AppSalesOrdersRouteImport
+      parentRoute: typeof AppSalesRoute
+    }
+    '/_app/sales/quotations': {
+      id: '/_app/sales/quotations'
+      path: '/quotations'
+      fullPath: '/sales/quotations'
+      preLoaderRoute: typeof AppSalesQuotationsRouteImport
+      parentRoute: typeof AppSalesRoute
+    }
     '/_app/inventory/products/': {
       id: '/_app/inventory/products/'
       path: '/'
@@ -539,6 +853,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPurchasingOrdersNewRouteImport
       parentRoute: typeof AppPurchasingOrdersRoute
     }
+    '/_app/sales/invoices/': {
+      id: '/_app/sales/invoices/'
+      path: '/'
+      fullPath: '/sales/invoices/'
+      preLoaderRoute: typeof AppSalesInvoicesIndexRouteImport
+      parentRoute: typeof AppSalesInvoicesRoute
+    }
+    '/_app/sales/orders/': {
+      id: '/_app/sales/orders/'
+      path: '/'
+      fullPath: '/sales/orders/'
+      preLoaderRoute: typeof AppSalesOrdersIndexRouteImport
+      parentRoute: typeof AppSalesOrdersRoute
+    }
+    '/_app/sales/quotations/': {
+      id: '/_app/sales/quotations/'
+      path: '/'
+      fullPath: '/sales/quotations/'
+      preLoaderRoute: typeof AppSalesQuotationsIndexRouteImport
+      parentRoute: typeof AppSalesQuotationsRoute
+    }
+    '/_app/sales/quotations/$quotationId': {
+      id: '/_app/sales/quotations/$quotationId'
+      path: '/$quotationId'
+      fullPath: '/sales/quotations/$quotationId'
+      preLoaderRoute: typeof AppSalesQuotationsQuotationIdRouteImport
+      parentRoute: typeof AppSalesQuotationsRoute
+    }
+    '/_app/sales/quotations/new': {
+      id: '/_app/sales/quotations/new'
+      path: '/new'
+      fullPath: '/sales/quotations/new'
+      preLoaderRoute: typeof AppSalesQuotationsNewRouteImport
+      parentRoute: typeof AppSalesQuotationsRoute
+    }
     '/_app/purchasing/orders/$poId/': {
       id: '/_app/purchasing/orders/$poId/'
       path: '/$poId'
@@ -553,8 +902,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPurchasingOrdersPoIdReceiveRouteImport
       parentRoute: typeof AppPurchasingOrdersRoute
     }
+    '/_app/sales/invoices/$invoiceId/': {
+      id: '/_app/sales/invoices/$invoiceId/'
+      path: '/$invoiceId'
+      fullPath: '/sales/invoices/$invoiceId/'
+      preLoaderRoute: typeof AppSalesInvoicesInvoiceIdIndexRouteImport
+      parentRoute: typeof AppSalesInvoicesRoute
+    }
+    '/_app/sales/invoices/$invoiceId/preview': {
+      id: '/_app/sales/invoices/$invoiceId/preview'
+      path: '/$invoiceId/preview'
+      fullPath: '/sales/invoices/$invoiceId/preview'
+      preLoaderRoute: typeof AppSalesInvoicesInvoiceIdPreviewRouteImport
+      parentRoute: typeof AppSalesInvoicesRoute
+    }
+    '/_app/sales/orders/$soId/': {
+      id: '/_app/sales/orders/$soId/'
+      path: '/$soId'
+      fullPath: '/sales/orders/$soId/'
+      preLoaderRoute: typeof AppSalesOrdersSoIdIndexRouteImport
+      parentRoute: typeof AppSalesOrdersRoute
+    }
+    '/_app/sales/orders/$soId/deliver': {
+      id: '/_app/sales/orders/$soId/deliver'
+      path: '/$soId/deliver'
+      fullPath: '/sales/orders/$soId/deliver'
+      preLoaderRoute: typeof AppSalesOrdersSoIdDeliverRouteImport
+      parentRoute: typeof AppSalesOrdersRoute
+    }
   }
 }
+
+interface AppAccountingRouteChildren {
+  AppAccountingApAgingRoute: typeof AppAccountingApAgingRoute
+  AppAccountingArAgingRoute: typeof AppAccountingArAgingRoute
+  AppAccountingChartOfAccountsRoute: typeof AppAccountingChartOfAccountsRoute
+  AppAccountingGeneralLedgerRoute: typeof AppAccountingGeneralLedgerRoute
+  AppAccountingTrialBalanceRoute: typeof AppAccountingTrialBalanceRoute
+  AppAccountingIndexRoute: typeof AppAccountingIndexRoute
+}
+
+const AppAccountingRouteChildren: AppAccountingRouteChildren = {
+  AppAccountingApAgingRoute: AppAccountingApAgingRoute,
+  AppAccountingArAgingRoute: AppAccountingArAgingRoute,
+  AppAccountingChartOfAccountsRoute: AppAccountingChartOfAccountsRoute,
+  AppAccountingGeneralLedgerRoute: AppAccountingGeneralLedgerRoute,
+  AppAccountingTrialBalanceRoute: AppAccountingTrialBalanceRoute,
+  AppAccountingIndexRoute: AppAccountingIndexRoute,
+}
+
+const AppAccountingRouteWithChildren = AppAccountingRoute._addFileChildren(
+  AppAccountingRouteChildren,
+)
 
 interface AppInventoryProductsRouteChildren {
   AppInventoryProductsProductIdRoute: typeof AppInventoryProductsProductIdRoute
@@ -637,25 +1036,91 @@ const AppPurchasingRouteWithChildren = AppPurchasingRoute._addFileChildren(
   AppPurchasingRouteChildren,
 )
 
+interface AppSalesInvoicesRouteChildren {
+  AppSalesInvoicesIndexRoute: typeof AppSalesInvoicesIndexRoute
+  AppSalesInvoicesInvoiceIdPreviewRoute: typeof AppSalesInvoicesInvoiceIdPreviewRoute
+  AppSalesInvoicesInvoiceIdIndexRoute: typeof AppSalesInvoicesInvoiceIdIndexRoute
+}
+
+const AppSalesInvoicesRouteChildren: AppSalesInvoicesRouteChildren = {
+  AppSalesInvoicesIndexRoute: AppSalesInvoicesIndexRoute,
+  AppSalesInvoicesInvoiceIdPreviewRoute: AppSalesInvoicesInvoiceIdPreviewRoute,
+  AppSalesInvoicesInvoiceIdIndexRoute: AppSalesInvoicesInvoiceIdIndexRoute,
+}
+
+const AppSalesInvoicesRouteWithChildren =
+  AppSalesInvoicesRoute._addFileChildren(AppSalesInvoicesRouteChildren)
+
+interface AppSalesOrdersRouteChildren {
+  AppSalesOrdersIndexRoute: typeof AppSalesOrdersIndexRoute
+  AppSalesOrdersSoIdDeliverRoute: typeof AppSalesOrdersSoIdDeliverRoute
+  AppSalesOrdersSoIdIndexRoute: typeof AppSalesOrdersSoIdIndexRoute
+}
+
+const AppSalesOrdersRouteChildren: AppSalesOrdersRouteChildren = {
+  AppSalesOrdersIndexRoute: AppSalesOrdersIndexRoute,
+  AppSalesOrdersSoIdDeliverRoute: AppSalesOrdersSoIdDeliverRoute,
+  AppSalesOrdersSoIdIndexRoute: AppSalesOrdersSoIdIndexRoute,
+}
+
+const AppSalesOrdersRouteWithChildren = AppSalesOrdersRoute._addFileChildren(
+  AppSalesOrdersRouteChildren,
+)
+
+interface AppSalesQuotationsRouteChildren {
+  AppSalesQuotationsQuotationIdRoute: typeof AppSalesQuotationsQuotationIdRoute
+  AppSalesQuotationsNewRoute: typeof AppSalesQuotationsNewRoute
+  AppSalesQuotationsIndexRoute: typeof AppSalesQuotationsIndexRoute
+}
+
+const AppSalesQuotationsRouteChildren: AppSalesQuotationsRouteChildren = {
+  AppSalesQuotationsQuotationIdRoute: AppSalesQuotationsQuotationIdRoute,
+  AppSalesQuotationsNewRoute: AppSalesQuotationsNewRoute,
+  AppSalesQuotationsIndexRoute: AppSalesQuotationsIndexRoute,
+}
+
+const AppSalesQuotationsRouteWithChildren =
+  AppSalesQuotationsRoute._addFileChildren(AppSalesQuotationsRouteChildren)
+
+interface AppSalesRouteChildren {
+  AppSalesCustomersRoute: typeof AppSalesCustomersRoute
+  AppSalesInvoicesRoute: typeof AppSalesInvoicesRouteWithChildren
+  AppSalesOrdersRoute: typeof AppSalesOrdersRouteWithChildren
+  AppSalesQuotationsRoute: typeof AppSalesQuotationsRouteWithChildren
+  AppSalesIndexRoute: typeof AppSalesIndexRoute
+}
+
+const AppSalesRouteChildren: AppSalesRouteChildren = {
+  AppSalesCustomersRoute: AppSalesCustomersRoute,
+  AppSalesInvoicesRoute: AppSalesInvoicesRouteWithChildren,
+  AppSalesOrdersRoute: AppSalesOrdersRouteWithChildren,
+  AppSalesQuotationsRoute: AppSalesQuotationsRouteWithChildren,
+  AppSalesIndexRoute: AppSalesIndexRoute,
+}
+
+const AppSalesRouteWithChildren = AppSalesRoute._addFileChildren(
+  AppSalesRouteChildren,
+)
+
 interface AppRouteChildren {
   App403Route: typeof App403Route
-  AppAccountingRoute: typeof AppAccountingRoute
+  AppAccountingRoute: typeof AppAccountingRouteWithChildren
   AppAdminRoute: typeof AppAdminRoute
   AppApprovalsRoute: typeof AppApprovalsRoute
   AppInventoryRoute: typeof AppInventoryRouteWithChildren
   AppPurchasingRoute: typeof AppPurchasingRouteWithChildren
-  AppSalesRoute: typeof AppSalesRoute
+  AppSalesRoute: typeof AppSalesRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   App403Route: App403Route,
-  AppAccountingRoute: AppAccountingRoute,
+  AppAccountingRoute: AppAccountingRouteWithChildren,
   AppAdminRoute: AppAdminRoute,
   AppApprovalsRoute: AppApprovalsRoute,
   AppInventoryRoute: AppInventoryRouteWithChildren,
   AppPurchasingRoute: AppPurchasingRouteWithChildren,
-  AppSalesRoute: AppSalesRoute,
+  AppSalesRoute: AppSalesRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
 

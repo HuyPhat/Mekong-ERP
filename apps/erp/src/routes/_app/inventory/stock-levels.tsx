@@ -11,6 +11,7 @@ import {
 } from '@mekong-erp/ui';
 import { PERMISSIONS, type ListParams, type StockLevelView } from '@mekong-erp/contract';
 import { requirePermission } from '../../../shared/permissions/guards';
+import { useRealtimeStore } from '../../../shared/realtime/realtime-store';
 import { useStockLevels, useWarehouses } from '../../../features/inventory/queries';
 import {
   StockLevelsSearchSchema,
@@ -51,6 +52,7 @@ function StockLevelsPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const { data: warehouses } = useWarehouses();
+  const recentlyChangedIds = useRealtimeStore((state) => state.recentlyChangedIds);
 
   const params = useMemo(() => toListParams(search), [search]);
   const { data, isLoading, isError, refetch } = useStockLevels(params);
@@ -169,13 +171,20 @@ function StockLevelsPage() {
         }
         searchPlaceholder={t('inventory.stockLevels.searchPlaceholder')}
         labels={dataGridLabels}
+        rowClassName={(row) => (recentlyChangedIds.has(row.id) ? 'row-flash' : undefined)}
         toolbarExtra={
-          <SavedViewsMenu<StockLevelsSearch>
-            viewId="inventory-stock-levels"
-            currentState={search}
-            onApply={(state) => void navigate({ search: state })}
-            labels={savedViewsLabels}
-          />
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-success" />
+              {t('inventory.stockLevels.live')}
+            </span>
+            <SavedViewsMenu<StockLevelsSearch>
+              viewId="inventory-stock-levels"
+              currentState={search}
+              onApply={(state) => void navigate({ search: state })}
+              labels={savedViewsLabels}
+            />
+          </div>
         }
         renderFooter={(rows) => (
           <div className="flex items-center gap-2 p-2 text-sm text-muted-foreground">

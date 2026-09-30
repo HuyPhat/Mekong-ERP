@@ -1,0 +1,144 @@
+// Print layout for the mock e-invoice (PLAN.md §6) — the project's one
+// deliberate SCSS module, everything else uses Tailwind utilities.
+$border-color: #333;
+$page-max-width: 210mm;
+$page-padding: 16mm;
+
+@mixin printable-page {
+  max-width: $page-max-width;
+  margin: 0 auto;
+  padding: $page-padding;
+  background: white;
+  color: #111;
+
+  @media print {
+    padding: 10mm;
+    box-shadow: none;
+  }
+}
+
+.sheet {
+  @include printable-page;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: 13px;
+  line-height: 1.5;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    border-bottom: 2px solid $border-color;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  .title {
+    text-align: center;
+    margin: 8px 0 16px;
+
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .symbol {
+      font-size: 12px;
+      color: #555;
+    }
+  }
+
+  .parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    dt {
+      font-weight: 600;
+    }
+
+    dd {
+      margin: 0 0 4px;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+
+    th,
+    td {
+      border: 1px solid $border-color;
+      padding: 6px 8px;
+    }
+
+    th {
+      background: #f3f3f3;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    td.number {
+      text-align: right;
+    }
+
+    td.center {
+      text-align: center;
+    }
+  }
+
+  .totals {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    margin-bottom: 12px;
+
+    .grand {
+      font-weight: 700;
+      font-size: 15px;
+    }
+  }
+
+  .words {
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+
+  .signatures {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    text-align: center;
+    gap: 16px;
+
+    .space {
+      height: 60px;
+    }
+  }
+}
+
+.demoNotice {
+  border: 1px dashed #b91c1c;
+  color: #b91c1c;
+  padding: 6px 10px;
+  font-size: 11px;
+  text-align: center;
+  margin-bottom: 12px;
+  border-radius: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0;
+
+  @media print {
+    display: none;
+  }
+}

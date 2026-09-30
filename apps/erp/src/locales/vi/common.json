@@ -22,6 +22,7 @@
     "admin": "Quản trị viên",
     "purchasing": "Nhân viên mua hàng",
     "warehouse": "Nhân viên kho",
+    "sales": "Nhân viên bán hàng",
     "accountant": "Kế toán viên",
     "approver_manager": "Trưởng phòng mua hàng",
     "approver_finance": "Trưởng phòng tài chính",
@@ -46,7 +47,36 @@
   },
   "dashboard": {
     "welcome": "Chào mừng, {{name}}",
-    "roleLabel": "Vai trò: {{role}}"
+    "roleLabel": "Vai trò: {{role}}",
+    "loading": "Đang tải bảng điều khiển…",
+    "kpis": {
+      "revenue": "Doanh thu (tháng này)",
+      "grossMargin": "Biên lợi nhuận gộp",
+      "cashPosition": "Số dư tiền mặt",
+      "arTotal": "Phải thu tồn đọng",
+      "apTotal": "Phải trả tồn đọng",
+      "pendingApprovals": "Chờ phê duyệt"
+    },
+    "charts": {
+      "revenueTrend": "Doanh thu & Giá vốn (12 tháng gần nhất)",
+      "revenue": "Doanh thu",
+      "cogs": "Giá vốn",
+      "arAging": "Tuổi nợ phải thu",
+      "apAging": "Tuổi nợ phải trả",
+      "outstanding": "Tồn đọng",
+      "viewFullReport": "Xem báo cáo đầy đủ →"
+    }
+  },
+  "realtime": {
+    "approvalRequested": {
+      "title": "Yêu cầu phê duyệt",
+      "description": "{{docNumber}} đang chờ {{role}}"
+    },
+    "approvalDecided": {
+      "approved": "Đã phê duyệt",
+      "rejected": "Đã từ chối",
+      "changes_requested": "Yêu cầu chỉnh sửa"
+    }
   },
   "placeholder": {
     "comingInPhase": "Sẽ có ở Phase {{phase}}"
@@ -439,6 +469,7 @@
       },
       "belowReorder": "Dưới mức tồn tối thiểu",
       "ok": "Bình thường",
+      "live": "Trực tiếp",
       "empty": "Không có tồn kho nào khớp bộ lọc.",
       "searchPlaceholder": "Tìm theo tên sản phẩm hoặc mã SKU…",
       "pageTotal": "Tổng tồn (trang này): {{total}}"
@@ -457,6 +488,319 @@
       },
       "empty": "Không có giao dịch nào khớp bộ lọc.",
       "searchPlaceholder": "Tìm theo sản phẩm, SKU hoặc chứng từ…"
+    }
+  },
+  "sales": {
+    "tabs": {
+      "customers": "Khách hàng",
+      "quotations": "Báo giá",
+      "orders": "Đơn bán hàng",
+      "invoices": "Hóa đơn"
+    },
+    "customers": {
+      "columns": {
+        "code": "Mã",
+        "name": "Tên",
+        "taxCode": "Mã số thuế",
+        "phone": "Điện thoại",
+        "email": "Email",
+        "creditLimit": "Hạn mức tín dụng",
+        "paymentTermsDays": "Thời hạn thanh toán (ngày)"
+      },
+      "empty": "Không có khách hàng nào khớp với bộ lọc.",
+      "searchPlaceholder": "Tìm theo tên, mã hoặc mã số thuế…"
+    },
+    "quotations": {
+      "columns": {
+        "number": "Số báo giá",
+        "customerName": "Khách hàng",
+        "status": "Trạng thái",
+        "quoteDate": "Ngày báo giá",
+        "validUntil": "Có hiệu lực đến",
+        "grandTotal": "Tổng tiền"
+      },
+      "status": {
+        "draft": "Nháp",
+        "sent": "Đã gửi",
+        "accepted": "Đã chấp nhận",
+        "rejected": "Đã từ chối",
+        "expired": "Hết hạn",
+        "converted": "Đã chuyển đổi"
+      },
+      "empty": "Không có báo giá nào khớp với bộ lọc.",
+      "searchPlaceholder": "Tìm theo số báo giá hoặc khách hàng…",
+      "newButton": "Tạo báo giá",
+      "form": {
+        "title": "Tạo báo giá mới",
+        "customerSection": "Khách hàng",
+        "customerLabel": "Khách hàng",
+        "customerPlaceholder": "Tìm khách hàng…",
+        "warehouseLabel": "Kho",
+        "warehousePlaceholder": "Chọn kho",
+        "linesSection": "Chi tiết",
+        "productColumn": "Sản phẩm",
+        "qtyColumn": "SL",
+        "unitPriceColumn": "Đơn giá",
+        "discountColumn": "CK %",
+        "vatColumn": "VAT",
+        "lineTotalColumn": "Thành tiền",
+        "productPlaceholder": "Tìm sản phẩm…",
+        "subtotal": "Tạm tính",
+        "vatTotal": "Thuế VAT",
+        "grandTotal": "Tổng cộng",
+        "termsSection": "Điều khoản",
+        "validUntilLabel": "Có hiệu lực đến",
+        "termsLabel": "Điều khoản",
+        "termsPlaceholder": "Điều khoản thanh toán, ghi chú…",
+        "submitButton": "Tạo báo giá",
+        "submitting": "Đang tạo…",
+        "createSuccess": "Đã tạo báo giá"
+      },
+      "detail": {
+        "backToList": "← Quay lại danh sách báo giá",
+        "loading": "Đang tải báo giá…",
+        "notFound": "Không tìm thấy báo giá.",
+        "customerLabel": "Khách hàng",
+        "validUntilLabel": "Có hiệu lực đến",
+        "termsLabel": "Điều khoản",
+        "createdLabel": "Tạo lúc {{date}}",
+        "viewSalesOrder": "Xem đơn bán hàng →",
+        "linesTitle": "Chi tiết",
+        "columns": {
+          "product": "Sản phẩm",
+          "qty": "SL",
+          "unitPrice": "Đơn giá",
+          "discount": "CK",
+          "vat": "VAT",
+          "lineTotal": "Thành tiền"
+        },
+        "totalsSubtotal": "Tạm tính",
+        "totalsVat": "Thuế VAT",
+        "totalsGrand": "Tổng cộng",
+        "sendButton": "Gửi cho khách hàng",
+        "sending": "Đang gửi…",
+        "acceptButton": "Đánh dấu đã chấp nhận",
+        "rejectButton": "Đánh dấu đã từ chối",
+        "convertButton": "Chuyển thành đơn bán hàng",
+        "converting": "Đang chuyển đổi…",
+        "convertSuccess": "Đã tạo đơn bán hàng"
+      }
+    },
+    "orders": {
+      "columns": {
+        "number": "Số đơn",
+        "customerName": "Khách hàng",
+        "status": "Trạng thái",
+        "orderDate": "Ngày đặt",
+        "deliveryDate": "Ngày giao",
+        "grandTotal": "Tổng tiền"
+      },
+      "status": {
+        "draft": "Nháp",
+        "confirmed": "Đã xác nhận",
+        "partially_delivered": "Giao một phần",
+        "delivered": "Đã giao",
+        "invoiced": "Đã xuất hóa đơn",
+        "closed": "Đã đóng",
+        "cancelled": "Đã hủy"
+      },
+      "empty": "Không có đơn bán hàng nào khớp với bộ lọc.",
+      "searchPlaceholder": "Tìm theo số đơn hoặc khách hàng…",
+      "detail": {
+        "backToList": "← Quay lại danh sách đơn bán hàng",
+        "loading": "Đang tải đơn bán hàng…",
+        "notFound": "Không tìm thấy đơn bán hàng.",
+        "confirmButton": "Xác nhận đơn",
+        "confirming": "Đang xác nhận…",
+        "deliverButton": "Giao hàng",
+        "createInvoiceButton": "Tạo hóa đơn",
+        "invoicing": "Đang tạo hóa đơn…",
+        "cancelButton": "Hủy đơn",
+        "cancelling": "Đang hủy…",
+        "customerLabel": "Khách hàng",
+        "deliveryDateLabel": "Ngày giao",
+        "termsLabel": "Điều khoản",
+        "createdLabel": "Tạo lúc {{date}}",
+        "viewQuotation": "Xem báo giá →",
+        "linesTitle": "Chi tiết",
+        "columns": {
+          "product": "Sản phẩm",
+          "qty": "SL",
+          "unitPrice": "Đơn giá",
+          "discount": "CK",
+          "vat": "VAT",
+          "lineTotal": "Thành tiền"
+        },
+        "totalsSubtotal": "Tạm tính",
+        "totalsVat": "Thuế VAT",
+        "totalsGrand": "Tổng cộng",
+        "deliveriesTitle": "Phiếu giao hàng",
+        "noDeliveries": "Chưa có phiếu giao hàng.",
+        "invoicesTitle": "Hóa đơn",
+        "noInvoices": "Chưa có hóa đơn."
+      },
+      "deliver": {
+        "backToOrder": "← Quay lại đơn bán hàng",
+        "title": "Giao hàng",
+        "loading": "Đang tải đơn bán hàng…",
+        "notFound": "Không tìm thấy đơn bán hàng.",
+        "notDeliverable": "Đơn bán hàng này không thể giao.",
+        "allDelivered": "Đơn hàng này đã được giao đầy đủ.",
+        "nothingToDeliver": "Nhập số lượng cần giao cho ít nhất một dòng.",
+        "productColumn": "Sản phẩm",
+        "orderedColumn": "Đã đặt",
+        "deliveredColumn": "Đã giao",
+        "remainingColumn": "Còn lại",
+        "deliverNowColumn": "Giao lần này",
+        "submitButton": "Ghi nhận giao hàng",
+        "submitting": "Đang ghi nhận…"
+      }
+    },
+    "invoices": {
+      "columns": {
+        "number": "Số hóa đơn",
+        "customerName": "Khách hàng",
+        "status": "Trạng thái",
+        "issueDate": "Ngày xuất",
+        "dueDate": "Ngày đến hạn",
+        "grandTotal": "Tổng tiền"
+      },
+      "status": {
+        "unpaid": "Chưa thanh toán",
+        "paid": "Đã thanh toán",
+        "cancelled": "Đã hủy",
+        "overdue": "Quá hạn"
+      },
+      "empty": "Không có hóa đơn nào khớp với bộ lọc.",
+      "searchPlaceholder": "Tìm theo số hóa đơn hoặc khách hàng…",
+      "detail": {
+        "backToList": "← Quay lại danh sách hóa đơn",
+        "loading": "Đang tải hóa đơn…",
+        "notFound": "Không tìm thấy hóa đơn.",
+        "previewButton": "Xem trước / In",
+        "recordPaymentButton": "Ghi nhận thanh toán",
+        "recordingPayment": "Đang ghi nhận…",
+        "paymentRecorded": "Đã ghi nhận thanh toán",
+        "customerLabel": "Khách hàng",
+        "soLabel": "Đơn bán hàng",
+        "issueDateLabel": "Ngày xuất",
+        "dueDateLabel": "Ngày đến hạn",
+        "linesTitle": "Chi tiết",
+        "columns": {
+          "product": "Sản phẩm",
+          "qty": "SL",
+          "unitPrice": "Đơn giá",
+          "vat": "VAT",
+          "lineTotal": "Thành tiền"
+        },
+        "totalsGrand": "Tổng cộng"
+      },
+      "preview": {
+        "backToInvoice": "← Quay lại hóa đơn",
+        "printButton": "In",
+        "downloadXmlButton": "Tải XML (giả lập)",
+        "demoNotice": "CHỈ MANG TÍNH MINH HỌA — không phải hóa đơn điện tử hợp lệ theo pháp luật. Dùng cho mục đích portfolio.",
+        "taxCode": "MST: {{code}}",
+        "invoiceTitle": "Hóa đơn Giá trị gia tăng",
+        "symbolLabel": "Ký hiệu {{symbol}} — Số {{number}}",
+        "issueDateLabel": "Ngày xuất: {{date}}",
+        "buyerLabel": "Người mua hàng",
+        "taxCodeLabel": "Mã số thuế",
+        "addressLabel": "Địa chỉ",
+        "phoneLabel": "Điện thoại",
+        "columns": {
+          "no": "STT",
+          "description": "Tên hàng hóa, dịch vụ",
+          "unit": "Đơn vị tính",
+          "qty": "Số lượng",
+          "unitPrice": "Đơn giá",
+          "vatRate": "Thuế suất",
+          "vatAmount": "Tiền thuế",
+          "lineTotal": "Thành tiền"
+        },
+        "subtotal": "Cộng tiền hàng: {{amount}}",
+        "vatTotal": "Tiền thuế GTGT: {{amount}}",
+        "grandTotal": "Tổng cộng tiền thanh toán: {{amount}}",
+        "amountInWords": "Số tiền viết bằng chữ: {{words}}",
+        "buyerSignature": "Chữ ký người mua hàng",
+        "sellerSignature": "Chữ ký người bán hàng"
+      }
+    }
+  },
+  "accounting": {
+    "tabs": {
+      "trialBalance": "Bảng cân đối phát sinh",
+      "generalLedger": "Sổ cái",
+      "arAging": "Tuổi nợ phải thu",
+      "apAging": "Tuổi nợ phải trả",
+      "chartOfAccounts": "Hệ thống tài khoản"
+    },
+    "accountTypes": {
+      "asset": "Tài sản",
+      "liability": "Nợ phải trả",
+      "equity": "Vốn chủ sở hữu",
+      "revenue": "Doanh thu",
+      "expense": "Chi phí"
+    },
+    "normalBalance": {
+      "debit": "Nợ",
+      "credit": "Có"
+    },
+    "chartOfAccounts": {
+      "note": "Danh mục tài khoản kiểu VAS mang tính minh họa, có thể chỉnh sửa — không khẳng định theo một thông tư hiện hành cụ thể.",
+      "loading": "Đang tải hệ thống tài khoản…",
+      "columns": {
+        "code": "Số hiệu",
+        "name": "Tên tài khoản",
+        "type": "Loại",
+        "normalBalance": "Số dư bình thường"
+      }
+    },
+    "generalLedger": {
+      "accountLabel": "Tài khoản",
+      "loading": "Đang tải sổ cái…",
+      "empty": "Chưa có phát sinh cho tài khoản này.",
+      "columns": {
+        "date": "Ngày",
+        "journalNumber": "Số chứng từ",
+        "description": "Diễn giải",
+        "debit": "Nợ",
+        "credit": "Có",
+        "balance": "Số dư"
+      }
+    },
+    "trialBalance": {
+      "balanced": "Cân đối",
+      "unbalanced": "Không cân đối",
+      "loading": "Đang tải bảng cân đối phát sinh…",
+      "totalsRow": "Tổng cộng",
+      "columns": {
+        "accountCode": "Số hiệu",
+        "accountName": "Tài khoản",
+        "debit": "Nợ",
+        "credit": "Có"
+      }
+    },
+    "aging": {
+      "loading": "Đang tải báo cáo tuổi nợ…",
+      "empty": "Không có công nợ tồn đọng.",
+      "customerColumn": "Khách hàng",
+      "supplierColumn": "Nhà cung cấp",
+      "docCount_other": "{{count}} chứng từ",
+      "buckets": {
+        "current": "Trong hạn",
+        "1-30": "1–30 ngày",
+        "31-60": "31–60 ngày",
+        "61-90": "61–90 ngày",
+        "90+": "Trên 90 ngày"
+      },
+      "columns": {
+        "number": "Số chứng từ",
+        "dueDate": "Ngày đến hạn",
+        "daysOverdue": "Số ngày quá hạn",
+        "bucket": "Nhóm tuổi nợ",
+        "amount": "Số tiền"
+      }
     }
   }
 }

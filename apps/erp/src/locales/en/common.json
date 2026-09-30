@@ -22,6 +22,7 @@
     "admin": "Administrator",
     "purchasing": "Purchasing Officer",
     "warehouse": "Warehouse Staff",
+    "sales": "Sales Rep",
     "accountant": "Accountant",
     "approver_manager": "Purchasing Manager",
     "approver_finance": "Finance Manager",
@@ -46,7 +47,36 @@
   },
   "dashboard": {
     "welcome": "Welcome, {{name}}",
-    "roleLabel": "Role: {{role}}"
+    "roleLabel": "Role: {{role}}",
+    "loading": "Loading dashboard…",
+    "kpis": {
+      "revenue": "Revenue (this month)",
+      "grossMargin": "Gross margin",
+      "cashPosition": "Cash position",
+      "arTotal": "AR outstanding",
+      "apTotal": "AP outstanding",
+      "pendingApprovals": "Pending approvals"
+    },
+    "charts": {
+      "revenueTrend": "Revenue & COGS (last 12 months)",
+      "revenue": "Revenue",
+      "cogs": "COGS",
+      "arAging": "AR Aging",
+      "apAging": "AP Aging",
+      "outstanding": "Outstanding",
+      "viewFullReport": "View full report →"
+    }
+  },
+  "realtime": {
+    "approvalRequested": {
+      "title": "Approval requested",
+      "description": "{{docNumber}} is waiting on {{role}}"
+    },
+    "approvalDecided": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "changes_requested": "Changes requested"
+    }
   },
   "placeholder": {
     "comingInPhase": "Coming in Phase {{phase}}"
@@ -439,6 +469,7 @@
       },
       "belowReorder": "Below reorder point",
       "ok": "OK",
+      "live": "Live",
       "empty": "No stock levels match these filters.",
       "searchPlaceholder": "Search by product name or SKU…",
       "pageTotal": "Total on hand (this page): {{total}}"
@@ -457,6 +488,320 @@
       },
       "empty": "No movements match these filters.",
       "searchPlaceholder": "Search by product, SKU, or reference…"
+    }
+  },
+  "sales": {
+    "tabs": {
+      "customers": "Customers",
+      "quotations": "Quotations",
+      "orders": "Sales Orders",
+      "invoices": "Invoices"
+    },
+    "customers": {
+      "columns": {
+        "code": "Code",
+        "name": "Name",
+        "taxCode": "Tax code",
+        "phone": "Phone",
+        "email": "Email",
+        "creditLimit": "Credit limit",
+        "paymentTermsDays": "Payment terms (days)"
+      },
+      "empty": "No customers match these filters.",
+      "searchPlaceholder": "Search by name, code, or tax code…"
+    },
+    "quotations": {
+      "columns": {
+        "number": "Number",
+        "customerName": "Customer",
+        "status": "Status",
+        "quoteDate": "Quote date",
+        "validUntil": "Valid until",
+        "grandTotal": "Total"
+      },
+      "status": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "expired": "Expired",
+        "converted": "Converted"
+      },
+      "empty": "No quotations match these filters.",
+      "searchPlaceholder": "Search by number or customer…",
+      "newButton": "New quotation",
+      "form": {
+        "title": "New quotation",
+        "customerSection": "Customer",
+        "customerLabel": "Customer",
+        "customerPlaceholder": "Search customers…",
+        "warehouseLabel": "Warehouse",
+        "warehousePlaceholder": "Select a warehouse",
+        "linesSection": "Lines",
+        "productColumn": "Product",
+        "qtyColumn": "Qty",
+        "unitPriceColumn": "Unit price",
+        "discountColumn": "Discount %",
+        "vatColumn": "VAT",
+        "lineTotalColumn": "Line total",
+        "productPlaceholder": "Search products…",
+        "subtotal": "Subtotal",
+        "vatTotal": "VAT",
+        "grandTotal": "Grand total",
+        "termsSection": "Terms",
+        "validUntilLabel": "Valid until",
+        "termsLabel": "Terms",
+        "termsPlaceholder": "Payment terms, notes…",
+        "submitButton": "Create quotation",
+        "submitting": "Creating…",
+        "createSuccess": "Quotation created"
+      },
+      "detail": {
+        "backToList": "← Back to quotations",
+        "loading": "Loading quotation…",
+        "notFound": "Quotation not found.",
+        "customerLabel": "Customer",
+        "validUntilLabel": "Valid until",
+        "termsLabel": "Terms",
+        "createdLabel": "Created {{date}}",
+        "viewSalesOrder": "View sales order →",
+        "linesTitle": "Lines",
+        "columns": {
+          "product": "Product",
+          "qty": "Qty",
+          "unitPrice": "Unit price",
+          "discount": "Discount",
+          "vat": "VAT",
+          "lineTotal": "Line total"
+        },
+        "totalsSubtotal": "Subtotal",
+        "totalsVat": "VAT",
+        "totalsGrand": "Grand total",
+        "sendButton": "Send to customer",
+        "sending": "Sending…",
+        "acceptButton": "Mark accepted",
+        "rejectButton": "Mark rejected",
+        "convertButton": "Convert to sales order",
+        "converting": "Converting…",
+        "convertSuccess": "Sales order created"
+      }
+    },
+    "orders": {
+      "columns": {
+        "number": "Number",
+        "customerName": "Customer",
+        "status": "Status",
+        "orderDate": "Order date",
+        "deliveryDate": "Delivery date",
+        "grandTotal": "Total"
+      },
+      "status": {
+        "draft": "Draft",
+        "confirmed": "Confirmed",
+        "partially_delivered": "Partially delivered",
+        "delivered": "Delivered",
+        "invoiced": "Invoiced",
+        "closed": "Closed",
+        "cancelled": "Cancelled"
+      },
+      "empty": "No sales orders match these filters.",
+      "searchPlaceholder": "Search by number or customer…",
+      "detail": {
+        "backToList": "← Back to sales orders",
+        "loading": "Loading sales order…",
+        "notFound": "Sales order not found.",
+        "confirmButton": "Confirm order",
+        "confirming": "Confirming…",
+        "deliverButton": "Deliver",
+        "createInvoiceButton": "Create invoice",
+        "invoicing": "Creating invoice…",
+        "cancelButton": "Cancel order",
+        "cancelling": "Cancelling…",
+        "customerLabel": "Customer",
+        "deliveryDateLabel": "Delivery date",
+        "termsLabel": "Terms",
+        "createdLabel": "Created {{date}}",
+        "viewQuotation": "View quotation →",
+        "linesTitle": "Lines",
+        "columns": {
+          "product": "Product",
+          "qty": "Qty",
+          "unitPrice": "Unit price",
+          "discount": "Discount",
+          "vat": "VAT",
+          "lineTotal": "Line total"
+        },
+        "totalsSubtotal": "Subtotal",
+        "totalsVat": "VAT",
+        "totalsGrand": "Grand total",
+        "deliveriesTitle": "Deliveries",
+        "noDeliveries": "No deliveries yet.",
+        "invoicesTitle": "Invoices",
+        "noInvoices": "No invoices yet."
+      },
+      "deliver": {
+        "backToOrder": "← Back to sales order",
+        "title": "Deliver",
+        "loading": "Loading sales order…",
+        "notFound": "Sales order not found.",
+        "notDeliverable": "This sales order cannot be delivered.",
+        "allDelivered": "Everything on this order has been delivered.",
+        "nothingToDeliver": "Enter a quantity to deliver for at least one line.",
+        "productColumn": "Product",
+        "orderedColumn": "Ordered",
+        "deliveredColumn": "Delivered",
+        "remainingColumn": "Remaining",
+        "deliverNowColumn": "Deliver now",
+        "submitButton": "Record delivery",
+        "submitting": "Recording…"
+      }
+    },
+    "invoices": {
+      "columns": {
+        "number": "Number",
+        "customerName": "Customer",
+        "status": "Status",
+        "issueDate": "Issue date",
+        "dueDate": "Due date",
+        "grandTotal": "Total"
+      },
+      "status": {
+        "unpaid": "Unpaid",
+        "paid": "Paid",
+        "cancelled": "Cancelled",
+        "overdue": "Overdue"
+      },
+      "empty": "No invoices match these filters.",
+      "searchPlaceholder": "Search by number or customer…",
+      "detail": {
+        "backToList": "← Back to invoices",
+        "loading": "Loading invoice…",
+        "notFound": "Invoice not found.",
+        "previewButton": "Preview / print",
+        "recordPaymentButton": "Record payment",
+        "recordingPayment": "Recording…",
+        "paymentRecorded": "Payment recorded",
+        "customerLabel": "Customer",
+        "soLabel": "Sales order",
+        "issueDateLabel": "Issue date",
+        "dueDateLabel": "Due date",
+        "linesTitle": "Lines",
+        "columns": {
+          "product": "Product",
+          "qty": "Qty",
+          "unitPrice": "Unit price",
+          "vat": "VAT",
+          "lineTotal": "Line total"
+        },
+        "totalsGrand": "Grand total"
+      },
+      "preview": {
+        "backToInvoice": "← Back to invoice",
+        "printButton": "Print",
+        "downloadXmlButton": "Download XML (mock)",
+        "demoNotice": "DEMO ONLY — not a legally compliant e-invoice. For portfolio purposes.",
+        "taxCode": "Tax code: {{code}}",
+        "invoiceTitle": "VAT Invoice",
+        "symbolLabel": "Symbol {{symbol}} — No. {{number}}",
+        "issueDateLabel": "Issue date: {{date}}",
+        "buyerLabel": "Buyer",
+        "taxCodeLabel": "Tax code",
+        "addressLabel": "Address",
+        "phoneLabel": "Phone",
+        "columns": {
+          "no": "No.",
+          "description": "Description",
+          "unit": "Unit",
+          "qty": "Qty",
+          "unitPrice": "Unit price",
+          "vatRate": "VAT rate",
+          "vatAmount": "VAT amount",
+          "lineTotal": "Amount"
+        },
+        "subtotal": "Subtotal: {{amount}}",
+        "vatTotal": "VAT: {{amount}}",
+        "grandTotal": "Grand total: {{amount}}",
+        "amountInWords": "Amount in words: {{words}}",
+        "buyerSignature": "Buyer's signature",
+        "sellerSignature": "Seller's signature"
+      }
+    }
+  },
+  "accounting": {
+    "tabs": {
+      "trialBalance": "Trial Balance",
+      "generalLedger": "General Ledger",
+      "arAging": "AR Aging",
+      "apAging": "AP Aging",
+      "chartOfAccounts": "Chart of Accounts"
+    },
+    "accountTypes": {
+      "asset": "Asset",
+      "liability": "Liability",
+      "equity": "Equity",
+      "revenue": "Revenue",
+      "expense": "Expense"
+    },
+    "normalBalance": {
+      "debit": "Debit",
+      "credit": "Credit"
+    },
+    "chartOfAccounts": {
+      "note": "Editable, illustrative VAS-style codes — not asserted against a specific current circular.",
+      "loading": "Loading chart of accounts…",
+      "columns": {
+        "code": "Code",
+        "name": "Name",
+        "type": "Type",
+        "normalBalance": "Normal balance"
+      }
+    },
+    "generalLedger": {
+      "accountLabel": "Account",
+      "loading": "Loading ledger…",
+      "empty": "No postings for this account yet.",
+      "columns": {
+        "date": "Date",
+        "journalNumber": "Journal",
+        "description": "Description",
+        "debit": "Debit",
+        "credit": "Credit",
+        "balance": "Balance"
+      }
+    },
+    "trialBalance": {
+      "balanced": "Balanced",
+      "unbalanced": "Out of balance",
+      "loading": "Loading trial balance…",
+      "totalsRow": "Totals",
+      "columns": {
+        "accountCode": "Code",
+        "accountName": "Account",
+        "debit": "Debit",
+        "credit": "Credit"
+      }
+    },
+    "aging": {
+      "loading": "Loading aging report…",
+      "empty": "Nothing outstanding.",
+      "customerColumn": "Customer",
+      "supplierColumn": "Supplier",
+      "docCount_one": "{{count}} document",
+      "docCount_other": "{{count}} documents",
+      "buckets": {
+        "current": "Current",
+        "1-30": "1–30 days",
+        "31-60": "31–60 days",
+        "61-90": "61–90 days",
+        "90+": "90+ days"
+      },
+      "columns": {
+        "number": "Number",
+        "dueDate": "Due date",
+        "daysOverdue": "Days overdue",
+        "bucket": "Bucket",
+        "amount": "Amount"
+      }
     }
   }
 }
