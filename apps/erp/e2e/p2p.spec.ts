@@ -1,3 +1,4 @@
+import { api } from './api';
 import { test, expect, expectStatus, loginAs, switchUser, gotoApp, PERSONAS } from './fixtures';
 
 // PO -> submit -> approve -> receive (partial x2) -> bill -> match -> pay -> closed.
@@ -87,4 +88,53 @@ test('a warehouse user cannot approve purchase orders', async ({ page }) => {
   await loginAs(page, PERSONAS.warehouse);
   await page.goto('/approvals');
   await expect(page.getByText('Access denied')).toBeVisible();
+});
+
+// Regression guard. A purchase order sent back for changes and then resubmitted got a
+// fresh approval chain, but the old "changes requested" step still counted when the
+// outcome was worked out, so approving the new chain sent the order straight back.
+test('a purchase order sent back for changes can be resubmitted and approved', async ({ page }) => {
+  await loginAs(page, PERSONAS.purchasing);
+
+  const supplier = (await api<{ data: { id: string }[] }>(page, 'GET', '/suppliers?pageSize=1'))
+    .json.data[0];
+  const warehouse = (await api<{ data: { id: string }[] }>(page, 'GET', '/warehouses')).json
+    .data[0];
+  const product = (await api<{ data: { id: string }[] }>(page, 'GET', '/products?pageSize=1')).json
+    .data[0];
+  const created = await api<{ id: string }>(page, 'POST', '/purchase-orders', {
+    supplierId: supplier?.id,
+    warehouseId: warehouse?.id,
+    deliveryDate: '2027-01-15',
+    terms: 'Net 30',
+    // 220,000 VND: under 50M, so the manager alone approves.
+    lines: [{ productId: product?.id, qty: 2, unitPrice: 100000, discountPct: 0, vatRate: 10 }],
+  });
+  const id = created.json.id;
+  const steps = () =>
+    api<{ data: { id: string; sequence: number; status: string }[] }>(
+      page,
+      'GET',
+      `/approvals?filter[docId]=${id}`,
+    );
+  const decide = (stepId: string, decision: string) =>
+    api<{ outcome: string }>(page, 'POST', `/approvals/${stepId}/decide`, {
+      decision,
+      actorId: 'approver_manager',
+      comment: 'Please adjust the quantity.',
+    });
+
+  await api(page, 'POST', `/purchase-orders/${id}/submit`);
+  const first = (await steps()).json.data[0];
+  expect((await decide(first?.id ?? '', 'changes_requested')).json.outcome).toBe(
+    'changes_requested',
+  );
+
+  await api(page, 'POST', `/purchase-orders/${id}/submit`);
+  const pending = (await steps()).json.data.filter((step) => step.status === 'pending');
+  expect(pending).toHaveLength(1);
+  expect((await decide(pending[0]?.id ?? '', 'approved')).json.outcome).toBe('approved');
+
+  const order = await api<{ status: string }>(page, 'GET', `/purchase-orders/${id}`);
+  expect(order.json.status).toBe('approved');
 });

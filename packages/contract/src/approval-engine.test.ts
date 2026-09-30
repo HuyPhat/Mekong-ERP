@@ -5,6 +5,7 @@ import {
   currentApprovalStep,
   chainOutcome,
   decideApproval,
+  latestChain,
 } from './approval-engine';
 import type { Approval, ApprovalRule } from './approval-entities';
 
@@ -239,5 +240,56 @@ describe('decideApproval', () => {
       approval({ id: 'a2', sequence: 2, status: 'pending' }),
     ];
     expect(() => decideApproval(chain, 'a2', 'approved', 'user-1', 'now')).toThrow();
+  });
+});
+
+describe('latestChain: a resubmitted document', () => {
+  const at = (day: number) => `2026-03-0${day}T09:00:00.000Z`;
+  const step = (
+    id: string,
+    sequence: number,
+    status: Approval['status'],
+    createdAt: string,
+  ): Approval => ({
+    id,
+    docType: 'purchase_order',
+    docId: 'po-1',
+    docNumber: 'PO-2026-000001',
+    sequence,
+    approverRole: sequence === 1 ? 'approver_manager' : 'approver_finance',
+    status,
+    createdAt,
+  });
+  const history = [
+    step('old-1', 1, 'changes_requested', at(1)),
+    step('old-2', 2, 'skipped', at(1)),
+    step('new-1', 1, 'pending', at(3)),
+    step('new-2', 2, 'pending', at(3)),
+  ];
+
+  it('is the steps of the newest submission, in any order', () => {
+    expect(latestChain(history).map((s) => s.id)).toEqual(['new-1', 'new-2']);
+    expect(latestChain([...history].reverse()).map((s) => s.id)).toEqual(['new-2', 'new-1']);
+    expect(latestChain([])).toEqual([]);
+  });
+
+  it('keeps a first submission whole', () => {
+    expect(latestChain(history.slice(0, 2)).map((s) => s.id)).toEqual(['old-1', 'old-2']);
+  });
+
+  it('is what stops an old "changes requested" step deciding the new submission', () => {
+    // Deciding against the whole history: the stale step wins and the new chain is halted.
+    const wrong = decideApproval(history, 'new-1', 'approved', 'approver_manager', at(4));
+    expect(wrong.outcome).toBe('changes_requested');
+    // Deciding against the newest chain: the manager's approval simply moves it on.
+    const right = decideApproval(
+      latestChain(history),
+      'new-1',
+      'approved',
+      'approver_manager',
+      at(4),
+    );
+    expect(right.outcome).toBe('pending');
+    expect(currentApprovalStep(right.chain)?.id).toBe('new-2');
   });
 });

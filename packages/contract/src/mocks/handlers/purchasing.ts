@@ -26,6 +26,7 @@ import {
   createApprovalChain,
   currentApprovalStep,
   decideApproval,
+  latestChain,
   resolveApprovalRoles,
 } from '../../approval-engine';
 import { computeThreeWayMatch, hasMatchExceptions } from '../../three-way-match';
@@ -900,7 +901,10 @@ export const purchasingHandlers = [
         { status: 422 },
       );
     }
-    const chain = approvalsStore.list().filter((candidate) => candidate.docId === approval.docId);
+    // A resubmitted document keeps its old steps as history; only the newest chain decides.
+    const chain = latestChain(
+      approvalsStore.list().filter((candidate) => candidate.docId === approval.docId),
+    );
     const now = new Date().toISOString();
     let result;
     try {

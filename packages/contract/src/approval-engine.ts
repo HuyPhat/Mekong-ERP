@@ -40,6 +40,19 @@ export function createApprovalChain(
   }));
 }
 
+/**
+ * A document resubmitted after changes were requested gets a fresh chain; the
+ * old steps stay in the store as history. Every step of one submission shares a
+ * timestamp, so the current chain is the steps carrying the newest one. Deciding
+ * against the whole history instead would let an old "changes requested" step
+ * decide the outcome of the new submission.
+ */
+export function latestChain(steps: Approval[]): Approval[] {
+  let newest = '';
+  for (const step of steps) if (step.createdAt > newest) newest = step.createdAt;
+  return steps.filter((step) => step.createdAt === newest);
+}
+
 /** The chain's next actionable step: the lowest-sequence approval still pending. */
 export function currentApprovalStep(chain: Approval[]): Approval | undefined {
   return [...chain]
