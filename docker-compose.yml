@@ -1,0 +1,14 @@
+# Local preview of the production build: `docker compose up --build`
+# then open http://localhost:8080
+services:
+  erp:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - '8080:8080'
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
