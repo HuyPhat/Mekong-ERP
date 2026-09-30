@@ -22,11 +22,17 @@ import {
   type VendorBill,
   type VendorBillLine,
 } from '../../purchasing-entities';
-import { createApprovalChain, decideApproval, resolveApprovalRoles } from '../../approval-engine';
+import {
+  createApprovalChain,
+  currentApprovalStep,
+  decideApproval,
+  resolveApprovalRoles,
+} from '../../approval-engine';
 import { computeThreeWayMatch, hasMatchExceptions } from '../../three-way-match';
 import { computeDocumentTotals, computeLineTotal, roundVnd } from '../../money';
 import { generateDocumentNumber } from '../../document-number';
 import { writeAudit } from './audit';
+import { broadcastEvent } from '../ws';
 
 function currentYear(): number {
   return new Date().getFullYear();
@@ -318,6 +324,16 @@ export const purchasingHandlers = [
       'pending_approval',
       now,
     );
+    const firstStep = currentApprovalStep(chain);
+    if (firstStep) {
+      broadcastEvent({
+        type: 'approval.requested',
+        docType: 'purchase_order',
+        docId: po.id,
+        docNumber: po.number,
+        approverRole: firstStep.approverRole,
+      });
+    }
     return HttpResponse.json(poView(updated));
   }),
 
@@ -416,11 +432,18 @@ export const purchasingHandlers = [
 
       const levelId = `${line.productId}:${po.warehouseId}`;
       const existingLevel = stockLevelsStore.get(levelId);
+      const quantityOnHand = (existingLevel?.quantityOnHand ?? 0) + line.receivedQty;
       await stockLevelsStore.put({
         id: levelId,
         productId: line.productId,
         warehouseId: po.warehouseId,
-        quantityOnHand: (existingLevel?.quantityOnHand ?? 0) + line.receivedQty,
+        quantityOnHand,
+      });
+      broadcastEvent({
+        type: 'stock.changed',
+        productId: line.productId,
+        warehouseId: po.warehouseId,
+        quantityOnHand,
       });
     }
 
@@ -446,6 +469,12 @@ export const purchasingHandlers = [
         { accountCode: '331', accountName: 'Phải trả người bán', debit: 0, credit: grnValue },
       ],
       createdAt: now,
+    });
+    broadcastEvent({
+      type: 'document.posted',
+      docType: 'goods_receipt',
+      docId: grn.id,
+      docNumber: grn.number,
     });
 
     const receivedByProduct = cumulativeReceivedByProduct(po.id);
@@ -630,6 +659,12 @@ export const purchasingHandlers = [
       ],
       createdAt: now,
     });
+    broadcastEvent({
+      type: 'document.posted',
+      docType: 'vendor_bill',
+      docId: bill.id,
+      docNumber: bill.number,
+    });
 
     const updatedPo: PurchaseOrder = { ...po, status: 'billed' };
     await purchaseOrdersStore.put(updatedPo);
@@ -792,6 +827,12 @@ export const purchasingHandlers = [
       ],
       createdAt: now,
     });
+    broadcastEvent({
+      type: 'document.posted',
+      docType: 'payment',
+      docId: bill.id,
+      docNumber: bill.number,
+    });
 
     const po = purchaseOrdersStore.get(bill.poId);
     if (po) {
@@ -878,6 +919,26 @@ export const purchasingHandlers = [
       );
     }
     await Promise.all(result.chain.map((step) => approvalsStore.put(step)));
+    broadcastEvent({
+      type: 'approval.decided',
+      docType: approval.docType,
+      docId: approval.docId,
+      docNumber: approval.docNumber,
+      decision: parsed.data.decision,
+      approverRole: approval.approverRole,
+    });
+    if (result.outcome === 'pending') {
+      const nextStep = currentApprovalStep(result.chain);
+      if (nextStep) {
+        broadcastEvent({
+          type: 'approval.requested',
+          docType: nextStep.docType,
+          docId: nextStep.docId,
+          docNumber: nextStep.docNumber,
+          approverRole: nextStep.approverRole,
+        });
+      }
+    }
 
     if (approval.docType === 'purchase_order') {
       const po = purchaseOrdersStore.get(approval.docId);

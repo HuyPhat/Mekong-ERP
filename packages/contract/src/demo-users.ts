@@ -7,6 +7,7 @@ export const PERMISSIONS = {
   purchasingRead: 'purchasing:read',
   purchasingWrite: 'purchasing:write',
   salesRead: 'sales:read',
+  salesWrite: 'sales:write',
   accountingRead: 'accounting:read',
   approvalsRead: 'approvals:read',
   adminRead: 'admin:read',
@@ -35,6 +36,17 @@ export const DEMO_USERS: User[] = [
     permissions: [PERMISSIONS.dashboardRead, PERMISSIONS.inventoryRead, PERMISSIONS.inventoryWrite],
   },
   {
+    id: 'sales',
+    name: 'Đỗ Thị Giang',
+    role: 'sales',
+    permissions: [
+      PERMISSIONS.dashboardRead,
+      PERMISSIONS.inventoryRead,
+      PERMISSIONS.salesRead,
+      PERMISSIONS.salesWrite,
+    ],
+  },
+  {
     id: 'accountant',
     name: 'Lê Thị Cúc',
     role: 'accountant',
@@ -43,6 +55,7 @@ export const DEMO_USERS: User[] = [
       PERMISSIONS.inventoryRead,
       PERMISSIONS.accountingRead,
       PERMISSIONS.purchasingRead,
+      PERMISSIONS.salesRead,
       PERMISSIONS.vendorBillOverrideMatch,
     ],
   },

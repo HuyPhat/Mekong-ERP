@@ -1,5 +1,5 @@
 const DB_NAME = 'mekong-erp';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAMES = [
   'warehouses',
   'products',
@@ -13,6 +13,12 @@ const STORE_NAMES = [
   'approvalRules',
   'auditLogEntries',
   'journalEntries',
+  'chartOfAccounts',
+  'customers',
+  'quotations',
+  'salesOrders',
+  'deliveries',
+  'customerInvoices',
 ] as const;
 
 let dbPromise: Promise<IDBDatabase> | undefined;

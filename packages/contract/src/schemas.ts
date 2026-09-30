@@ -4,6 +4,7 @@ export const RoleSchema = z.enum([
   'admin',
   'purchasing',
   'warehouse',
+  'sales',
   'accountant',
   'approver_manager',
   'approver_finance',

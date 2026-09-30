@@ -3,7 +3,8 @@ import type { Product, StockLevel, StockMovement, Warehouse } from '../entities'
 import type { GoodsReceipt, PurchaseOrder, Supplier, VendorBill } from '../purchasing-entities';
 import type { Approval, ApprovalRule } from '../approval-entities';
 import type { AuditLogEntry } from '../audit-entities';
-import type { JournalEntry } from '../accounting-entities';
+import type { ChartOfAccount, JournalEntry } from '../accounting-entities';
+import type { Customer, CustomerInvoice, Delivery, Quotation, SalesOrder } from '../sales-entities';
 
 export const warehousesStore = new Collection<Warehouse>('warehouses');
 export const productsStore = new Collection<Product>('products');
@@ -17,3 +18,9 @@ export const approvalsStore = new Collection<Approval>('approvals');
 export const approvalRulesStore = new Collection<ApprovalRule>('approvalRules');
 export const auditLogStore = new Collection<AuditLogEntry>('auditLogEntries');
 export const journalEntriesStore = new Collection<JournalEntry>('journalEntries');
+export const chartOfAccountsStore = new Collection<ChartOfAccount>('chartOfAccounts');
+export const customersStore = new Collection<Customer>('customers');
+export const quotationsStore = new Collection<Quotation>('quotations');
+export const salesOrdersStore = new Collection<SalesOrder>('salesOrders');
+export const deliveriesStore = new Collection<Delivery>('deliveries');
+export const customerInvoicesStore = new Collection<CustomerInvoice>('customerInvoices');

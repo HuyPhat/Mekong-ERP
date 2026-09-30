@@ -1,5 +1,22 @@
 import { z } from 'zod';
 
+export const AccountTypeSchema = z.enum(['asset', 'liability', 'equity', 'revenue', 'expense']);
+export type AccountType = z.infer<typeof AccountTypeSchema>;
+
+export const NormalBalanceSchema = z.enum(['debit', 'credit']);
+export type NormalBalance = z.infer<typeof NormalBalanceSchema>;
+
+// Editable VAS-style chart of accounts (PLAN.md §9 risk 6: codes shown are
+// illustrative, not asserted against a specific current circular number).
+export const ChartOfAccountSchema = z.object({
+  id: z.string(),
+  code: z.string(),
+  name: z.string(),
+  type: AccountTypeSchema,
+  normalBalance: NormalBalanceSchema,
+});
+export type ChartOfAccount = z.infer<typeof ChartOfAccountSchema>;
+
 export const JournalLineSchema = z.object({
   accountCode: z.string(),
   accountName: z.string(),
