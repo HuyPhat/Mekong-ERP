@@ -18,8 +18,9 @@ function HrmLayout() {
         <Link
           to="/hrm/leave"
           search={{ page: 1, pageSize: 50, scope: 'mine' }}
-          className="border-b-2 border-transparent px-1 pb-2 text-sm text-muted-foreground hover:text-foreground"
+          className="border-b-2 px-1 pb-2 text-sm text-muted-foreground hover:text-foreground"
           activeProps={{ className: 'border-accent font-medium text-foreground' }}
+          inactiveProps={{ className: 'border-transparent' }}
         >
           {t('hrm.tabs.leave')}
         </Link>

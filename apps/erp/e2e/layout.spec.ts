@@ -14,6 +14,7 @@ const GRID_PAGES = [
   '/sales/orders',
   '/sales/invoices',
   '/approvals',
+  '/hrm/leave',
   '/admin',
 ];
 
@@ -31,4 +32,20 @@ test('wide grids scroll inside their container instead of stretching the page', 
     expect(overflow, `${path} is wider than the viewport`).toBeLessThanOrEqual(0);
     await expect(page.getByTestId('user-menu-trigger'), `${path} top bar`).toBeInViewport();
   }
+});
+
+// Each module's tabs mark the current one with an accent underline. An earlier
+// version applied both the transparent and the accent border classes to the current
+// tab, so the transparent one won and no tab looked selected anywhere.
+test('the current module tab is marked and the others are not', async ({ page }) => {
+  await loginAs(page, PERSONAS.admin);
+  await gotoApp(page, '/purchasing/orders');
+  const underline = (name: string) =>
+    page
+      .getByRole('link', { name, exact: true })
+      .evaluate((link) => getComputedStyle(link).borderBottomColor);
+
+  const transparent = 'rgba(0, 0, 0, 0)';
+  expect(await underline('Suppliers')).toBe(transparent);
+  expect(await underline('Purchase Orders')).not.toBe(transparent);
 });
