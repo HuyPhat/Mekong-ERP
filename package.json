@@ -15,7 +15,8 @@
     "test": "turbo run test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:e2e": "pnpm --filter @mekong-erp/erp test:e2e"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
