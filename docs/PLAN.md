@@ -791,13 +791,14 @@ format:check`, `lint`, `typecheck`, `test` (127 tests: 95 contract + 19 ui
   failure rate, via a catch-all MSW handler that falls through to the real
   ones, with `/api/session` exempt so a failure toggle can't lock the user
   out) and wrote the rest.
-  **Testing.** 25 Playwright specs run against the production build served
+  **Testing.** 27 Playwright specs run against the production build served
   with the real security headers ([ADR-0011](adr/0011-end-to-end-and-accessibility-testing.md)):
   auth/RBAC, the full procure-to-pay and order-to-cash flows (asserting exact
   status badges, the wizard review total and a balanced trial balance
   afterwards), dashboard and realtime toast, inventory grid, demo tools,
-  layout, and axe-core (WCAG 2.0/2.1 A + AA) on login, five screens and the
-  dark dashboard. Every spec fails on any console error, page error or
+  layout, and axe-core (WCAG 2.0/2.1 A + AA) on login, five screens, the dark
+  dashboard and the two searchable dialogs. Every spec fails on any console
+  error, page error or
   `securitypolicyviolation`. Seeding takes about a minute, so a global setup
   seeds once and each test restores the saved storage state (IndexedDB
   included). Unit tests are now 150 (115 contract, 19 ui, 16 erp); coverage of
@@ -821,8 +822,13 @@ format:check`, `lint`, `typecheck`, `test` (127 tests: 95 contract + 19 ui
   that fails without the fix); Zod 4's `new Function` probe violated the CSP
   on every load (details under security below); heading order, a language
   button whose accessible name didn't contain its visible text, form fields
-  without `name`, and missing `<main>` landmarks on standalone pages; and the
-  marketing site had no favicon.
+  without `name`, and missing `<main>` landmarks on standalone pages; the
+  command palette and the searchable record pickers (supplier, product,
+  customer, purchase order), whose dialogs had no title and so no accessible
+  name (the installed Radix Dialog no longer warns about that and the
+  page-level axe scans never opened them; found while reviewing dialogs before
+  the final push, now named with screen-reader-only titles and covered by two
+  specs that fail without them); and the marketing site had no favicon.
   **Performance.** Faker and every seed generator are now a lazily imported
   chunk, so a returning visitor (whose IndexedDB already holds the data) no
   longer downloads them: initial JS fell from about 437 kB to 273 kB gzipped,

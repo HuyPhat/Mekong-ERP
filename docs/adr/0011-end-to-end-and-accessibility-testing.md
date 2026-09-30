@@ -34,16 +34,18 @@ Keep those checks as a real suite (`apps/erp/e2e`, Playwright + axe-core):
   buttons exist: the full P2P and O2C paths, exact status badges, the wizard's
   review total, and a balanced trial balance afterwards.
 - **axe-core (WCAG 2.0/2.1 A + AA)** on the login page and five representative
-  screens, plus the dark theme.
+  screens, plus the dark theme and the two dialogs that list records (command
+  palette and the searchable pickers), which a page-level scan never opens.
 - Vitest excludes `e2e/`; Playwright specs are not unit tests.
 
 ## Consequences
 
 - The suite has already paid for itself: it found a stale-total bug in the PO
   wizard's review step, WCAG contrast failures in three theme colours, an
-  unnamed grid header button, a missing favicon and a wrong `<html lang>`.
-- Each test spends ~50 s restoring the 78 MB IndexedDB snapshot, so 24 specs take
-  about 9 minutes on 3 local workers. That is the price of independence at full
+  unnamed grid header button, two dialogs with no accessible name, a missing
+  favicon and a wrong `<html lang>`.
+- Each test spends ~50 s restoring the 78 MB IndexedDB snapshot, so the suite takes
+  roughly 9–10 minutes on 3 local workers. That is the price of independence at full
   data volume. Alternatives considered: a smaller e2e-only seed (rejected: it
   would stop exercising the 100,000-row virtualization claim) and one shared
   context with serial tests (rejected: order-dependent, and one failure cascades).

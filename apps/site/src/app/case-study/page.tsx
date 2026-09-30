@@ -104,11 +104,12 @@ export default function CaseStudyPage() {
         dialog rendered unstyled, and a 20–30 second first-load seed that looked like a hung app.
         The end-to-end and accessibility suite added later found more: a wizard review step that
         showed a 0 VND total because a memo was keyed on an array the form library mutates in place;
-        light-mode colours that failed WCAG contrast; a wide table that stretched the whole page and
-        pushed the user menu off-screen; and Zod probing <code>eval</code> on every page load, which
-        the content security policy correctly blocked and reported, without anything visibly
-        breaking. Each is written up in the project plan with its fix, and the ones that can regress
-        now have a test that fails without it.
+        light-mode colours that failed WCAG contrast; two searchable dialogs with no accessible
+        name, because the dialog library no longer warns about a missing title; a wide table that
+        stretched the whole page and pushed the user menu off-screen; and Zod probing{' '}
+        <code>eval</code> on every page load, which the content security policy correctly blocked
+        and reported, without anything visibly breaking. Each is written up in the project plan with
+        its fix, and the ones that can regress now have a test that fails without it.
       </p>
 
       <h2>What I would do next</h2>

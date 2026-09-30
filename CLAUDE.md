@@ -18,7 +18,7 @@ so the whole thing runs and deploys with no real server.
 Phase 5 (Quality, docs, deploy) landed 2026-09-30 **except deployment**: no
 Vercel projects exist, so there is no live URL, and the exit criterion "both
 apps deployed" is unmet (see `docs/PLAN.md` §13 for the owner's steps). What
-landed: 25 Playwright specs (full P2P and O2C flows, RBAC, dashboard, grid,
+landed: 27 Playwright specs (full P2P and O2C flows, RBAC, dashboard, grid,
 demo tools, layout, axe WCAG A/AA) run against the production build with the
 real CSP; 150 unit tests with 99% line coverage of the pure domain modules;
 strict security headers with a drift test; a 300 kB gzip initial-JS budget
@@ -360,6 +360,15 @@ preview` of the production build, with the real CSP. Seeding takes ~1 min, so
   under a stationary pointer: for screenshots or axe runs, park the mouse and
   wait, or you will "see" a half-empty chart (the earlier false alarm) or a
   tooltip mid-fade.
+- **A Radix dialog with no `DialogTitle` fails silently.** The installed Radix
+  Dialog (1.1.23) no longer logs a dev warning for a missing title or
+  description, so lint, types and the console all stay green while the dialog
+  has no accessible name (the command palette and the searchable pickers shipped
+  that way through Phase 4). Every `DialogContent` needs a `DialogTitle` (add
+  `className="sr-only"` when it would repeat visible text); only axe's
+  `aria-dialog-name`, or querying `getByRole('dialog', { name })`, notices a
+  miss. Dialogs the page-level scans can't reach need their own spec
+  (`e2e/a11y.spec.ts`).
 - **Colour tokens are measured, not eyeballed.** Text on white and on a 10%
   tint of itself (badges) must be >= 4.5:1; the light-mode accent, success,
   warning and destructive tokens are >= 5:1. Keep chroma inside sRGB (a
