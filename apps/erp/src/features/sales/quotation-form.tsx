@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   WizardDraftBanner,
@@ -76,7 +76,10 @@ export function QuotationForm() {
     [productsData],
   );
 
-  const watchedLines = watch('lines');
+  // `watch('lines')` returns RHF's own array, mutated in place as fields change, so a
+  // useMemo keyed on it never recomputes (the review totals went stale). useWatch
+  // hands back a fresh value on every change.
+  const watchedLines = useWatch({ control, name: 'lines' });
   const computedLines = useMemo(
     () =>
       watchedLines.map((line) => {
