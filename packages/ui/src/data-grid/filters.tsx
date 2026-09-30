@@ -136,6 +136,7 @@ function FilterControl({
       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
         {config.label}
         <input
+          name={config.id}
           value={values[config.id] ?? ''}
           onChange={(event) => onSetValue(config.id, event.target.value)}
           className={`${inputClassName} w-40`}
@@ -155,6 +156,7 @@ function FilterControl({
         <div className="flex items-center gap-1">
           <input
             type={inputType}
+            name={minKey}
             value={values[minKey] ?? ''}
             onChange={(event) => onSetValue(minKey, event.target.value)}
             aria-label={labels.minimumLabel(config.label)}
@@ -163,6 +165,7 @@ function FilterControl({
           <span aria-hidden="true">–</span>
           <input
             type={inputType}
+            name={maxKey}
             value={values[maxKey] ?? ''}
             onChange={(event) => onSetValue(maxKey, event.target.value)}
             aria-label={labels.maximumLabel(config.label)}
@@ -201,6 +204,7 @@ function FilterControl({
             >
               <input
                 type="checkbox"
+                name={`${config.id}-${option.value}`}
                 checked={selected.has(option.value)}
                 readOnly
                 className="mr-2"

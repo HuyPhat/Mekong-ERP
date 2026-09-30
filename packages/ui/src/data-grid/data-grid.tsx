@@ -206,6 +206,7 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                   <th className="w-10 border-b border-border p-2">
                     <input
                       type="checkbox"
+                      name="select-all"
                       checked={table.getIsAllRowsSelected()}
                       ref={(el) => {
                         if (el)
@@ -392,6 +393,7 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                       <td className="flex w-10 items-center p-2">
                         <input
                           type="checkbox"
+                          name="select-row"
                           checked={row.getIsSelected()}
                           onChange={row.getToggleSelectedHandler()}
                           aria-label={labels.selectRow}
@@ -427,6 +429,7 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                     <td className="p-2">
                       <input
                         type="checkbox"
+                        name="select-row"
                         checked={row.getIsSelected()}
                         onChange={row.getToggleSelectedHandler()}
                         aria-label={labels.selectRow}

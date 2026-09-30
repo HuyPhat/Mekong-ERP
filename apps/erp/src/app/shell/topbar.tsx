@@ -35,6 +35,7 @@ export function Topbar() {
     });
   }
 
+  const nextLanguage = i18n.language === 'vi' ? 'EN' : 'VI';
   const otherUsers = DEMO_USERS.filter((user) => user.id !== data?.user?.id);
 
   return (
@@ -53,11 +54,12 @@ export function Topbar() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => void i18n.changeLanguage(i18n.language === 'vi' ? 'en' : 'vi')}
-          aria-label={t('commandPalette.toggleLanguage')}
+          onClick={() => void i18n.changeLanguage(nextLanguage.toLowerCase())}
+          // The accessible name must contain the visible text (WCAG 2.5.3 Label in Name).
+          aria-label={`${nextLanguage} — ${t('commandPalette.toggleLanguage')}`}
           data-testid="language-toggle"
         >
-          {i18n.language === 'vi' ? 'EN' : 'VI'}
+          {nextLanguage}
         </Button>
         <Button
           variant="ghost"

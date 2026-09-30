@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '../lib/cn';
-import { Card, CardContent, CardHeader, CardTitle } from './card';
+import { Card, CardContent, CardHeader } from './card';
 
 export interface KpiTileTrend {
   direction: 'up' | 'down' | 'flat';
@@ -25,7 +25,8 @@ export function KpiTile({ label, value, trend, icon }: KpiTileProps) {
   return (
     <Card className="min-w-0">
       <CardHeader className="flex-row items-center justify-between gap-2 space-y-0 pb-0">
-        <CardTitle>{label}</CardTitle>
+        {/* A caption, not a heading: six of them under the page h1 would be noise for heading navigation. */}
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
         {icon}
       </CardHeader>
       <CardContent>

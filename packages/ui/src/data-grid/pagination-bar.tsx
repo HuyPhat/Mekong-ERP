@@ -31,6 +31,7 @@ export function PaginationBar({
       <div className="flex items-center gap-2 text-muted-foreground">
         <span>{labels.rangeOfTotal(from, to, total)}</span>
         <select
+          name="pageSize"
           value={pageSize}
           onChange={(event) => onPageSizeChange(Number(event.target.value))}
           className="h-8 rounded-md border border-border bg-transparent px-1 text-sm"
