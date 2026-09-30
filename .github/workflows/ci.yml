@@ -45,6 +45,9 @@ jobs:
       - name: Initial-load bundle budget
         run: pnpm --filter @mekong-erp/erp budget
 
+      - name: Initial-load bundle budget (Vue inbox)
+        run: pnpm --filter @mekong-erp/erp-vue budget
+
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -75,6 +78,38 @@ jobs:
           path: |
             apps/erp/playwright-report
             apps/erp/test-results
+          retention-days: 7
+
+  e2e-vue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Vue inbox end-to-end + accessibility tests (production build, real CSP)
+        run: pnpm test:e2e:vue
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-vue
+          path: |
+            apps/erp-vue/playwright-report
+            apps/erp-vue/test-results
           retention-days: 7
 
   storybook:
