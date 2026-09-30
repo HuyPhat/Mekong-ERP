@@ -17,6 +17,7 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "test:e2e": "pnpm --filter @mekong-erp/erp test:e2e",
+    "test:e2e:vue": "pnpm --filter @mekong-erp/erp-vue test:e2e",
     "test:stories": "pnpm --filter @mekong-erp/ui test:stories"
   },
   "devDependencies": {
@@ -30,12 +31,14 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-vue": "^10.11.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.9",
     "turbo": "^2.11.5",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.1",
-    "vitest": "^5.0.2"
+    "vitest": "^5.0.2",
+    "vue-eslint-parser": "^10.4.1"
   }
 }

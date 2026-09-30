@@ -6,6 +6,7 @@
   "exports": {
     "./eslint/base": "./eslint/base.js",
     "./eslint/react": "./eslint/react.js",
+    "./eslint/vue": "./eslint/vue.js",
     "./typescript/base.json": "./typescript/base.json"
   }
 }

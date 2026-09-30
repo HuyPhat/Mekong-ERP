@@ -1,0 +1,4 @@
+@import 'tailwindcss';
+/* The palette, Tailwind theme and base colours are the React app's: one file in
+   packages/ui, so the two apps can't drift apart. */
+@import '@mekong-erp/ui/tokens.css';
