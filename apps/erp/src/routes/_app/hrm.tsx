@@ -21,6 +21,8 @@ function HrmLayout() {
           className="border-b-2 px-1 pb-2 text-sm text-muted-foreground hover:text-foreground"
           activeProps={{ className: 'border-accent font-medium text-foreground' }}
           inactiveProps={{ className: 'border-transparent' }}
+          // Stay marked on the tab's own sub-pages (new, detail), whose URL carries no list search.
+          activeOptions={{ includeSearch: false }}
         >
           {t('hrm.tabs.leave')}
         </Link>

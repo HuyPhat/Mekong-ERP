@@ -48,4 +48,12 @@ test('the current module tab is marked and the others are not', async ({ page })
   const transparent = 'rgba(0, 0, 0, 0)';
   expect(await underline('Suppliers')).toBe(transparent);
   expect(await underline('Purchase Orders')).not.toBe(transparent);
+
+  // A tab stays marked on its own sub-pages. Their URLs carry no list search (page,
+  // pageSize), which the tab's link does, and that used to unmark it.
+  await gotoApp(page, '/purchasing/orders/new');
+  expect(await underline('Purchase Orders')).not.toBe(transparent);
+  expect(await underline('Suppliers')).toBe(transparent);
+  await gotoApp(page, '/hrm/leave/new');
+  expect(await underline('Leave requests')).not.toBe(transparent);
 });
