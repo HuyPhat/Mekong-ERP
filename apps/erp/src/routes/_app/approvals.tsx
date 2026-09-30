@@ -173,7 +173,7 @@ function ApprovalsInboxPage() {
       }),
       columnHelper.display({
         id: 'actions',
-        header: '',
+        header: () => <span className="sr-only">{t('approvals.columns.actions')}</span>,
         size: 260,
         cell: (info) => {
           const approval = info.row.original;

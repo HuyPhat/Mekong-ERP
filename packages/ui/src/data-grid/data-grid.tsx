@@ -243,26 +243,27 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                       }
                     >
                       <div className="flex items-center gap-1">
-                        {header.isPlaceholder ? null : (
+                        {header.isPlaceholder ? null : header.column.getCanSort() ? (
                           <button
                             type="button"
-                            className={cn(
-                              'flex items-center gap-1',
-                              header.column.getCanSort() && 'cursor-pointer hover:text-accent',
-                            )}
+                            className="flex cursor-pointer items-center gap-1 hover:text-accent"
                             onClick={header.column.getToggleSortingHandler()}
-                            disabled={!header.column.getCanSort()}
                           >
                             <table.FlexRender header={header} />
-                            {header.column.getCanSort() &&
-                              (sortDirection === 'asc' ? (
-                                <ArrowUp className="h-3 w-3" />
-                              ) : sortDirection === 'desc' ? (
-                                <ArrowDown className="h-3 w-3" />
-                              ) : (
-                                <ChevronsUpDown className="h-3 w-3 opacity-40" />
-                              ))}
+                            {sortDirection === 'asc' ? (
+                              <ArrowUp className="h-3 w-3" />
+                            ) : sortDirection === 'desc' ? (
+                              <ArrowDown className="h-3 w-3" />
+                            ) : (
+                              <ChevronsUpDown className="h-3 w-3 opacity-40" />
+                            )}
                           </button>
+                        ) : (
+                          // A column that can't sort gets plain text, not an inert (and, when the
+                          // header is empty, unnamed) button.
+                          <span className="flex items-center gap-1">
+                            <table.FlexRender header={header} />
+                          </span>
                         )}
                         {header.column.getCanPin() && (
                           <button

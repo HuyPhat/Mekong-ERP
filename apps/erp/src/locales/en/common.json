@@ -330,7 +330,8 @@
       "supplierName": "Supplier",
       "amount": "Amount",
       "approverRole": "Approver role",
-      "createdAt": "Submitted"
+      "createdAt": "Submitted",
+      "actions": "Actions"
     },
     "empty": "No approvals match these filters.",
     "searchPlaceholder": "Search by document number or supplier…",

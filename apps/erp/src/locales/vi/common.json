@@ -330,7 +330,8 @@
       "supplierName": "Nhà cung cấp",
       "amount": "Số tiền",
       "approverRole": "Vai trò duyệt",
-      "createdAt": "Ngày gửi"
+      "createdAt": "Ngày gửi",
+      "actions": "Thao tác"
     },
     "empty": "Không có yêu cầu duyệt nào khớp bộ lọc.",
     "searchPlaceholder": "Tìm theo số chứng từ hoặc nhà cung cấp…",
