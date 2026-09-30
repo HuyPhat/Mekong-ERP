@@ -127,6 +127,36 @@ async function goto(page, path) {
 }
 
 {
+  // HR: the balance and requests, the request form's live preview, and a submitted request
+  // waiting on its two approvals. Dates are worked out from today so the capture is repeatable
+  // on any day; they sit further out than the seeded leave history (about 75 days).
+  const { context, page } = await session('Nguyễn Văn An');
+  const monday = new Date(Date.now() + 120 * 86_400_000);
+  monday.setHours(12, 0, 0, 0);
+  monday.setDate(monday.getDate() + ((8 - monday.getDay()) % 7));
+  const iso = (date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  const wednesday = new Date(monday.getTime() + 2 * 86_400_000);
+
+  await goto(page, '/hrm/leave');
+  await page.getByText('Remaining', { exact: true }).waitFor();
+  await page.getByRole('grid').waitFor();
+  await shot(page, '12-leave-requests');
+
+  await goto(page, '/hrm/leave/new');
+  await page.getByLabel('First day').fill(iso(monday));
+  await page.getByLabel('Last day').fill(iso(wednesday));
+  await page.getByLabel('Reason').fill('Family trip');
+  await page.getByText('3 working days').waitFor();
+  await shot(page, '13-leave-request-form');
+
+  await page.getByRole('button', { name: 'Submit request' }).click();
+  await page.getByText('Director — Pending').waitFor();
+  await shot(page, '14-leave-request-approvals', { fullPage: true });
+  await context.close();
+}
+
+{
   const { context, page } = await session('Lê Thị Cúc', { lang: 'vi', theme: 'dark' });
   await page.getByText('Doanh thu (tháng này)').first().waitFor();
   await shot(page, '10-dashboard-dark-vietnamese', { fullPage: true });
