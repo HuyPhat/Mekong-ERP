@@ -58,6 +58,7 @@ export interface DataGridLabels {
   switchToCompactDensity: string;
   switchToComfortableDensity: string;
   exportCsv: string;
+  exportXlsx: string;
   selectAllRows: string;
   selectRow: string;
   pinColumn: string;
@@ -84,6 +85,7 @@ export const defaultDataGridLabels: DataGridLabels = {
   switchToCompactDensity: 'Compact density',
   switchToComfortableDensity: 'Comfortable density',
   exportCsv: 'Export CSV',
+  exportXlsx: 'Export Excel',
   selectAllRows: 'Select all rows',
   selectRow: 'Select row',
   pinColumn: 'Pin column',

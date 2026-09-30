@@ -24,5 +24,6 @@ export * from './data-grid/types';
 export * from './data-grid/data-grid';
 export * from './data-grid/cells';
 export * from './data-grid/csv';
+export * from './data-grid/xlsx';
 export * from './data-grid/filters';
 export * from './data-grid/saved-views';

@@ -53,6 +53,7 @@ export interface DataGridProps<TData extends object> {
   searchPlaceholder?: string;
   toolbarExtra?: ReactNode;
   onExportCsv?: () => void;
+  onExportXlsx?: () => void;
 
   enableRowSelection?: boolean;
   bulkActions?: BulkAction<TData>[];
@@ -83,6 +84,7 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
     searchPlaceholder,
     toolbarExtra,
     onExportCsv,
+    onExportXlsx,
     enableRowSelection = false,
     bulkActions,
     renderFooter,
@@ -171,6 +173,8 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
         searchPlaceholder={searchPlaceholder}
         toolbarExtra={toolbarExtra}
         onExportCsv={onExportCsv}
+        onExportXlsx={onExportXlsx}
+        exportDisabled={isLoading || isError}
         columns={toggleableColumns}
         density={layout.density}
         onDensityChange={(density) => updateLayout({ density })}

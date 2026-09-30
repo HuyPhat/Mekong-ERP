@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Search, Download, Columns3, RotateCcw, Rows3, Rows2 } from 'lucide-react';
+import { Search, Download, FileSpreadsheet, Columns3, RotateCcw, Rows3, Rows2 } from 'lucide-react';
 import { Button } from '../components/button';
 import {
   DropdownMenu,
@@ -24,6 +24,9 @@ export interface DataGridToolbarProps {
   searchPlaceholder?: string | undefined;
   toolbarExtra?: ReactNode | undefined;
   onExportCsv?: (() => void) | undefined;
+  onExportXlsx?: (() => void) | undefined;
+  /** Exporting while the data is loading (or failed to load) would produce an empty file. */
+  exportDisabled?: boolean | undefined;
   columns?: ToggleableColumn[] | undefined;
   density: Density;
   onDensityChange: (density: Density) => void;
@@ -37,6 +40,8 @@ export function DataGridToolbar({
   searchPlaceholder = 'Search…',
   toolbarExtra,
   onExportCsv,
+  onExportXlsx,
+  exportDisabled = false,
   columns,
   density,
   onDensityChange,
@@ -127,9 +132,16 @@ export function DataGridToolbar({
         )}
 
         {onExportCsv && (
-          <Button variant="outline" size="sm" onClick={onExportCsv}>
+          <Button variant="outline" size="sm" onClick={onExportCsv} disabled={exportDisabled}>
             <Download className="h-4 w-4" />
             {labels.exportCsv}
+          </Button>
+        )}
+
+        {onExportXlsx && (
+          <Button variant="outline" size="sm" onClick={onExportXlsx} disabled={exportDisabled}>
+            <FileSpreadsheet className="h-4 w-4" />
+            {labels.exportXlsx}
           </Button>
         )}
       </div>

@@ -1,4 +1,5 @@
 import Papa from 'papaparse';
+import { downloadBlob } from './download';
 
 // A leading =, +, -, or @ can execute as a formula when the CSV is opened in
 // Excel/Sheets. Prefix with an apostrophe (rendered as plain text) if unsafe.
@@ -23,13 +24,7 @@ export function exportCsv<TRow>(rows: TRow[], columns: CsvColumn<TRow>[], filena
     return record;
   });
   const csv = Papa.unparse(data);
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), filename);
 }
 
 export interface CsvParseResult {
