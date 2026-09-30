@@ -10,7 +10,8 @@ export function Shell({ children }: { children: ReactNode }) {
       <div className="print:hidden">
         <Sidebar />
       </div>
-      <div className="flex flex-1 flex-col">
+      {/* min-w-0: a flex item never shrinks below its content, so without it a wide grid stretches the whole page (top bar included) instead of scrolling inside its own container. */}
+      <div className="flex min-w-0 flex-1 flex-col">
         <div className="print:hidden">
           <Topbar />
         </div>
