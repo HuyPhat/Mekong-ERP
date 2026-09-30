@@ -27,4 +27,11 @@ export * from './realtime-events';
 export * from './graphql-client';
 export * from './dashboard-client';
 export { ensureSeeded, resetSeed } from './seed';
-export { PRODUCT_CATEGORIES, PRODUCT_UNITS } from './seed/products';
+export {
+  DEFAULT_DEV_CONFIG,
+  DevConfigSchema,
+  getDevConfig,
+  setDevConfig,
+  type DevConfig,
+} from './dev-config';
+export { PRODUCT_CATEGORIES, PRODUCT_UNITS } from './seed/product-catalog';

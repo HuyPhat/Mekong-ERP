@@ -1,3 +1,4 @@
+import { devPanelHandlers } from './handlers/dev-panel';
 import { sessionHandlers } from './handlers/session';
 import { inventoryHandlers } from './handlers/inventory';
 import { purchasingHandlers } from './handlers/purchasing';
@@ -8,6 +9,7 @@ import { dashboardHandlers } from './handlers/dashboard';
 import { wsHandlers } from './ws';
 
 export const handlers = [
+  ...devPanelHandlers,
   ...sessionHandlers,
   ...inventoryHandlers,
   ...purchasingHandlers,

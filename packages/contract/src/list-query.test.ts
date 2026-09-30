@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { applySort, matchesSearch, paginate, parseSort } from './list-query';
+import {
+  applySort,
+  buildListQuery,
+  matchesSearch,
+  paginate,
+  parseListParams,
+  parseSort,
+} from './list-query';
 
 describe('parseSort', () => {
   it('returns an empty array for null or empty input', () => {
@@ -120,5 +127,56 @@ describe('matchesSearch', () => {
 
   it('returns false when no listed field contains the query', () => {
     expect(matchesSearch(product, 'nonexistent', ['name', 'sku'])).toBe(false);
+  });
+});
+
+describe('parseListParams', () => {
+  const defaults = [{ field: 'createdAt', direction: 'desc' as const }];
+
+  it('falls back to page 1, size 50, the default sort and no query', () => {
+    expect(parseListParams(new URL('http://x/api/things'), defaults)).toEqual({
+      page: 1,
+      pageSize: 50,
+      sort: defaults,
+      q: '',
+    });
+  });
+
+  it('reads explicit params and prefers a requested sort over the default', () => {
+    const url = new URL('http://x/api/things?page=3&pageSize=25&sort=name:asc&q=tea');
+    expect(parseListParams(url, defaults)).toEqual({
+      page: 3,
+      pageSize: 25,
+      sort: [{ field: 'name', direction: 'asc' }],
+      q: 'tea',
+    });
+  });
+
+  it('ignores non-numeric paging instead of producing NaN', () => {
+    const parsed = parseListParams(new URL('http://x/api?page=abc&pageSize=zzz'), defaults);
+    expect(parsed.page).toBe(1);
+    expect(parsed.pageSize).toBe(50);
+  });
+});
+
+describe('buildListQuery', () => {
+  it('always sends page and pageSize', () => {
+    expect(buildListQuery({ page: 2, pageSize: 10 })).toBe('page=2&pageSize=10');
+  });
+
+  it('adds sort, search and filter[...] params, skipping empty filters', () => {
+    const query = buildListQuery({
+      page: 1,
+      pageSize: 50,
+      sort: 'name:asc',
+      q: 'tra xanh',
+      filters: { status: 'approved', supplierId: undefined, category: '' },
+    });
+    const params = new URLSearchParams(query);
+    expect(params.get('sort')).toBe('name:asc');
+    expect(params.get('q')).toBe('tra xanh');
+    expect(params.get('filter[status]')).toBe('approved');
+    expect(params.has('filter[supplierId]')).toBe(false);
+    expect(params.has('filter[category]')).toBe(false);
   });
 });
