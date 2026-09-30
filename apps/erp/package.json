@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc -b",
-    "test": "vitest run"
+    "test": "vitest run",
+    "budget": "node scripts/check-bundle-budget.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

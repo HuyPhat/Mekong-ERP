@@ -36,5 +36,30 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Domain-logic coverage (thresholds enforced)
+        run: pnpm --filter @mekong-erp/contract test:coverage
+
       - name: Build
         run: pnpm build
+
+      - name: Initial-load bundle budget
+        run: pnpm --filter @mekong-erp/erp budget
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the image
+        run: docker build -t mekong-erp:ci .
+
+      - name: Smoke test the container and its security headers
+        run: |
+          docker run -d --rm -p 8080:8080 --name erp mekong-erp:ci
+          for i in $(seq 1 20); do curl -fsS -o /dev/null http://localhost:8080/ && break; sleep 1; done
+          headers=$(curl -fsSI http://localhost:8080/)
+          echo "$headers"
+          echo "$headers" | grep -i "content-security-policy: default-src 'self'"
+          echo "$headers" | grep -i "x-content-type-options: nosniff"
+          curl -fsS -o /dev/null -w '%{http_code}\n' http://localhost:8080/some/deep/link
+          docker stop erp
