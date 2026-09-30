@@ -15,6 +15,22 @@ so the whole thing runs and deploys with no real server.
 
 ## Current status
 
+Phase 5 (Quality, docs, deploy) landed 2026-09-30 **except deployment**: no
+Vercel projects exist, so there is no live URL, and the exit criterion "both
+apps deployed" is unmet (see `docs/PLAN.md` §13 for the owner's steps). What
+landed: 25 Playwright specs (full P2P and O2C flows, RBAC, dashboard, grid,
+demo tools, layout, axe WCAG A/AA) run against the production build with the
+real CSP; 150 unit tests with 99% line coverage of the pure domain modules;
+strict security headers with a drift test; a 300 kB gzip initial-JS budget
+(currently 273 kB); Lighthouse 98–100 across the app and 100 on the site;
+`apps/site` with real content and SEO; README, `docs/workflows`, DEMO_SCRIPT,
+SECURITY, CONTRIBUTING, LICENSE, screenshots; Dockerfile, `vercel.json` files,
+and CI jobs for coverage, budget, e2e and a Docker build. It also added the
+missing **Demo tools** (user menu: reset demo data, simulated latency and
+failures) and fixed a dozen real defects the new checks found (list in
+`docs/PLAN.md` §14). The Phase 4 summary below is still accurate for what each
+module does.
+
 Phase 4 (Order-to-Cash, Accounting, Dashboard, Realtime) landed 2026-09-30,
 on top of Phase 3's P2P flow, Phase 2's DataGrid + Inventory, and Phase 1's
 logged-in shell. `apps/erp` now also has a full O2C flow: Customers list,
@@ -52,16 +68,18 @@ pnpm format           # prettier --write
 pnpm format:check     # prettier --check
 ```
 
-`pnpm test:e2e` and `pnpm storybook` don't exist yet. `packages/ui` now has
-DataGrid (the component Storybook was deliberately waiting for, per the
-Phase 1 note this replaces) alongside Button/Dialog/DropdownMenu/Command,
-so the payoff case for Storybook is real now — but setting it up is a
-project-owner call (new tooling, not free), not something to add silently.
-Playwright e2e still lands per the plan, in Phase 5. Don't claim either runs
-until actually wired up.
+Also: `pnpm test:e2e` (builds `apps/erp`, then runs Playwright against
+`vite preview`; ~9 min locally, ~5 min on CI), `pnpm --filter
+@mekong-erp/contract test:coverage` (domain-logic thresholds), and `pnpm
+--filter @mekong-erp/erp budget` (initial-bundle budget; run after a build).
+`pnpm storybook` does not exist: `packages/ui` has DataGrid and FormKit, so the
+payoff case is real, but adding Storybook is a project-owner call (new
+tooling), not something to add silently. Don't claim it runs.
 
 Run `pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build`
-before every commit that touches app code (this is exactly what CI runs).
+before every commit that touches app code (this is what CI's main job runs;
+CI additionally runs coverage thresholds, the bundle budget, `pnpm test:e2e`
+and a Docker build as separate jobs).
 
 ## Non-negotiable conventions
 
@@ -86,6 +104,9 @@ before every commit that touches app code (this is exactly what CI runs).
   `useCan()`, and route `beforeLoad` guards — but never claim or imply this
   is real authorization; `SECURITY.md` says so explicitly, and any doc/comment
   suggesting otherwise is wrong.
+- **Import `z` from `@mekong-erp/contract`, never from `'zod'`** (ESLint
+  enforces it). The contract's wrapper turns Zod's JIT off, because Zod 4's
+  `new Function` probe otherwise violates the CSP on every load (ADR-0012).
 - **`packages/contract` stays framework-agnostic** — no React imports. This
   is what lets `apps/erp-vue` (stretch) reuse it.
 - Feature-sliced structure inside `apps/erp/src/features/*`: a feature owns
@@ -115,8 +136,8 @@ because a task "seems small.")
 
 ## Definition of done (per phase, and per meaningful PR-sized chunk)
 
-- [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` green (+
-      `pnpm test:e2e` once it exists).
+- [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` green, plus
+      `pnpm test:e2e` when the change touches UI or a business flow.
 - [ ] No new `any`, no console errors/warnings introduced in dev.
 - [ ] Tests added for this phase's new domain logic — not deferred to a
       later "testing phase."
@@ -130,9 +151,10 @@ because a task "seems small.")
 - `docs/PLAN.md` — full spec, phase plan, risks, ADR backlog, open questions.
 - `docs/adr/NNNN-title.md` — one file per significant decision.
 - `docs/workflows/` — user stories + Mermaid diagrams (P2P, O2C, approvals).
-- `docs/DEMO_SCRIPT.md` — written in Phase 5.
-- `README.md` — written in Phase 5 (needs real, working features to point at
-  before it's worth writing).
+- `docs/DEMO_SCRIPT.md` — guided walk-through for a reviewer.
+- `README.md` — public front page: JD mapping with honest statuses, quality
+  numbers, deploy steps. Numbers in it must be re-measured, not edited by hand.
+- `SECURITY.md`, `CONTRIBUTING.md`, `LICENSE` (MIT).
 
 ## Confirmed decisions
 
@@ -148,12 +170,13 @@ settled, not defaults):
 
 ## Status of this plan
 
-Phase 4 is complete (approved 2026-09-29 via "Move on", landed 2026-09-30 —
-see `docs/PLAN.md` §14). **Phase 5 (Quality, docs, deploy) has not been
-asked for yet** — don't start Playwright e2e, axe/Lighthouse passes, the
-performance budget, security headers, the README/architecture write-up, or
-deployment until the project owner explicitly says to move on, per the
-standing "ask before" rules above.
+Phase 5 is complete except deployment (approved 2026-09-30 via "Move on",
+landed 2026-09-30 — see `docs/PLAN.md` §14). **Nothing is deployed**: the
+project owner has to create the two Vercel projects (`docs/PLAN.md` §13) and
+put the live links in the README. **Phase 6 (stretch: Vue approvals inbox, HRM
+leave requests, Storybook, XLSX export) has not been asked for** — don't start
+it until the project owner explicitly says to move on, per the standing "ask
+before" rules above.
 
 Known gaps carried forward rather than overstated as done:
 
@@ -182,6 +205,12 @@ Known gaps carried forward rather than overstated as done:
   GraphQL surface is intentionally exactly one query (`DashboardAggregates`,
   PLAN.md §9 risk 4) — there is no other GraphQL endpoint to extend without
   a deliberate decision to widen that surface.
+- From Phase 5: e2e runs in Chromium only; Lighthouse was measured on local
+  production builds with the desktop preset (not on a hosted deployment or the
+  mobile preset); the layout is desktop-first and not tuned for phones; no
+  GIF/Loom was recorded (only `docs/DEMO_SCRIPT.md`); the Vercel configuration
+  has never run on Vercel (the Docker image was built and smoke-tested by CI,
+  not locally, as the authoring sandbox has no Docker daemon).
 
 Pick these up if a future phase's work would benefit, or if asked.
 
@@ -291,3 +320,62 @@ Pick these up if a future phase's work would benefit, or if asked.
   not `textContent`. A regex asserting on `innerText` against such an
   element needs to match the transformed case (or use `/i`), even though the
   source text/props never changed case.
+- **`watch('lines')` is not a safe `useMemo` dependency.** React Hook Form
+  returns its own array there and mutates it in place as fields change, so a
+  memo keyed on it never recomputes; the PO wizard's Review step and the
+  quotation form showed a blank line and a 0 VND total (the submitted document
+  was correct). Use `useWatch({ control, name })`, which returns a fresh value
+  on every change. The e2e P2P spec asserts the 220,000 VND review total.
+- **Zod 4 + CSP.** Zod probes `new Function('')` when each schema is
+  constructed; under a CSP without `unsafe-eval` that is reported as a
+  `securitypolicyviolation` even though the throw is caught. Nothing breaks and
+  no console check notices (Lighthouse's "issues logged in DevTools" audit
+  did). `z.config({ jitless: true })` fixes it, but only if it runs before the
+  first schema is built, and a side-effect-only config module was evaluated by
+  the bundler after the chunk that had already built the schemas. So
+  `packages/contract/src/zod.ts` sets it and re-exports `z` (a data
+  dependency), and ESLint forbids `import ... from 'zod'` elsewhere.
+- **A flex item never shrinks below its content** — the app shell's content
+  column needs `min-w-0`, otherwise a wide grid stretches the whole page and
+  pushes the top bar (user menu, theme, language) off-screen at 1360px.
+  Playwright treats an off-screen element as _visible_, so only an explicit
+  `toBeInViewport()` / `scrollWidth <= innerWidth` check catches it
+  (`e2e/layout.spec.ts`).
+- **e2e conventions** (`apps/erp/e2e`, ADR-0011). Specs run against `vite
+preview` of the production build, with the real CSP. Seeding takes ~1 min, so
+  `global-setup.ts` seeds once and saves `e2e/.auth/seeded.json` (~78 MB,
+  gitignored, IndexedDB included); every test restores it, which is most of
+  each test's ~50 s. `E2E_REUSE_SEED=1` skips reseeding for local iteration
+  (rebuild `dist` first if app code changed). A sandbox's preinstalled Chromium
+  may not match the Playwright version: set
+  `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. Vitest in `apps/erp` must exclude
+  `e2e/**` (set in `vite.config.ts`) or it collects the specs.
+- **Assertion traps found while writing the specs.** `expect(body).toContainText`
+  sees adjacent elements' text run together (`QUO-2026-001307Sent`), so
+  `\bSent\b` never matches and `Received` would match `Partially received`:
+  use the `expectStatus` helper (exact badge text). Grid search is debounced, so
+  the first Approve button in the still-unfiltered inbox belongs to another
+  document: scope the click to the row containing this document's number.
+  Recharts draws lines with a ~1.5 s entrance animation and opens a tooltip
+  under a stationary pointer: for screenshots or axe runs, park the mouse and
+  wait, or you will "see" a half-empty chart (the earlier false alarm) or a
+  tooltip mid-fade.
+- **Colour tokens are measured, not eyeballed.** Text on white and on a 10%
+  tint of itself (badges) must be >= 4.5:1; the light-mode accent, success,
+  warning and destructive tokens are >= 5:1. Keep chroma inside sRGB (a
+  wider-gamut value is gamut-mapped by the browser to something with
+  different contrast). Dark mode already passed.
+- **Lighthouse here.** `npx lighthouse` (not a repo dependency) can't launch its
+  own Chrome in this sandbox; start Chromium yourself with
+  `--remote-debugging-port=N --user-data-dir=...` and pass `--port=N`. Use a
+  profile that was seeded first plus `--disable-storage-reset`, otherwise you
+  are measuring the 110k-record seed, not the app. The app can't be audited
+  cold: a genuine first visit reached the login page in 9.0 s on an idle
+  machine.
+- **Sandbox shell gotcha.** `pkill -f`/`pgrep -f` inside a Bash call also matches
+  the calling shell's own command line (the command text contains the pattern)
+  and kills it (exit 144). Kill by PID, or put the kill in a script file and run
+  it as its own command, never in the same command as the process it targets.
+- The README's screenshots come from `apps/erp/scripts/capture-screenshots.mjs`
+  against a running `vite preview` (reuses the e2e seeded state); regenerate
+  them rather than hand-editing when the UI changes.

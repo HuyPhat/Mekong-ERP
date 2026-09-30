@@ -1,7 +1,7 @@
 # Mekong ERP — Project Plan
 
-Status: **Phase 4 complete (Order-to-Cash, Accounting, Dashboard, Realtime).
-Phase 5 not yet started.**
+Status: **Phase 5 (Quality, docs, deploy) complete except deployment: nothing
+is hosted yet.** Phase 6 (stretch) not started.
 Last updated: 2026-09-30
 
 This document is the durable source of truth for scope, architecture, phasing,
@@ -374,6 +374,12 @@ Written:
 - [**0010**](adr/0010-general-ledger-and-aging-model.md) — GL/trial-balance/
   aging computed on-demand from journal entries at read time, rather than a
   separate running-balance store.
+- [**0011**](adr/0011-end-to-end-and-accessibility-testing.md) — End-to-end and
+  accessibility tests run against the production build, from a pre-seeded
+  IndexedDB snapshot, failing on any console error.
+- [**0012**](adr/0012-security-headers-single-source.md) — Security headers
+  defined once (`security-headers.ts`), served by `vite preview`, mirrored in
+  `vercel.json`/`nginx.conf`, with a drift test.
 
 ## 12. Open questions
 
@@ -412,12 +418,17 @@ XLSX, which is a scope/prioritization call rather than an architectural one:
 
 ## 13. Immediate next step
 
-Phase 4 is done (§14). **Phase 5 (Quality, docs, deploy) has not been asked
-for yet** — per the standing "ask before" rules, work on Playwright e2e
-specs, axe/Lighthouse passes, the performance budget, security headers,
-README/architecture write-up + screenshots, `apps/site` real content, the
-Dockerfile, or deployment will not start until the project owner explicitly
-says to move on.
+Phase 5 is done except for what only the project owner can do (§14). The
+exit criterion "both apps deployed" is **not** met: nothing here can create
+Vercel projects. To finish it, the owner creates two Vercel projects from this
+repo with root directories `apps/erp` and `apps/site` (each already has a
+`vercel.json`), sets `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_DEMO_URL` on the
+site project, then replaces the README's "not deployed yet" line with the live
+links and records a short screen capture from `docs/DEMO_SCRIPT.md`.
+
+**Phase 6 (stretch: Vue approvals inbox, HRM leave requests, Storybook, XLSX
+export) has not been asked for** — per the standing "ask before" rules it will
+not start until the project owner explicitly says to move on.
 
 ## 14. Progress log
 
@@ -768,3 +779,97 @@ table.getTotalSize()` on the `<tbody>`.
 format:check`, `lint`, `typecheck`, `test` (127 tests: 95 contract + 19 ui
   - 13 erp), and `build` all green across every package. Pushed to
     `claude/vibrant-mccarthy-hj07u8`.
+- **2026-09-30** — Project owner said to move on to Phase 5. Two tooling
+  approvals first: `@vitest/coverage-v8` (not named in §3) and deleting two
+  stray `--help/` and `--version/` husky directories at the repo root.
+  `@playwright/test` and `@axe-core/playwright` were already named in §3.
+  **Audit against the plan** found gaps left by earlier phases: no "reset demo
+  data" action (§1 success criteria) and no dev panel for latency and
+  failures (§7), and no `docs/workflows`, LICENSE, SECURITY.md or
+  CONTRIBUTING. Built the first two as **Demo tools** in the user menu (reset
+  behind a second confirmation; latency 150–600 ms on by default and a random
+  failure rate, via a catch-all MSW handler that falls through to the real
+  ones, with `/api/session` exempt so a failure toggle can't lock the user
+  out) and wrote the rest.
+  **Testing.** 25 Playwright specs run against the production build served
+  with the real security headers ([ADR-0011](adr/0011-end-to-end-and-accessibility-testing.md)):
+  auth/RBAC, the full procure-to-pay and order-to-cash flows (asserting exact
+  status badges, the wizard review total and a balanced trial balance
+  afterwards), dashboard and realtime toast, inventory grid, demo tools,
+  layout, and axe-core (WCAG 2.0/2.1 A + AA) on login, five screens and the
+  dark dashboard. Every spec fails on any console error, page error or
+  `securitypolicyviolation`. Seeding takes about a minute, so a global setup
+  seeds once and each test restores the saved storage state (IndexedDB
+  included). Unit tests are now 150 (115 contract, 19 ui, 16 erp); coverage of
+  the pure domain-logic modules is 99% of lines (98% statements, 94%
+  branches), thresholds enforced in CI, scope stated in
+  `packages/contract/vitest.config.ts`.
+  **What the new tooling found**, none of it visible to lint, types or the 127
+  earlier tests, each fixed and (where practical) covered by a regression
+  check: the PO wizard's Review step and the quotation form showed a blank
+  line and a 0 VND total when edited quickly, because a `useMemo` was keyed on
+  the array `watch('lines')` returns, which React Hook Form mutates in place
+  (the submitted document was correct; fixed with `useWatch`); light-mode
+  accent, success and warning colours failed WCAG AA (4.26:1, 4.00:1 and
+  4.01:1 measured; darkened to at least 5:1 and kept inside sRGB); a DataGrid
+  header rendered an unnamed button for a non-sortable column; every page load
+  404'd on a missing favicon and `<html lang>` stayed `en` under a Vietnamese
+  UI; on Products and Approvals the whole page grew wider than a 1360px
+  viewport and pushed the top bar's user menu off-screen (the shell's content
+  column lacked `min-w-0`; noticed in a documentation screenshot because
+  Playwright counts an off-screen element as visible, and now covered by a spec
+  that fails without the fix); Zod 4's `new Function` probe violated the CSP
+  on every load (details under security below); heading order, a language
+  button whose accessible name didn't contain its visible text, form fields
+  without `name`, and missing `<main>` landmarks on standalone pages; and the
+  marketing site had no favicon.
+  **Performance.** Faker and every seed generator are now a lazily imported
+  chunk, so a returning visitor (whose IndexedDB already holds the data) no
+  longer downloads them: initial JS fell from about 437 kB to 273 kB gzipped,
+  with a 300 kB / 20 kB gzip budget enforced in CI. Lighthouse 13.5 (desktop
+  preset, local production builds, warm profile so the seed isn't measured):
+  the app scores 98–99 performance and 100 accessibility, best practices and
+  SEO on the login, dashboard and products pages (before the fixes above:
+  96 / 98 / 96 / 100 on the dashboard); the static site scores 100 in all four
+  categories on all three pages. Caveats: these are local runs, not a hosted
+  deployment, and the mobile preset was not measured. A genuine cold first
+  visit (fresh profile, seeding 110,000+ records) reached the interactive
+  login page in 9.0 s on an idle machine, unthrottled (the e2e global setup,
+  which also serializes the storage state, takes about a minute).
+  **Security** ([ADR-0012](adr/0012-security-headers-single-source.md)):
+  `security-headers.ts` is the single source for a strict CSP
+  (`script-src 'self'`, no inline scripts or eval, `frame-ancestors 'none'`)
+  and hardening headers, served by `vite preview`, mirrored in `vercel.json`
+  and `nginx.conf`, with a test that fails on drift; `SECURITY.md` states that
+  client-side RBAC is UX, not authorization. The CSP finding: Zod 4 probes
+  `new Function('')` when each schema is constructed, and under a CSP without
+  `unsafe-eval` that is reported as a violation even though the throw is
+  caught, so nothing broke and no console check noticed; Lighthouse's "issues
+  logged in DevTools" audit found it. `z.config({ jitless: true })` fixes it,
+  but a side-effect-only config module was evaluated by the bundler after the
+  chunk that had already built the schemas (confirmed in the built output), so
+  every schema now imports `z` from one wrapper module that sets the option
+  and re-exports it, an ESLint rule forbids importing `zod` directly, and the
+  e2e fixture fails on the violation (verified to fail without the fix).
+  **Deploy config and CI.** `vercel.json` for both apps, a multi-stage
+  Dockerfile serving the build via unprivileged nginx, a compose file, and CI
+  jobs for domain-logic coverage thresholds, the bundle budget, the Playwright
+  suite, and a Docker image build with a smoke test of the container's
+  headers. The authoring sandbox had no Docker daemon, so the image was
+  verified only by CI: the first run with those jobs (24 specs at that commit)
+  passed all three jobs on GitHub's runners, e2e in about five minutes.
+  **Docs.** README with an honest requirement-to-feature table (Done, Partial
+  or Not built per row), architecture diagram, quality table and known
+  limitations; user stories and Mermaid state diagrams checked against the
+  code's status enums, posting rules and approval thresholds
+  (`docs/workflows`); a demo script; CONTRIBUTING; MIT LICENSE; 11 screenshots
+  captured from the real production build by a script; and the
+  Next.js site (landing, case study, architecture; metadata, sitemap, robots,
+  OG image).
+  **Not done, stated plainly.** Nothing is deployed (§13); no GIF or Loom was
+  recorded, only the script; e2e runs in Chromium only; Lighthouse was not run
+  against a hosted deployment or with the mobile preset; Storybook and the Vue
+  and HRM stretch items were not built (not asked for); the responsive claim is
+  desktop-first, not phone-tuned. Known gaps from earlier phases (drag-reorder
+  handle, arrow-key cell navigation, `changes_requested` re-open, in-memory
+  comboboxes, same-tab realtime, on-demand ledger) carry forward unchanged.

@@ -28,6 +28,11 @@ The "session" is a mocked endpoint that stores the chosen demo persona in
   because Radix, Recharts and TanStack Virtual set inline style attributes. The e2e suite
   runs against the production build served with exactly these headers, so a CSP
   violation surfaces as a failing console-error check.
+- **No `eval` anywhere.** Zod 4 probes `new Function` for its JIT parser, which a
+  CSP without `'unsafe-eval'` blocks and reports on every load. Zod runs with JIT
+  disabled (`z.config({ jitless: true })` in the contract package's `z` wrapper,
+  enforced by a lint rule), and the end-to-end suite fails on any
+  `securitypolicyviolation`.
 - **No raw HTML rendering.** Values are rendered through React (escaped by default);
   there is no `dangerouslySetInnerHTML`.
 - **CSV formula-injection sanitization.** Exported cells beginning with `=`, `+`, `-`
