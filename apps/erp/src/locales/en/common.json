@@ -396,6 +396,8 @@
     "switchToCompactDensity": "Compact density",
     "switchToComfortableDensity": "Comfortable density",
     "exportCsv": "Export CSV",
+    "exportXlsx": "Export Excel",
+    "exportFailed": "The export could not be created.",
     "selectAllRows": "Select all rows",
     "selectRow": "Select row",
     "pinColumn": "Pin column",

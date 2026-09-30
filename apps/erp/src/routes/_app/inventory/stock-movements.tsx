@@ -7,7 +7,10 @@ import {
   NumberCell,
   FilterBar,
   exportCsv,
+  exportXlsx,
+  toast,
   type ColumnFilterConfig,
+  type XlsxColumn,
 } from '@mekong-erp/ui';
 import { PERMISSIONS, MovementTypeSchema, type StockMovementView } from '@mekong-erp/contract';
 import { requirePermission } from '../../../shared/permissions/guards';
@@ -122,41 +125,39 @@ function StockMovementsPage() {
     });
   }, [data, search.type, search.occurredAtFrom, search.occurredAtTo, search.q]);
 
-  function handleExport() {
-    exportCsv(
-      filteredRows,
-      [
-        {
-          header: t('inventory.stockMovements.columns.occurredAt'),
-          get: (row: StockMovementView) => row.occurredAt,
-        },
-        {
-          header: t('inventory.products.columns.sku'),
-          get: (row: StockMovementView) => row.productSku,
-        },
-        {
-          header: t('inventory.products.columns.name'),
-          get: (row: StockMovementView) => row.productName,
-        },
-        {
-          header: t('inventory.stockLevels.columns.warehouse'),
-          get: (row: StockMovementView) => row.warehouseName,
-        },
-        {
-          header: t('inventory.stockMovements.columns.type'),
-          get: (row: StockMovementView) => row.type,
-        },
-        {
-          header: t('inventory.stockMovements.columns.quantity'),
-          get: (row: StockMovementView) => row.quantity,
-        },
-        {
-          header: t('inventory.stockMovements.columns.reference'),
-          get: (row: StockMovementView) => row.reference,
-        },
-      ],
-      'stock-movements.csv',
-    );
+  // One column list feeds both exports; `type` only matters to the XLSX cell format.
+  function buildExportColumns(): XlsxColumn<StockMovementView>[] {
+    return [
+      {
+        header: t('inventory.stockMovements.columns.occurredAt'),
+        get: (row) => row.occurredAt,
+        type: 'datetime',
+      },
+      { header: t('inventory.products.columns.sku'), get: (row) => row.productSku },
+      { header: t('inventory.products.columns.name'), get: (row) => row.productName },
+      { header: t('inventory.stockLevels.columns.warehouse'), get: (row) => row.warehouseName },
+      { header: t('inventory.stockMovements.columns.type'), get: (row) => row.type },
+      {
+        header: t('inventory.stockMovements.columns.quantity'),
+        get: (row) => row.quantity,
+        type: 'integer',
+      },
+      { header: t('inventory.stockMovements.columns.reference'), get: (row) => row.reference },
+    ];
+  }
+
+  function handleExportCsv() {
+    exportCsv(filteredRows, buildExportColumns(), 'stock-movements.csv');
+  }
+
+  async function handleExportXlsx() {
+    try {
+      await exportXlsx(filteredRows, buildExportColumns(), 'stock-movements.xlsx', {
+        sheetName: t('inventory.tabs.stockMovements'),
+      });
+    } catch {
+      toast({ title: t('dataGrid.exportFailed'), variant: 'destructive' });
+    }
   }
 
   return (
@@ -199,7 +200,8 @@ function StockMovementsPage() {
           void navigate({ search: (prev) => ({ ...prev, q: value || undefined }) })
         }
         searchPlaceholder={t('inventory.stockMovements.searchPlaceholder')}
-        onExportCsv={handleExport}
+        onExportCsv={handleExportCsv}
+        onExportXlsx={() => void handleExportXlsx()}
         labels={dataGridLabels}
       />
     </div>

@@ -23,6 +23,7 @@ export function buildDataGridLabels(t: TFunction): DataGridLabels {
     switchToCompactDensity: t('dataGrid.switchToCompactDensity'),
     switchToComfortableDensity: t('dataGrid.switchToComfortableDensity'),
     exportCsv: t('dataGrid.exportCsv'),
+    exportXlsx: t('dataGrid.exportXlsx'),
     selectAllRows: t('dataGrid.selectAllRows'),
     selectRow: t('dataGrid.selectRow'),
     pinColumn: t('dataGrid.pinColumn'),

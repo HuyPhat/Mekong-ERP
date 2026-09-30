@@ -8,12 +8,15 @@ import {
   MoneyCell,
   NumberCell,
   exportCsv,
+  exportXlsx,
+  toast,
   FilterBar,
   SavedViewsMenu,
   Button,
   type ColumnFilterConfig,
   type BulkAction,
   type BulkActionResult,
+  type XlsxColumn,
 } from '@mekong-erp/ui';
 import {
   PERMISSIONS,
@@ -179,25 +182,53 @@ function ProductsPage() {
   const filterBarLabels = useMemo(() => buildFilterBarLabels(t), [t]);
   const savedViewsLabels = useMemo(() => buildSavedViewsLabels(t), [t]);
 
-  async function handleExport() {
+  // One column list feeds both exports; `type` only matters to the XLSX cell format.
+  function buildExportColumns(): XlsxColumn<Product>[] {
+    return [
+      { header: t('inventory.products.columns.sku'), get: (row) => row.sku },
+      { header: t('inventory.products.columns.name'), get: (row) => row.name },
+      { header: t('inventory.products.columns.category'), get: (row) => row.category },
+      { header: t('inventory.products.columns.unit'), get: (row) => row.unit },
+      {
+        header: t('inventory.products.columns.costPrice'),
+        get: (row) => row.costPrice,
+        type: 'money',
+      },
+      {
+        header: t('inventory.products.columns.salePrice'),
+        get: (row) => row.salePrice,
+        type: 'money',
+      },
+      {
+        header: t('inventory.products.columns.reorderPoint'),
+        get: (row) => row.reorderPoint,
+        type: 'integer',
+      },
+      {
+        header: t('inventory.products.columns.createdAt'),
+        get: (row) => row.createdAt,
+        type: 'date',
+      },
+    ];
+  }
+
+  async function fetchAllProducts() {
     const all = await fetchProducts({ ...params, page: 1, pageSize: data?.meta.total ?? 10_000 });
-    exportCsv(
-      all.data,
-      [
-        { header: t('inventory.products.columns.sku'), get: (row: Product) => row.sku },
-        { header: t('inventory.products.columns.name'), get: (row: Product) => row.name },
-        { header: t('inventory.products.columns.category'), get: (row: Product) => row.category },
-        { header: t('inventory.products.columns.unit'), get: (row: Product) => row.unit },
-        { header: t('inventory.products.columns.costPrice'), get: (row: Product) => row.costPrice },
-        { header: t('inventory.products.columns.salePrice'), get: (row: Product) => row.salePrice },
-        {
-          header: t('inventory.products.columns.reorderPoint'),
-          get: (row: Product) => row.reorderPoint,
-        },
-        { header: t('inventory.products.columns.createdAt'), get: (row: Product) => row.createdAt },
-      ],
-      'products.csv',
-    );
+    return all.data;
+  }
+
+  async function handleExportCsv() {
+    exportCsv(await fetchAllProducts(), buildExportColumns(), 'products.csv');
+  }
+
+  async function handleExportXlsx() {
+    try {
+      await exportXlsx(await fetchAllProducts(), buildExportColumns(), 'products.xlsx', {
+        sheetName: t('inventory.tabs.products'),
+      });
+    } catch {
+      toast({ title: t('dataGrid.exportFailed'), variant: 'destructive' });
+    }
   }
 
   return (
@@ -253,7 +284,8 @@ function ProductsPage() {
           void navigate({ search: (prev) => ({ ...prev, page: 1, q: value || undefined }) })
         }
         searchPlaceholder={t('inventory.products.searchPlaceholder')}
-        onExportCsv={() => void handleExport()}
+        onExportCsv={() => void handleExportCsv()}
+        onExportXlsx={() => void handleExportXlsx()}
         labels={dataGridLabels}
         toolbarExtra={
           <div className="flex items-center gap-2">

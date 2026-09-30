@@ -396,6 +396,8 @@
     "switchToCompactDensity": "Mật độ gọn",
     "switchToComfortableDensity": "Mật độ thoáng",
     "exportCsv": "Xuất CSV",
+    "exportXlsx": "Xuất Excel",
+    "exportFailed": "Không thể tạo tệp xuất.",
     "selectAllRows": "Chọn tất cả các dòng",
     "selectRow": "Chọn dòng",
     "pinColumn": "Ghim cột",
