@@ -43,3 +43,20 @@ describe('DEMO_USERS fixture', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 });
+
+describe('HR permissions', () => {
+  it('lets every demo user read and write their own leave', () => {
+    for (const user of DEMO_USERS) {
+      expect(hasPermission(user, PERMISSIONS.hrmRead), user.id).toBe(true);
+      expect(hasPermission(user, PERMISSIONS.hrmWrite), user.id).toBe(true);
+    }
+  });
+
+  it('lets only the manager, the director and the admin decide leave requests', () => {
+    const approvers = DEMO_USERS.filter((user) =>
+      hasPermission(user, PERMISSIONS.leaveRequestApprove),
+    ).map((user) => user.id);
+    // The approval rules only ever route leave to these two roles.
+    expect(approvers.sort()).toEqual(['admin', 'approver_director', 'approver_manager']);
+  });
+});

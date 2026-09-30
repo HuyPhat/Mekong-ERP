@@ -1,10 +1,9 @@
 import { z } from './zod';
 
-// Only purchase orders go through the approval engine in Phase 3 — vendor
-// bills are gated by three-way match instead (ADR-0005), not a second
-// approval chain. Extend this enum only when something actually creates a
-// chain for that doc type.
-export const ApprovalDocTypeSchema = z.enum(['purchase_order']);
+// A doc type is added when something actually creates an approval chain for it:
+// purchase orders in Phase 3, leave requests in Phase 6 (ADR-0004, ADR-0015).
+// Vendor bills go through the three-way-match gate instead (ADR-0005).
+export const ApprovalDocTypeSchema = z.enum(['purchase_order', 'leave_request']);
 export type ApprovalDocType = z.infer<typeof ApprovalDocTypeSchema>;
 
 export const ApprovalStatusSchema = z.enum([
@@ -31,12 +30,25 @@ export const ApprovalSchema = z.object({
 });
 export type Approval = z.infer<typeof ApprovalSchema>;
 
+/**
+ * What the inbox lists: an approval step plus enough of its document to decide
+ * on. The same shape serves every doc type, so one inbox (and one client, in any
+ * framework) lists them together.
+ */
 export const ApprovalViewSchema = ApprovalSchema.extend({
+  /** What the approval is about: the supplier for a purchase order, the employee for leave. */
+  subject: z.string(),
+  /** The magnitude the approval rules are keyed on, in `unit`. */
   amount: z.number().int(),
-  supplierName: z.string(),
+  /** VND for a purchase order, working days for a leave request. */
+  unit: z.enum(['vnd', 'days']),
 });
 export type ApprovalView = z.infer<typeof ApprovalViewSchema>;
 
+/**
+ * `minAmount`/`maxAmount` bound the document's magnitude, which is in VND for a
+ * purchase order and in working days for a leave request.
+ */
 export const ApprovalRuleSchema = z.object({
   id: z.string(),
   docType: ApprovalDocTypeSchema,

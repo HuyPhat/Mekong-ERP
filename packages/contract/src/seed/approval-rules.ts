@@ -1,8 +1,9 @@
 import type { ApprovalRule } from '../approval-entities';
 
 // Thresholds and escalation from PLAN.md §6: PO < 50M → Purchasing Manager;
-// >= 50M → + Finance Manager; >= 500M → + Director. Each tier lists the full
-// cumulative chain (see ADR-0004), not just the newly-added approver.
+// >= 50M → + Finance Manager; >= 500M → + Director. Leave (ADR-0015) is keyed on
+// working days: 1-2 days → Manager; 3 or more → + Director. Each tier lists the
+// full cumulative chain (see ADR-0004), not just the newly-added approver.
 export function generateApprovalRules(): ApprovalRule[] {
   return [
     {
@@ -25,6 +26,20 @@ export function generateApprovalRules(): ApprovalRule[] {
       minAmount: 500_000_000,
       maxAmount: null,
       approverRoles: ['approver_manager', 'approver_finance', 'approver_director'],
+    },
+    {
+      id: 'rule-leave-1',
+      docType: 'leave_request',
+      minAmount: 0,
+      maxAmount: 2,
+      approverRoles: ['approver_manager'],
+    },
+    {
+      id: 'rule-leave-2',
+      docType: 'leave_request',
+      minAmount: 3,
+      maxAmount: null,
+      approverRoles: ['approver_manager', 'approver_director'],
     },
   ];
 }

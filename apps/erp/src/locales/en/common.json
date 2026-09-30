@@ -329,14 +329,21 @@
     "title": "Approvals inbox",
     "columns": {
       "docNumber": "Document",
-      "supplierName": "Supplier",
+      "subject": "Supplier / employee",
       "amount": "Amount",
       "approverRole": "Approver role",
       "createdAt": "Submitted",
       "actions": "Actions"
     },
     "empty": "No approvals match these filters.",
-    "searchPlaceholder": "Search by document number or supplier…",
+    "searchPlaceholder": "Search by document number, supplier or employee…",
+    "docTypeFilterLabel": "Type",
+    "docTypes": {
+      "purchase_order": "Purchase order",
+      "leave_request": "Leave request"
+    },
+    "daysUnit_one": "day",
+    "daysUnit_other": "days",
     "statusFilterLabel": "Status",
     "status": {
       "pending": "Pending",
@@ -355,6 +362,7 @@
     "reasonPlaceholder": "Explain what needs to change…",
     "reasonSubmit": "Submit",
     "reasonRequired": "A comment is required.",
+    "selfDecision": "You can't decide your own leave request.",
     "bulkApprove": "Approve selected",
     "bulkApproveConfirm": "Approve all selected documents?"
   },

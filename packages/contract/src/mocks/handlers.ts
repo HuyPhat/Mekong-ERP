@@ -2,6 +2,8 @@ import { devPanelHandlers } from './handlers/dev-panel';
 import { sessionHandlers } from './handlers/session';
 import { inventoryHandlers } from './handlers/inventory';
 import { purchasingHandlers } from './handlers/purchasing';
+import { approvalsHandlers } from './handlers/approvals';
+import { hrmHandlers } from './handlers/hrm';
 import { auditHandlers } from './handlers/audit';
 import { salesHandlers } from './handlers/sales';
 import { accountingHandlers } from './handlers/accounting';
@@ -13,6 +15,8 @@ export const handlers = [
   ...sessionHandlers,
   ...inventoryHandlers,
   ...purchasingHandlers,
+  ...approvalsHandlers,
+  ...hrmHandlers,
   ...auditHandlers,
   ...salesHandlers,
   ...accountingHandlers,

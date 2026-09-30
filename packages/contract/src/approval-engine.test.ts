@@ -8,6 +8,7 @@ import {
   latestChain,
 } from './approval-engine';
 import type { Approval, ApprovalRule } from './approval-entities';
+import { generateApprovalRules } from './seed/approval-rules';
 
 const RULES: ApprovalRule[] = [
   {
@@ -243,6 +244,69 @@ describe('decideApproval', () => {
   });
 });
 
+describe('resolveApprovalRoles for leave requests (keyed on working days)', () => {
+  const rules = generateApprovalRules();
+
+  it('sends one or two days to the manager alone', () => {
+    expect(resolveApprovalRoles(rules, 'leave_request', 1)).toEqual(['approver_manager']);
+    expect(resolveApprovalRoles(rules, 'leave_request', 2)).toEqual(['approver_manager']);
+  });
+
+  it('adds the director from three days, with no upper bound', () => {
+    expect(resolveApprovalRoles(rules, 'leave_request', 3)).toEqual([
+      'approver_manager',
+      'approver_director',
+    ]);
+    expect(resolveApprovalRoles(rules, 'leave_request', 12)).toEqual([
+      'approver_manager',
+      'approver_director',
+    ]);
+  });
+
+  it("never applies a purchase order's VND tiers to leave, or the reverse", () => {
+    // 60 days must not land in the 50M-VND purchase-order tier (which adds finance).
+    expect(resolveApprovalRoles(rules, 'leave_request', 60)).toEqual([
+      'approver_manager',
+      'approver_director',
+    ]);
+    // And 60M VND is a purchase order: it gets the finance tier, not the leave chain.
+    expect(resolveApprovalRoles(rules, 'purchase_order', 60_000_000)).toEqual([
+      'approver_manager',
+      'approver_finance',
+    ]);
+  });
+
+  it('runs a leave chain through the engine like any other document', () => {
+    const roles = resolveApprovalRoles(rules, 'leave_request', 4);
+    let n = 0;
+    const chain = createApprovalChain(
+      'leave_request',
+      'leave-1',
+      'LV-2026-000001',
+      roles,
+      () => `step-${(n += 1)}`,
+      '2026-03-01T00:00:00.000Z',
+    );
+    const afterManager = decideApproval(
+      chain,
+      'step-1',
+      'approved',
+      'approver_manager',
+      '2026-03-02T00:00:00.000Z',
+    );
+    expect(afterManager.outcome).toBe('pending');
+    expect(currentApprovalStep(afterManager.chain)?.approverRole).toBe('approver_director');
+    const afterDirector = decideApproval(
+      afterManager.chain,
+      'step-2',
+      'approved',
+      'approver_director',
+      '2026-03-03T00:00:00.000Z',
+    );
+    expect(afterDirector.outcome).toBe('approved');
+  });
+});
+
 describe('latestChain: a resubmitted document', () => {
   const at = (day: number) => `2026-03-0${day}T09:00:00.000Z`;
   const step = (
@@ -252,11 +316,11 @@ describe('latestChain: a resubmitted document', () => {
     createdAt: string,
   ): Approval => ({
     id,
-    docType: 'purchase_order',
-    docId: 'po-1',
-    docNumber: 'PO-2026-000001',
+    docType: 'leave_request',
+    docId: 'leave-1',
+    docNumber: 'LV-2026-000001',
     sequence,
-    approverRole: sequence === 1 ? 'approver_manager' : 'approver_finance',
+    approverRole: sequence === 1 ? 'approver_manager' : 'approver_director',
     status,
     createdAt,
   });

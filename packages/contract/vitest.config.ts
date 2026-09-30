@@ -14,6 +14,7 @@ export default defineConfig({
         'src/demo-users.ts',
         'src/dev-config.ts',
         'src/document-number.ts',
+        'src/leave.ts',
         'src/ledger.ts',
         'src/list-query.ts',
         'src/money.ts',

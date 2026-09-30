@@ -5,6 +5,7 @@ import type { Approval, ApprovalRule } from '../approval-entities';
 import type { AuditLogEntry } from '../audit-entities';
 import type { ChartOfAccount, JournalEntry } from '../accounting-entities';
 import type { Customer, CustomerInvoice, Delivery, Quotation, SalesOrder } from '../sales-entities';
+import type { Employee, LeaveRequest } from '../hrm-entities';
 
 export const warehousesStore = new Collection<Warehouse>('warehouses');
 export const productsStore = new Collection<Product>('products');
@@ -24,3 +25,5 @@ export const quotationsStore = new Collection<Quotation>('quotations');
 export const salesOrdersStore = new Collection<SalesOrder>('salesOrders');
 export const deliveriesStore = new Collection<Delivery>('deliveries');
 export const customerInvoicesStore = new Collection<CustomerInvoice>('customerInvoices');
+export const employeesStore = new Collection<Employee>('employees');
+export const leaveRequestsStore = new Collection<LeaveRequest>('leaveRequests');

@@ -41,6 +41,7 @@ export const ApprovalsSearchSchema = z.object({
   sort: z.string().optional(),
   q: z.string().optional(),
   status: z.string().optional(),
+  docType: z.string().optional(),
 });
 export type ApprovalsSearch = z.infer<typeof ApprovalsSearchSchema>;
 

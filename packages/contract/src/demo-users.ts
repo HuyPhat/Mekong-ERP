@@ -14,7 +14,14 @@ export const PERMISSIONS = {
   purchaseOrderApprove: 'purchase_order:approve',
   journalPost: 'journal:post',
   vendorBillOverrideMatch: 'vendor_bill:override_match',
+  // Everyone is an employee: hrm:read/write cover their own leave. Approving
+  // someone else's request is a separate permission (ADR-0015).
+  hrmRead: 'hrm:read',
+  hrmWrite: 'hrm:write',
+  leaveRequestApprove: 'leave_request:approve',
 } as const;
+
+const EMPLOYEE_PERMISSIONS = [PERMISSIONS.hrmRead, PERMISSIONS.hrmWrite];
 
 export const DEMO_USERS: User[] = [
   { id: 'admin', name: 'Admin', role: 'admin', permissions: ['*'] },
@@ -27,13 +34,19 @@ export const DEMO_USERS: User[] = [
       PERMISSIONS.inventoryRead,
       PERMISSIONS.purchasingRead,
       PERMISSIONS.purchasingWrite,
+      ...EMPLOYEE_PERMISSIONS,
     ],
   },
   {
     id: 'warehouse',
     name: 'Trần Thị Bình',
     role: 'warehouse',
-    permissions: [PERMISSIONS.dashboardRead, PERMISSIONS.inventoryRead, PERMISSIONS.inventoryWrite],
+    permissions: [
+      PERMISSIONS.dashboardRead,
+      PERMISSIONS.inventoryRead,
+      PERMISSIONS.inventoryWrite,
+      ...EMPLOYEE_PERMISSIONS,
+    ],
   },
   {
     id: 'sales',
@@ -44,6 +57,7 @@ export const DEMO_USERS: User[] = [
       PERMISSIONS.inventoryRead,
       PERMISSIONS.salesRead,
       PERMISSIONS.salesWrite,
+      ...EMPLOYEE_PERMISSIONS,
     ],
   },
   {
@@ -57,6 +71,7 @@ export const DEMO_USERS: User[] = [
       PERMISSIONS.purchasingRead,
       PERMISSIONS.salesRead,
       PERMISSIONS.vendorBillOverrideMatch,
+      ...EMPLOYEE_PERMISSIONS,
     ],
   },
   {
@@ -67,6 +82,8 @@ export const DEMO_USERS: User[] = [
       PERMISSIONS.dashboardRead,
       PERMISSIONS.approvalsRead,
       PERMISSIONS.purchaseOrderApprove,
+      PERMISSIONS.leaveRequestApprove,
+      ...EMPLOYEE_PERMISSIONS,
     ],
   },
   {
@@ -78,6 +95,7 @@ export const DEMO_USERS: User[] = [
       PERMISSIONS.approvalsRead,
       PERMISSIONS.purchaseOrderApprove,
       PERMISSIONS.accountingRead,
+      ...EMPLOYEE_PERMISSIONS,
     ],
   },
   {
@@ -90,6 +108,8 @@ export const DEMO_USERS: User[] = [
       PERMISSIONS.purchaseOrderApprove,
       PERMISSIONS.journalPost,
       PERMISSIONS.accountingRead,
+      PERMISSIONS.leaveRequestApprove,
+      ...EMPLOYEE_PERMISSIONS,
     ],
   },
 ];

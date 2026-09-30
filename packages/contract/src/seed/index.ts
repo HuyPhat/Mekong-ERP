@@ -6,8 +6,10 @@ import {
   customerInvoicesStore,
   customersStore,
   deliveriesStore,
+  employeesStore,
   goodsReceiptsStore,
   journalEntriesStore,
+  leaveRequestsStore,
   productsStore,
   purchaseOrdersStore,
   quotationsStore,
@@ -29,17 +31,31 @@ async function generateAndSeed(): Promise<void> {
   const { generateSeedData } = await import('./generate');
   const approvalRules = generateApprovalRules();
   const chartOfAccounts = generateChartOfAccounts();
-  const { warehouses, products, randomMovements, suppliers, procurement, customers, commerce } =
-    generateSeedData(approvalRules);
+  const {
+    warehouses,
+    products,
+    randomMovements,
+    suppliers,
+    procurement,
+    customers,
+    commerce,
+    hrm,
+  } = generateSeedData(approvalRules);
 
   const movements = [...randomMovements, ...procurement.stockMovements, ...commerce.stockMovements];
   const levels = computeStockLevels(products, warehouses, movements);
   const journalEntries = [...procurement.journalEntries, ...commerce.journalEntries];
-  const auditLogEntries = [...procurement.auditLogEntries, ...commerce.auditLogEntries];
+  const auditLogEntries = [
+    ...procurement.auditLogEntries,
+    ...commerce.auditLogEntries,
+    ...hrm.auditLogEntries,
+  ];
+  // Purchase-order and leave approvals share one store, and one inbox.
+  const approvals = [...procurement.approvals, ...hrm.approvals];
 
   // Independent stores/transactions — writing them concurrently keeps total
   // wall-clock time to roughly the slowest one (stock movements, the
-  // largest by far) instead of the sum of all eighteen.
+  // largest by far) instead of the sum of all twenty.
   await Promise.all([
     warehousesStore.seed(warehouses),
     productsStore.seed(products),
@@ -50,7 +66,7 @@ async function generateAndSeed(): Promise<void> {
     purchaseOrdersStore.seed(procurement.purchaseOrders),
     goodsReceiptsStore.seed(procurement.goodsReceipts),
     vendorBillsStore.seed(procurement.vendorBills),
-    approvalsStore.seed(procurement.approvals),
+    approvalsStore.seed(approvals),
     journalEntriesStore.seed(journalEntries),
     auditLogStore.seed(auditLogEntries),
     chartOfAccountsStore.seed(chartOfAccounts),
@@ -59,6 +75,27 @@ async function generateAndSeed(): Promise<void> {
     salesOrdersStore.seed(commerce.salesOrders),
     deliveriesStore.seed(commerce.deliveries),
     customerInvoicesStore.seed(commerce.customerInvoices),
+    employeesStore.seed(hrm.employees),
+    leaveRequestsStore.seed(hrm.leaveRequests),
+  ]);
+}
+
+/**
+ * Adds the HR data to a database seeded before it existed, without touching (or
+ * regenerating) the 110,000 records already there.
+ */
+async function seedHrm(): Promise<void> {
+  const { generateHrmData } = await import('./hrm');
+  const rules = generateApprovalRules();
+  // An older database only holds the purchase-order rules.
+  const knownRuleIds = new Set(approvalRulesStore.list().map((rule) => rule.id));
+  const hrm = generateHrmData(rules);
+  await Promise.all([
+    approvalRulesStore.putMany(rules.filter((rule) => !knownRuleIds.has(rule.id))),
+    employeesStore.seed(hrm.employees),
+    leaveRequestsStore.seed(hrm.leaveRequests),
+    approvalsStore.putMany(hrm.approvals),
+    auditLogStore.putMany(hrm.auditLogEntries),
   ]);
 }
 
@@ -72,7 +109,9 @@ export async function ensureSeeded(): Promise<void> {
   const hadPurchaseOrders = hadProducts && (await purchaseOrdersStore.hydrate());
   const hadSalesOrders = hadPurchaseOrders && (await salesOrdersStore.hydrate());
   if (hadProducts && hadPurchaseOrders && hadSalesOrders) {
-    await Promise.all([
+    const [hadStaff] = await Promise.all([
+      employeesStore.hydrate(),
+      leaveRequestsStore.hydrate(),
       warehousesStore.hydrate(),
       stockLevelsStore.hydrate(),
       stockMovementsStore.hydrate(),
@@ -89,6 +128,8 @@ export async function ensureSeeded(): Promise<void> {
       deliveriesStore.hydrate(),
       customerInvoicesStore.hydrate(),
     ]);
+    // A Phase 5 database: keep its data and add just the HR records.
+    if (!hadStaff) await seedHrm();
     return;
   }
   await generateAndSeed();
@@ -115,6 +156,8 @@ export async function resetSeed(): Promise<void> {
     salesOrdersStore.clear(),
     deliveriesStore.clear(),
     customerInvoicesStore.clear(),
+    employeesStore.clear(),
+    leaveRequestsStore.clear(),
   ]);
   await generateAndSeed();
 }

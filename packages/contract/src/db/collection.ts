@@ -25,6 +25,12 @@ export class Collection<T extends Identified> {
     await idbBulkPut(this.storeName, items);
   }
 
+  /** Adds or replaces these rows without touching the others, in one transaction. */
+  async putMany(items: T[]): Promise<void> {
+    for (const item of items) this.items.set(item.id, item);
+    await idbBulkPut(this.storeName, items);
+  }
+
   list(): T[] {
     return [...this.items.values()];
   }

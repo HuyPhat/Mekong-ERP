@@ -25,8 +25,6 @@ import {
 import {
   createApprovalChain,
   currentApprovalStep,
-  decideApproval,
-  latestChain,
   resolveApprovalRoles,
 } from '../../approval-engine';
 import { computeThreeWayMatch, hasMatchExceptions } from '../../three-way-match';
@@ -97,12 +95,6 @@ const CreateBillLineSchema = z.object({
 const CreateBillSchema = z.object({
   poId: z.string(),
   lines: z.array(CreateBillLineSchema).min(1),
-});
-
-const DecideApprovalSchema = z.object({
-  decision: z.enum(['approved', 'rejected', 'changes_requested']),
-  comment: z.string().optional(),
-  actorId: z.string(),
 });
 
 function cumulativeReceivedByProduct(poId: string): Map<string, number> {
@@ -301,8 +293,8 @@ export const purchasingHandlers = [
         { status: 422 },
       );
     }
-    // Replace any prior chain from a previous submit-then-changes-requested cycle.
-    const remaining = approvalsStore.list().filter((approval) => approval.docId !== po.id);
+    // A resubmission after changes were requested gets a fresh chain; the earlier
+    // steps stay as history (see latestChain).
     const chain = createApprovalChain(
       'purchase_order',
       po.id,
@@ -311,7 +303,7 @@ export const purchasingHandlers = [
       () => crypto.randomUUID(),
       now,
     );
-    await Promise.all([...remaining, ...chain].map((approval) => approvalsStore.put(approval)));
+    await approvalsStore.putMany(chain);
 
     const updated: PurchaseOrder = { ...po, status: 'pending_approval', submittedAt: now };
     await purchaseOrdersStore.put(updated);
@@ -850,125 +842,5 @@ export const purchasingHandlers = [
       now,
     );
     return HttpResponse.json(updated);
-  }),
-
-  http.get('/api/approvals', async ({ request }) => {
-    await ensureSeeded();
-    const url = new URL(request.url);
-    const { page, pageSize, sort, q } = parseListParams(url, [
-      { field: 'createdAt', direction: 'asc' },
-    ]);
-    const approverRole = url.searchParams.get('filter[approverRole]');
-    const statuses = url.searchParams.get('filter[status]')?.split(',').filter(Boolean) ?? [];
-    const docId = url.searchParams.get('filter[docId]');
-    const purchaseOrders = new Map(purchaseOrdersStore.list().map((po) => [po.id, po]));
-
-    let items = approvalsStore.list().map((approval) => {
-      const po =
-        approval.docType === 'purchase_order' ? purchaseOrders.get(approval.docId) : undefined;
-      return {
-        ...approval,
-        amount: po?.grandTotal ?? 0,
-        supplierName: po ? supplierName(po.supplierId) : '',
-      };
-    });
-    if (approverRole) items = items.filter((approval) => approval.approverRole === approverRole);
-    if (statuses.length > 0) items = items.filter((approval) => statuses.includes(approval.status));
-    if (docId) items = items.filter((approval) => approval.docId === docId);
-    items = items.filter((approval) => matchesSearch(approval, q, ['docNumber', 'supplierName']));
-    items = applySort(items, sort);
-    return HttpResponse.json(paginate(items, page, pageSize));
-  }),
-
-  http.post('/api/approvals/:id/decide', async ({ params, request }) => {
-    await ensureSeeded();
-    const approval = approvalsStore.get(String(params.id));
-    if (!approval) {
-      return HttpResponse.json(
-        { code: 'NOT_FOUND', message: 'Approval step not found' },
-        { status: 404 },
-      );
-    }
-    const body: unknown = await request.json();
-    const parsed = DecideApprovalSchema.safeParse(body);
-    if (!parsed.success) {
-      return HttpResponse.json(
-        {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid decision',
-          fieldErrors: z.flattenError(parsed.error).fieldErrors,
-        },
-        { status: 422 },
-      );
-    }
-    // A resubmitted document keeps its old steps as history; only the newest chain decides.
-    const chain = latestChain(
-      approvalsStore.list().filter((candidate) => candidate.docId === approval.docId),
-    );
-    const now = new Date().toISOString();
-    let result;
-    try {
-      result = decideApproval(
-        chain,
-        approval.id,
-        parsed.data.decision,
-        parsed.data.actorId,
-        now,
-        parsed.data.comment,
-      );
-    } catch (error) {
-      return HttpResponse.json(
-        { code: 'INVALID_STEP', message: (error as Error).message },
-        { status: 409 },
-      );
-    }
-    await Promise.all(result.chain.map((step) => approvalsStore.put(step)));
-    broadcastEvent({
-      type: 'approval.decided',
-      docType: approval.docType,
-      docId: approval.docId,
-      docNumber: approval.docNumber,
-      decision: parsed.data.decision,
-      approverRole: approval.approverRole,
-    });
-    if (result.outcome === 'pending') {
-      const nextStep = currentApprovalStep(result.chain);
-      if (nextStep) {
-        broadcastEvent({
-          type: 'approval.requested',
-          docType: nextStep.docType,
-          docId: nextStep.docId,
-          docNumber: nextStep.docNumber,
-          approverRole: nextStep.approverRole,
-        });
-      }
-    }
-
-    if (approval.docType === 'purchase_order') {
-      const po = purchaseOrdersStore.get(approval.docId);
-      if (po) {
-        const nextStatus =
-          result.outcome === 'approved'
-            ? 'approved'
-            : result.outcome === 'rejected'
-              ? 'rejected'
-              : result.outcome === 'changes_requested'
-                ? 'changes_requested'
-                : 'pending_approval';
-        await purchaseOrdersStore.put({ ...po, status: nextStatus });
-        await writeAudit(
-          'purchase_order',
-          po.id,
-          po.number,
-          `approval_${parsed.data.decision}`,
-          parsed.data.actorId,
-          po.status,
-          nextStatus,
-          now,
-        );
-      }
-    }
-
-    return HttpResponse.json({ chain: result.chain, outcome: result.outcome });
   }),
 ];

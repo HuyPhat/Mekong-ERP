@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   DataGrid,
   createDataGridColumnHelper,
   MoneyCell,
+  NumberCell,
   StatusBadge,
   FilterBar,
   Button,
@@ -20,6 +22,8 @@ import {
 } from '@mekong-erp/ui';
 import {
   PERMISSIONS,
+  ApiError,
+  ApprovalDocTypeSchema,
   ApprovalStatusSchema,
   type ApprovalView,
   type ListParams,
@@ -51,8 +55,22 @@ function toListParams(search: ApprovalsSearch, approverRole: string | undefined)
     pageSize: search.pageSize,
     ...(search.sort ? { sort: search.sort } : {}),
     ...(search.q ? { q: search.q } : {}),
-    filters: { status: search.status, ...(approverRole ? { approverRole } : {}) },
+    filters: {
+      status: search.status,
+      docType: search.docType,
+      ...(approverRole ? { approverRole } : {}),
+    },
   };
+}
+
+// A refused decision says why when the reason is one the reviewer can act on;
+// every other failure stays the generic one.
+function decisionFailure(error: unknown, t: TFunction) {
+  const title =
+    error instanceof ApiError && error.code === 'SELF_DECISION'
+      ? t('approvals.selfDecision')
+      : t('errors.genericTitle');
+  return { title, variant: 'destructive' as const };
 }
 
 type ReasonDecision = 'rejected' | 'changes_requested';
@@ -61,10 +79,21 @@ function ApprovalsInboxPage() {
   const { t } = useTranslation();
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const canDecide = useCan(PERMISSIONS.purchaseOrderApprove);
+  // One inbox, several document types: each is decided under its own permission.
+  const canDecidePurchaseOrder = useCan(PERMISSIONS.purchaseOrderApprove);
+  const canDecideLeave = useCan(PERMISSIONS.leaveRequestApprove);
+  const canDecide = canDecidePurchaseOrder || canDecideLeave;
+  const canDecideRow = useCallback(
+    (approval: ApprovalView) =>
+      approval.docType === 'leave_request' ? canDecideLeave : canDecidePurchaseOrder,
+    [canDecideLeave, canDecidePurchaseOrder],
+  );
   const { data: session } = useSession();
   const actorId = session?.user?.id ?? '';
-  const approverRole = session?.user?.role;
+  // The inbox shows the steps waiting on the viewer's role. The admin login holds no
+  // approver role but can decide any step, so it sees them all: otherwise a request
+  // nobody else may decide (a manager's own leave) would have no one to decide it.
+  const approverRole = session?.user?.role === 'admin' ? undefined : session?.user?.role;
 
   const [reasonTarget, setReasonTarget] = useState<{ id: string; decision: ReasonDecision } | null>(
     null,
@@ -79,8 +108,8 @@ function ApprovalsInboxPage() {
     async (id: string) => {
       try {
         await decideMutation.mutateAsync({ id, decision: 'approved', actorId });
-      } catch {
-        toast({ title: t('errors.genericTitle'), variant: 'destructive' });
+      } catch (error) {
+        toast(decisionFailure(error, t));
       }
     },
     [decideMutation, actorId, t],
@@ -101,8 +130,8 @@ function ApprovalsInboxPage() {
       });
       setReasonTarget(null);
       setReasonText('');
-    } catch {
-      toast({ title: t('errors.genericTitle'), variant: 'destructive' });
+    } catch (error) {
+      toast(decisionFailure(error, t));
     }
   }
 
@@ -115,7 +144,7 @@ function ApprovalsInboxPage() {
         run: async (rows): Promise<BulkActionResult> => {
           const outcomes = await Promise.allSettled(
             rows
-              .filter((row) => row.status === 'pending')
+              .filter((row) => row.status === 'pending' && canDecideRow(row))
               .map((row) =>
                 decideMutation.mutateAsync({ id: row.id, decision: 'approved', actorId }),
               ),
@@ -126,7 +155,7 @@ function ApprovalsInboxPage() {
         },
       },
     ],
-    [t, decideMutation, actorId],
+    [t, decideMutation, actorId, canDecideRow],
   );
 
   const columns = useMemo(
@@ -134,24 +163,48 @@ function ApprovalsInboxPage() {
       columnHelper.accessor('docNumber', {
         header: t('approvals.columns.docNumber'),
         size: 160,
-        cell: (info) => (
-          <Link
-            to="/purchasing/orders/$poId"
-            params={{ poId: info.row.original.docId }}
-            className="text-foreground hover:underline"
-          >
-            {info.getValue()}
-          </Link>
-        ),
+        // The kind of document sits under its number rather than in a column of its
+        // own: the actions column already pushes this grid past a laptop's width.
+        cell: (info) => {
+          const approval = info.row.original;
+          return (
+            <div className="flex flex-col">
+              {approval.docType === 'purchase_order' ? (
+                <Link
+                  to="/purchasing/orders/$poId"
+                  params={{ poId: approval.docId }}
+                  className="text-foreground hover:underline"
+                >
+                  {info.getValue()}
+                </Link>
+              ) : (
+                // Leave requests get a detail link once the HR screens exist (Phase 6.4).
+                <span>{info.getValue()}</span>
+              )}
+              <span className="text-xs text-muted-foreground">
+                {t(`approvals.docTypes.${approval.docType}`)}
+              </span>
+            </div>
+          );
+        },
       }),
-      columnHelper.accessor('supplierName', {
-        header: t('approvals.columns.supplierName'),
+      columnHelper.accessor('subject', {
+        header: t('approvals.columns.subject'),
         size: 220,
       }),
       columnHelper.accessor('amount', {
         header: t('approvals.columns.amount'),
         size: 140,
-        cell: (info) => <MoneyCell value={info.getValue()} />,
+        // The rules' magnitude: VND for a purchase order, working days for leave.
+        cell: (info) =>
+          info.row.original.unit === 'days' ? (
+            <NumberCell
+              value={info.getValue()}
+              unit={t('approvals.daysUnit', { count: info.getValue() })}
+            />
+          ) : (
+            <MoneyCell value={info.getValue()} />
+          ),
       }),
       columnHelper.accessor('approverRole', {
         header: t('approvals.columns.approverRole'),
@@ -177,7 +230,7 @@ function ApprovalsInboxPage() {
         size: 260,
         cell: (info) => {
           const approval = info.row.original;
-          if (!canDecide || approval.status !== 'pending') return null;
+          if (!canDecideRow(approval) || approval.status !== 'pending') return null;
           return (
             <div className="flex gap-2">
               <Button
@@ -212,7 +265,7 @@ function ApprovalsInboxPage() {
         },
       }),
     ],
-    [t, canDecide, decideMutation.isPending, handleApprove],
+    [t, canDecideRow, decideMutation.isPending, handleApprove],
   );
 
   const filterConfigs: ColumnFilterConfig[] = useMemo(
@@ -224,6 +277,15 @@ function ApprovalsInboxPage() {
         options: ApprovalStatusSchema.options.map((status) => ({
           label: approvalStatusLabel(t, status),
           value: status,
+        })),
+      },
+      {
+        id: 'docType',
+        label: t('approvals.docTypeFilterLabel'),
+        type: 'enum-multiselect',
+        options: ApprovalDocTypeSchema.options.map((docType) => ({
+          label: t(`approvals.docTypes.${docType}`),
+          value: docType,
         })),
       },
     ],
@@ -239,10 +301,12 @@ function ApprovalsInboxPage() {
 
       <FilterBar
         configs={filterConfigs}
-        values={{ status: search.status }}
+        values={{ status: search.status, docType: search.docType }}
         labels={filterBarLabels}
         onChange={(next) =>
-          void navigate({ search: (prev) => ({ ...prev, page: 1, status: next.status }) })
+          void navigate({
+            search: (prev) => ({ ...prev, page: 1, status: next.status, docType: next.docType }),
+          })
         }
       />
 

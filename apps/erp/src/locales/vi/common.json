@@ -329,14 +329,20 @@
     "title": "Hộp thư phê duyệt",
     "columns": {
       "docNumber": "Chứng từ",
-      "supplierName": "Nhà cung cấp",
+      "subject": "Nhà cung cấp / nhân viên",
       "amount": "Số tiền",
       "approverRole": "Vai trò duyệt",
       "createdAt": "Ngày gửi",
       "actions": "Thao tác"
     },
     "empty": "Không có yêu cầu duyệt nào khớp bộ lọc.",
-    "searchPlaceholder": "Tìm theo số chứng từ hoặc nhà cung cấp…",
+    "searchPlaceholder": "Tìm theo số chứng từ, nhà cung cấp hoặc nhân viên…",
+    "docTypeFilterLabel": "Loại",
+    "docTypes": {
+      "purchase_order": "Đơn mua hàng",
+      "leave_request": "Đơn nghỉ phép"
+    },
+    "daysUnit_other": "ngày",
     "statusFilterLabel": "Trạng thái",
     "status": {
       "pending": "Chờ duyệt",
@@ -355,6 +361,7 @@
     "reasonPlaceholder": "Giải thích cần chỉnh sửa gì…",
     "reasonSubmit": "Gửi",
     "reasonRequired": "Vui lòng nhập ghi chú.",
+    "selfDecision": "Bạn không thể tự duyệt đơn nghỉ phép của mình.",
     "bulkApprove": "Duyệt các mục đã chọn",
     "bulkApproveConfirm": "Duyệt tất cả chứng từ đã chọn?"
   },

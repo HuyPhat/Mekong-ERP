@@ -9,6 +9,7 @@ import { generateCustomers } from './customers';
 import { generateSalesOrderDrafts } from './sales-orders';
 import { generateStandaloneQuotationDrafts } from './quotations';
 import { generateCommerceData } from './commerce';
+import { generateHrmData } from './hrm';
 
 const PRODUCT_COUNT = 3000;
 const MOVEMENT_COUNT = 100_000;
@@ -42,5 +43,17 @@ export function generateSeedData(approvalRules: ApprovalRule[]) {
   );
   const commerce = generateCommerceData(soDrafts, standaloneQuotationDrafts, products, customers);
 
-  return { warehouses, products, randomMovements, suppliers, procurement, customers, commerce };
+  // Last, so the data above is unchanged by it.
+  const hrm = generateHrmData(approvalRules);
+
+  return {
+    warehouses,
+    products,
+    randomMovements,
+    suppliers,
+    procurement,
+    customers,
+    commerce,
+    hrm,
+  };
 }
