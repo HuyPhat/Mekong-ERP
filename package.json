@@ -16,7 +16,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "test:e2e": "pnpm --filter @mekong-erp/erp test:e2e"
+    "test:e2e": "pnpm --filter @mekong-erp/erp test:e2e",
+    "test:stories": "pnpm --filter @mekong-erp/ui test:stories"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
