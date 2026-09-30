@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from './zod';
 import { gqlRequest } from './graphql-client';
 
 const RevenuePointSchema = z.object({

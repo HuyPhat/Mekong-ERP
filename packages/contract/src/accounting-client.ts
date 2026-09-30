@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from './zod';
 import { request } from './client';
 import { ChartOfAccountSchema } from './accounting-entities';
 

@@ -1,4 +1,5 @@
 // Framework-agnostic: schemas, client, MSW handlers, and seed live here.
+export { z } from './zod';
 export const CONTRACT_VERSION = '0.3.0';
 
 export * from './schemas';

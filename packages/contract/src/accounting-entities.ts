@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from './zod';
 
 export const AccountTypeSchema = z.enum(['asset', 'liability', 'equity', 'revenue', 'expense']);
 export type AccountType = z.infer<typeof AccountTypeSchema>;

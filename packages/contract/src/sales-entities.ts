@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from './zod';
 import { VatRateSchema } from './purchasing-entities';
 
 export const CustomerSchema = z.object({

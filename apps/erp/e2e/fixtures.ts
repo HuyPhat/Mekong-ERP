@@ -8,6 +8,22 @@ export const test = base.extend<{ consoleGuard: boolean; allowedConsoleErrors: R
   consoleGuard: [
     async ({ page, allowedConsoleErrors }, use) => {
       const problems: string[] = [];
+      // CSP violations (an eval probe, a blocked inline script, ...) are not
+      // reliably surfaced as console errors, but always fire this DOM event.
+      await page.exposeFunction('__reportCspViolation', (detail: string) => {
+        problems.push(`CSP violation: ${detail}`);
+      });
+      await page.addInitScript(() => {
+        document.addEventListener('securitypolicyviolation', (event) => {
+          const report = (window as unknown as Record<string, (detail: string) => void>)[
+            '__reportCspViolation'
+          ];
+          report?.(
+            `${event.violatedDirective} blocked ${event.blockedURI || 'inline/eval'} ` +
+              `(${event.sourceFile}:${event.lineNumber})`,
+          );
+        });
+      });
       page.on('console', (msg) => {
         if (msg.type() !== 'error') return;
         if (allowedConsoleErrors.some((pattern) => pattern.test(msg.text()))) return;

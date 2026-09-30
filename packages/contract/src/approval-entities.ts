@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from './zod';
 
 // Only purchase orders go through the approval engine in Phase 3 — vendor
 // bills are gated by three-way match instead (ADR-0005), not a second

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from './zod';
 import { request } from './client';
 import { buildListQuery, listResponseSchema, type ListParams } from './list-query';
 import { ApprovalSchema, ApprovalViewSchema, ApprovalStatusSchema } from './approval-entities';

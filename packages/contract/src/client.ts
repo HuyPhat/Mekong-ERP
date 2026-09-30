@@ -1,4 +1,4 @@
-import type { z } from 'zod';
+import type { z } from './zod';
 import { SessionSchema, type Session, type ApiErrorBody } from './schemas';
 
 const API_BASE = '/api';

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@mekong-erp/contract';
 import { createFileRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Select } from '@mekong-erp/ui';

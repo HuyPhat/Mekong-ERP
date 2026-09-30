@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@mekong-erp/contract';
 
 export const SuppliersSearchSchema = z.object({
   page: z.number().int().min(1).catch(1),

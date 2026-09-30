@@ -1,7 +1,7 @@
 // Shared shape for the mock WebSocket channel (`wss://mekong.mock/events`,
 // ADR-0002). Same-tab baseline: events are emitted by mock handlers reacting
 // to that tab's own mutations, not pushed from a real server.
-import { z } from 'zod';
+import { z } from './zod';
 
 export const StockChangedEventSchema = z.object({
   type: z.literal('stock.changed'),

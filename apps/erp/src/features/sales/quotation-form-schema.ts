@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@mekong-erp/contract';
 import { VatRateSchema } from '@mekong-erp/contract';
 
 export const QuotationFormLineSchema = z.object({

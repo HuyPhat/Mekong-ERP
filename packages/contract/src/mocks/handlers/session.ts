@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import { z } from 'zod';
+import { z } from '../../zod';
 import { DEMO_USERS } from '../../demo-users';
 import type { Session } from '../../schemas';
 import { readActiveUserId, writeActiveUserId } from '../session-store';
