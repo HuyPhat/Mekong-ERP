@@ -31,3 +31,6 @@ pnpm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# e2e
+apps/erp/e2e/.auth/
