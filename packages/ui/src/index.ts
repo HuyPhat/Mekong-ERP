@@ -9,6 +9,8 @@ export * from './components/toast-store';
 export * from './components/toaster';
 export * from './components/status-badge';
 export * from './components/timeline';
+export * from './components/card';
+export * from './components/kpi-tile';
 export * from './form/form';
 export * from './form/input';
 export * from './form/textarea';

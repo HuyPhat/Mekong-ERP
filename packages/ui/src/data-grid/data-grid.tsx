@@ -59,6 +59,7 @@ export interface DataGridProps<TData extends object> {
 
   renderFooter?: (rows: TData[]) => ReactNode;
   labels?: DataGridLabels;
+  rowClassName?: (row: TData) => string | undefined;
 }
 
 export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
@@ -86,6 +87,7 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
     bulkActions,
     renderFooter,
     labels = defaultDataGridLabels,
+    rowClassName,
   } = props;
 
   const { layout, update: updateLayout, reset: resetLayout } = useColumnLayout(viewId);
@@ -379,7 +381,10 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                     key={row.id}
                     data-index={virtualRow.index}
                     ref={virtualizer.measureElement}
-                    className="absolute left-0 flex w-full border-b border-border hover:bg-muted"
+                    className={cn(
+                      'absolute left-0 flex w-full border-b border-border hover:bg-muted',
+                      rowClassName?.(row.original),
+                    )}
                     style={{ transform: `translateY(${virtualRow.start}px)`, height: rowHeight }}
                   >
                     {enableRowSelection && (
@@ -413,6 +418,7 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                   className={cn(
                     'border-b border-border hover:bg-muted',
                     row.getIsSelected() && 'bg-muted',
+                    rowClassName?.(row.original),
                   )}
                   style={{ height: rowHeight }}
                 >
