@@ -98,11 +98,17 @@ export default function CaseStudyPage() {
 
       <h2>Bugs that only a real browser found</h2>
       <p>
-        Lint, types and unit tests stayed green through several real defects. Driving the built app
-        in Chromium caught them: a virtualized table body that collapsed to 150px wide, a detail
-        route silently swallowed by its sibling list route, Tailwind not scanning the UI package so
-        a dialog rendered unstyled, and a 20–30 second first-load seed that looked like a hung app.
-        Each is written up in the project plan with its fix.
+        Lint, types and unit tests stayed green through many real defects. Driving the built app in
+        Chromium caught them: a virtualized table body that collapsed to 150px wide, a detail route
+        silently swallowed by its sibling list route, Tailwind not scanning the UI package so a
+        dialog rendered unstyled, and a 20–30 second first-load seed that looked like a hung app.
+        The end-to-end and accessibility suite added later found more: a wizard review step that
+        showed a 0 VND total because a memo was keyed on an array the form library mutates in place;
+        light-mode colours that failed WCAG contrast; a wide table that stretched the whole page and
+        pushed the user menu off-screen; and Zod probing <code>eval</code> on every page load, which
+        the content security policy correctly blocked and reported, without anything visibly
+        breaking. Each is written up in the project plan with its fix, and the ones that can regress
+        now have a test that fails without it.
       </p>
 
       <h2>What I would do next</h2>
