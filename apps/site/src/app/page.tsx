@@ -12,7 +12,7 @@ const FEATURES = [
   },
   {
     title: 'Inventory & the DataGrid',
-    body: 'A reusable server-driven grid: URL-backed filters and sort, saved views, column pinning/resizing, CSV import with row-level validation, and a virtualized 100,000-row movements view.',
+    body: 'A reusable server-driven grid: URL-backed filters and sort, saved views, column pinning/resizing, CSV import with row-level validation, CSV and Excel export, and a virtualized 100,000-row movements view.',
   },
   {
     title: 'Accounting-lite',
@@ -21,6 +21,14 @@ const FEATURES = [
   {
     title: 'Dashboards & realtime',
     body: 'GraphQL-backed KPIs and charts, plus a WebSocket feed that toasts approvals and flashes changed stock rows — all served by mocks running in the browser.',
+  },
+  {
+    title: 'HR leave requests',
+    body: 'Leave runs on the same approval engine as purchase orders: a live working-day and balance preview, a manager-then-director chain for longer absences, no deciding your own request, and send back, edit and resubmit.',
+  },
+  {
+    title: 'A Vue approvals inbox',
+    body: 'The same inbox rebuilt in Vue 3 on the shared contract package, with its own unit and browser tests — a separate app that shares schemas, tokens and headers, not a composed micro frontend.',
   },
   {
     title: 'RBAC & i18n',
@@ -65,8 +73,9 @@ export default function HomePage() {
       <p>
         React 19, Vite, TanStack Router / Query / Table / Virtual, React Hook Form + Zod, Tailwind
         CSS v4 with Radix primitives, Recharts, i18next, and MSW v2 (REST, GraphQL and WebSocket)
-        persisting to IndexedDB. A pnpm + Turborepo monorepo holds the app, a shared UI package, a
-        framework-agnostic contract package and this Next.js static site.
+        persisting to IndexedDB. A pnpm + Turborepo monorepo holds the React app, a Vue 3 approvals
+        inbox, a shared UI package (with Storybook), a framework-agnostic contract package and this
+        Next.js static site.
       </p>
 
       <p className="notice">

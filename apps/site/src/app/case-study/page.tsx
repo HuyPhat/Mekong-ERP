@@ -40,6 +40,21 @@ const DECISIONS = [
     'Ledger computed on read',
     'GL, trial balance and aging are derived from journal entries, so they are consistent by construction.',
   ],
+  [
+    'ADR-0013',
+    'Excel export without a library',
+    'The library tried hung silently under the content security policy on large exports, so the workbook is written in-house and zipped synchronously in a same-origin worker.',
+  ],
+  [
+    'ADR-0015',
+    'Leave on the approval engine',
+    'A second document type, with working days as the "amount", approvers by role, computed balances and a guard against deciding your own request.',
+  ],
+  [
+    'ADR-0016',
+    'A Vue inbox on the shared contract',
+    'A standalone app that reuses the schemas, client and rules, and says plainly that it is not a composed micro frontend.',
+  ],
 ] as const;
 
 export default function CaseStudyPage() {
@@ -111,6 +126,15 @@ export default function CaseStudyPage() {
         and reported, without anything visibly breaking. Each is written up in the project plan with
         its fix, and the ones that can regress now have a test that fails without it.
       </p>
+      <p>
+        Building the later features found two more. An Excel library passed a small demo and then
+        never finished on a large export, because it started a worker the content security policy
+        forbids and did not report the failure. And leave requests, the second document on the
+        approval engine, exposed an older bug: a purchase order sent back for changes and then
+        resubmitted was sent straight back again, because the engine still counted its old approval
+        steps. Nothing had exercised a resubmission end to end; it now has a browser test that fails
+        without the fix.
+      </p>
 
       <h2>What I would do next</h2>
       <ul>
@@ -120,7 +144,12 @@ export default function CaseStudyPage() {
           Cross-tab realtime with <code>BroadcastChannel</code>; today realtime is same-tab.
         </li>
         <li>
-          A Vue approvals inbox on the same contract package, to prove it is framework-agnostic.
+          Tell each client whether an approval step is actionable yet, so both inboxes can hide the
+          buttons on steps that are waiting behind an earlier approver.
+        </li>
+        <li>
+          Compose the React and Vue apps at run time behind one shell; today they are separate apps
+          that share packages.
         </li>
       </ul>
 

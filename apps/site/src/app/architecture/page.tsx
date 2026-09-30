@@ -12,8 +12,8 @@ export default function ArchitecturePage() {
     <>
       <h1>Architecture</h1>
       <p className="lede">
-        Three packages and two apps, with one rule that shapes everything: the contract package
-        knows nothing about React.
+        Three packages and three apps, with one rule that shapes everything: the contract package
+        knows nothing about React — which is why a Vue app can use it unchanged.
       </p>
 
       <svg
@@ -24,9 +24,9 @@ export default function ArchitecturePage() {
       >
         <title id="arch-title">Monorepo and runtime architecture</title>
         <desc id="arch-desc">
-          The ERP app renders UI from the ui package and calls the contract package. In the browser,
-          a Mock Service Worker intercepts REST, GraphQL and WebSocket traffic and serves it from
-          IndexedDB.
+          The ERP app renders UI from the ui package and calls the contract package, and so does the
+          Vue approvals inbox. In the browser, a Mock Service Worker intercepts REST, GraphQL and
+          WebSocket traffic and serves it from IndexedDB.
         </desc>
         <g fontFamily="system-ui, sans-serif" fontSize="14" fill="currentColor">
           <rect x="20" y="20" width="200" height="70" rx="10" fill="none" stroke="currentColor" />
@@ -78,7 +78,15 @@ export default function ArchitecturePage() {
             runs in the browser, in every environment
           </text>
 
-          <path d="M120 90v40M360 90v40M240 200v30" stroke="currentColor" fill="none" />
+          <rect x="500" y="130" width="200" height="70" rx="10" fill="none" stroke="currentColor" />
+          <text x="600" y="160" textAnchor="middle" fontWeight="700">
+            apps/erp-vue
+          </text>
+          <text x="600" y="180" textAnchor="middle">
+            Vue 3 · approvals inbox
+          </text>
+
+          <path d="M120 90v40M360 90v40M240 200v30M500 165h-40" stroke="currentColor" fill="none" />
         </g>
       </svg>
 
