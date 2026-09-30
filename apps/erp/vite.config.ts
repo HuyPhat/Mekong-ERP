@@ -13,6 +13,8 @@ export default defineConfig({
   preview: { headers: SECURITY_HEADERS },
   // Playwright specs live in e2e/ and must not be collected by Vitest.
   test: { exclude: ['**/node_modules/**', '**/dist/**', 'e2e/**'] },
+  // The repository is public; readable stack traces beat obscurity for a portfolio.
+  build: { sourcemap: true },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
