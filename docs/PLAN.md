@@ -1,7 +1,10 @@
 # Mekong ERP — Project Plan
 
-Status: **Phase 5 (Quality, docs, deploy) complete except deployment: nothing
-is hosted yet.** Phase 6 (stretch) not started.
+Status: **Phases 0–6 built; nothing is hosted.** Phase 5 (quality, docs,
+deploy) is complete except deployment, and Phase 6 (stretch: Excel export,
+Storybook, HR leave requests, a Vue approvals inbox) is complete except
+publishing Storybook and deploying the apps — the owner steps in §13. Two
+Phase 6 items were never asked for (a saved report builder, offline drafts).
 Last updated: 2026-09-30
 
 This document is the durable source of truth for scope, architecture, phasing,
@@ -58,8 +61,9 @@ Query (key factories, optimistic updates, invalidation, infinite queries
 where useful, devtools), TanStack Table + TanStack Virtual (DataGrid), React
 Hook Form + Zod for forms (confirmed — ADR-0007), Tailwind CSS v4 +
 shadcn/ui (Radix) + lucide-react, Recharts, i18next/react-i18next (vi
-default, en) + Intl formatters, date-fns, papaparse (CSV; XLSX export
-deferred to Phase 6 stretch — see §12), MSW v2 (http + graphql + ws) running in-browser in **all**
+default, en) + Intl formatters, date-fns, papaparse (CSV) and an in-house
+XLSX writer on fflate (Phase 6 — ADR-0013; a library was tried and hung
+silently under the CSP), MSW v2 (http + graphql + ws) running in-browser in **all**
 environments as the demo "backend," data persisted to IndexedDB/localStorage,
 seed data via `@faker-js/faker` with a fixed seed.
 
@@ -77,8 +81,10 @@ reuse it).
   _(Will pin the actual current stable Next.js version at scaffold time rather
   than assume one — see §9 risks.)_
 
-**apps/erp-vue** (stretch) — Vue 3 + Vite + TanStack Vue Query + Vue Router on
-`packages/contract`; single "Approvals Inbox" screen.
+**apps/erp-vue** (built in Phase 6 — ADR-0016) — Vue 3 + Vite + TanStack Vue
+Query + Vue Router on `packages/contract`; single "Approvals Inbox" screen, its
+own origin and light demo dataset, sharing the contract, the design tokens and
+the security headers with the React app. Not a run-time micro frontend.
 
 **Quality tooling** — ESLint (typescript-eslint strict, react-hooks,
 jsx-a11y), Prettier, Vitest + RTL + user-event, Playwright + @axe-core/playwright,
@@ -281,7 +287,10 @@ actually run and is true.
 **Phase 6 — Stretch (after applying).**
 Vue 3 Approvals Inbox on the shared contract; HRM leave requests on the
 approval engine; Storybook published; saved report builder; offline draft
-support. Explicitly optional.
+support. Explicitly optional. _Landed 2026-09-30 (asked for as "move on"):_
+XLSX export, Storybook (built and tested, **not published**), HR leave
+requests, the Vue inbox. _Not asked for:_ the saved report builder and offline
+drafts. See §14.
 
 ## 9. Risks
 
@@ -380,6 +389,19 @@ Written:
 - [**0012**](adr/0012-security-headers-single-source.md) — Security headers
   defined once (`security-headers.ts`), served by `vite preview`, mirrored in
   `vercel.json`/`nginx.conf`, with a drift test.
+- [**0013**](adr/0013-xlsx-export-without-a-library.md) — XLSX export written
+  in-house on fflate's synchronous zip, built in a same-origin worker, because
+  the library that was tried hung silently under the CSP.
+- [**0014**](adr/0014-storybook-and-shared-design-tokens.md) — Storybook 10 for
+  `packages/ui`, design tokens moved to a shared stylesheet, every story tested
+  for console errors and axe violations in both themes.
+- [**0015**](adr/0015-leave-requests-on-the-approval-engine.md) — Leave
+  requests as the second document on the approval engine (working days as the
+  "amount", roles not people, self-decision guard, computed balances), and the
+  `latestChain` fix for resubmitted documents.
+- [**0016**](adr/0016-vue-approvals-inbox-on-the-shared-contract.md) — The Vue
+  approvals inbox as a standalone app on the shared contract, what is and is not
+  shared, and why it is not called a micro frontend.
 
 ## 12. Open questions
 
@@ -393,7 +415,7 @@ XLSX, which is a scope/prioritization call rather than an architectural one:
    See ADR-0008.
 3. **Hosting target** → Vercel. See ADR-0009.
 4. **XLSX export** → deferred to Phase 6 stretch; CSV covers the JD-mapping
-   requirement for v1.
+   requirement for v1. _(Built in Phase 6, in-house: ADR-0013.)_
 
 ### Narrative (default + reasoning — tell me if you want something else)
 
@@ -418,17 +440,22 @@ XLSX, which is a scope/prioritization call rather than an architectural one:
 
 ## 13. Immediate next step
 
-Phase 5 is done except for what only the project owner can do (§14). The
-exit criterion "both apps deployed" is **not** met: nothing here can create
-Vercel projects. To finish it, the owner creates two Vercel projects from this
-repo with root directories `apps/erp` and `apps/site` (each already has a
-`vercel.json`), sets `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_DEMO_URL` on the
-site project, then replaces the README's "not deployed yet" line with the live
-links and records a short screen capture from `docs/DEMO_SCRIPT.md`.
+Phases 0–6 are built; what remains is what only the project owner can do
+(§14). The Phase 5 exit criterion "both apps deployed" is **not** met: nothing
+here can create Vercel projects. To finish it, the owner creates Vercel projects
+from this repo with root directories `apps/erp` and `apps/site` (each already
+has a `vercel.json`), sets `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_DEMO_URL` on
+the site project, then replaces the README's "not deployed yet" line with the
+live links and records a short screen capture from `docs/DEMO_SCRIPT.md`. The
+Vue inbox (`apps/erp-vue`) needs a third project and, first, its own
+`vercel.json` (SPA rewrite and the headers from `apps/erp/security-headers.ts`);
+the static Storybook (`pnpm --filter @mekong-erp/ui build-storybook`, uploaded as
+a CI artifact) needs a host.
 
-**Phase 6 (stretch: Vue approvals inbox, HRM leave requests, Storybook, XLSX
-export) has not been asked for** — per the standing "ask before" rules it will
-not start until the project owner explicitly says to move on.
+**Anything past Phase 6 has not been asked for** — the saved report builder and
+offline drafts (the rest of §8's Phase 6 list) and any further work will not
+start until the project owner explicitly says to move on, per the standing
+"ask before" rules.
 
 ## 14. Progress log
 
@@ -879,3 +906,99 @@ format:check`, `lint`, `typecheck`, `test` (127 tests: 95 contract + 19 ui
   desktop-first, not phone-tuned. Known gaps from earlier phases (drag-reorder
   handle, arrow-key cell navigation, `changes_requested` re-open, in-memory
   comboboxes, same-tab realtime, on-demand ledger) carry forward unchanged.
+- **2026-09-30** — Project owner said "move on": Phase 6 (stretch). Approvals
+  came first and were asked for, not assumed: dependencies (`write-excel-file`,
+  later dropped; Storybook dev dependencies; the Vue app's tooling — `vue`,
+  `vue-router`, `@tanstack/vue-query`, `@vitejs/plugin-vue`, `vue-tsc`,
+  `eslint-plugin-vue`, `vue-eslint-parser`; `@vue/test-utils` and `happy-dom`
+  were **not** approved, so the Vue app's logic is plain modules tested without
+  a component-test library), the contract extension (a `leave_request` document
+  type and `ApprovalView` reshaped to `{subject, amount, unit}`), a standalone
+  Vue app with a light seed, and an in-house XLSX writer.
+  **Excel export** ([ADR-0013](adr/0013-xlsx-export-without-a-library.md)). The
+  approved library, `write-excel-file`, exported 100 rows and never finished on
+  5,000 under the app's CSP: it zips with fflate's async API, which starts a
+  `blob:` worker the policy blocks, and the failure is silent. Measured, then
+  replaced by an in-house OOXML writer (typed cells, `#,##0 "₫"` money, real
+  dates, frozen and filterable header) zipped with fflate's synchronous
+  `zipSync` inside a same-origin worker. Both e2e specs build a workbook through
+  the UI, one of them a 100,000-row movements export. Read back with openpyxl
+  and SheetJS; **not opened in desktop Excel**.
+  **Storybook** ([ADR-0014](adr/0014-storybook-and-shared-design-tokens.md)).
+  Tokens moved to `@mekong-erp/ui/tokens.css` (the app's compiled CSS is
+  byte-identical); Storybook 10 with 52 stories; a spec opens every story in
+  light and dark and fails on a console error or an axe violation, with a
+  negative control. Findings: axe allows one run per frame, and a 150 ms colour
+  transition produced a false 1.39:1 contrast reading. Built and checked in CI;
+  **not published**.
+  **HR leave requests** ([ADR-0015](adr/0015-leave-requests-on-the-approval-engine.md)).
+  The second document on the approval engine: working days are the rule
+  "amount" (1–2 days to a manager, 3+ to a manager then a director), approvers
+  are roles, nobody decides their own request (`403 SELF_DECISION`), balances
+  are computed from the requests with pending days held, the server enforces
+  the rules (overlap, balance, same-year, at least one working day), and a
+  request sent back is edited and resubmitted under the same number. Contract,
+  mock handlers, `DB_VERSION` 4 with a targeted upgrade that adds HR data to an
+  existing 110,000-record database without a reseed, seeds (40 employees, 225
+  leave requests), HR screens (balance tiles, list with "my" and "everyone",
+  form with a live working-day and balance preview, detail with a timeline),
+  leave rows in the shared inbox, and realtime invalidation.
+  **A real Phase 3 bug surfaced by it:** the decide handler passed every step
+  ever created for a document to the engine, so a purchase order sent back and
+  then resubmitted was sent straight back again when its manager approved the
+  new chain. Reproduced on the pre-fix build, fixed in its own commit
+  (`latestChain`), with an e2e regression spec that fails on the old build; the
+  history view now shows one approval round at a time (`approvalHistory`, in the
+  contract). Other findings: the e2e specs first hard-coded 2027 dates and
+  absolute balances (a time bomb, replaced by dates computed from today);
+  `new Date('yyyy-mm-dd')` shifts a calendar date by the time zone (a
+  `formatDateOnly` helper, checked under two zones); the module tabs never
+  showed the current one (both border classes applied) and, found while taking
+  screenshots, lost it on every sub-page because the link's default list search
+  no longer matched (`activeOptions.includeSearch: false`, spec added and
+  confirmed to fail without it).
+  **Vue approvals inbox** ([ADR-0016](adr/0016-vue-approvals-inbox-on-the-shared-contract.md)).
+  `apps/erp-vue`: Vue 3, Vue Router, `@tanstack/vue-query`, Tailwind on the
+  shared tokens, a typed vi/en dictionary. One screen on the same contract:
+  filters, search, sort and paging held in the URL, single and bulk decisions
+  with a mandatory comment for reject/changes, a detail panel with the
+  approval history, `403`/`409` refusals explained, and a light seed profile
+  (~2,400 records, reaching the login in about 0.6 s). 47 unit tests and 15
+  Playwright specs (10 flows, 5 axe scans) on the production build under the
+  real CSP; 82.5 kB gzip initial JS against a 150 kB budget. **It is not a
+  micro frontend** and the README says so: a separate origin, service worker,
+  database and login that share the contract, tokens and headers. Findings:
+  two clients confirmed that `hasPermission` and the history ordering belong in
+  the contract; an aborted `DELETE /api/session` (a hard navigation right after
+  "Log out") is a console error that fails the guard; the inbox lists steps that
+  are not yet actionable, which needs an `actionable` flag on `ApprovalView`
+  (proposed in ADR-0016, a contract change, **not made**); and, found in a
+  documentation screenshot, the list was squeezed to a sliver beside the detail
+  panel with its buttons off the edge (subject minimum width, pinned Actions
+  column, spec confirmed to fail on the old build).
+  **Verification.** `pnpm format:check`, `lint`, `typecheck`, `test` (296 tests:
+  contract 176, ui 47, erp-vue 47, erp 26) and `build` green; domain coverage
+  99.2% of lines, 98.7% of statements, 95.5% of branches; initial JS 279.0 kB
+  (React) and 82.5 kB (Vue) against their budgets; the full React e2e suite
+  from a fresh seed, 40 passed in 14.1 minutes (an older v3 snapshot also
+  exercised the database upgrade); Vue e2e 15 passed, no failures across 14
+  consecutive full runs after two real flakes were fixed at their cause; a
+  dev-server console sweep of every route (including HR, leave detail, the
+  leave-aware inbox and an Excel download) and of the Vue app reported no
+  warnings; Lighthouse 13.5 (desktop, local production builds) re-measured: the
+  React app 97–99 performance and 100 in the other three categories on five
+  pages, the static site 100 across the board (a first run scored 86/91 because
+  a file server answered `/case-study/` with a directory listing; the real page
+  is `case-study.html`). CI gained a Vue bundle-budget step, an `e2e-vue` job
+  and a `storybook` job.
+  **Not done, stated plainly.** Nothing is deployed and Storybook is not hosted
+  (§13); `apps/erp-vue` has no `vercel.json`; no demo was recorded; the
+  `.xlsx` was never opened in Excel; e2e runs in Chromium only; the Vue app was
+  not Lighthouse-audited and has no realtime feed; the `actionable` flag, the
+  React inbox's clipped Actions column at 1400px (pre-existing; needs a
+  default-pinning API on the DataGrid) and moving the approval hooks that
+  `features/hrm` imports from `features/purchasing` into a shared module are
+  open; leave is a slice of HR (flat 12-day allowance, no lunar holidays, roles
+  not reporting lines, no payroll or attendance); the saved report builder and
+  offline drafts were not asked for. Known gaps from earlier phases carry
+  forward unchanged.

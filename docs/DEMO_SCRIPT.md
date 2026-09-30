@@ -1,6 +1,6 @@
 # Demo script
 
-A guided walk-through for a reviewer (or a screen recording). About 5–6 minutes; the
+A guided walk-through for a reviewer (or a screen recording). About 8 minutes; the
 two-minute version is steps 1–7.
 
 **Before you start:** the first visit seeds ~110,000 records into your browser — expect a
@@ -38,6 +38,43 @@ the data at any time.
     open the General ledger for a 131 or 511 account, and AR/AP aging.
 11. **Dashboard:** KPI tiles and the revenue-vs-COGS, AR aging and AP aging charts, served by
     a mocked GraphQL endpoint.
+
+## HR: a leave request on the same approval engine
+
+12. **Switch to Nguyễn Văn An.** **HR** opens on _My requests_: allowance, used, pending and
+    remaining days, then the list. **New request**: pick dates in a future week. The form
+    previews the **working days** (weekends and fixed public holidays don't count) and the balance
+    _after_ the request, before anything is sent. Try a range that overlaps an existing request,
+    or one longer than the balance: the server refuses with a field-level message.
+13. Submit three or more working days. The request's page shows the chain it needs: **Purchasing
+    Manager, then Director**. (One or two days need the manager only.) The days are held against
+    your balance while it waits.
+14. **Switch to Phạm Văn Đức (Manager)**, open **Approvals**, filter **Type → Leave request** and
+    approve; **switch to Hoàng Thị Em (Director)** and approve the second step. Back as An, the
+    request is _Approved_ and the balance has moved. Instead of approving, **Request changes**
+    to see the send-back path: An edits the request and resubmits it under the same number, and
+    the timeline keeps the earlier round as history.
+15. As the manager, request leave and open your own request in **Approvals**: deciding it is
+    refused (`SELF_DECISION`), and the admin login, which sees every step, is who decides it.
+
+## The same inbox in Vue
+
+16. In a second terminal: `pnpm --filter @mekong-erp/erp-vue dev` (http://localhost:5174). This is a **standalone** Vue 3 app that shares only the contract package, the
+    design tokens and the security headers with the React app — its own origin, its own light
+    demo dataset (about 2,400 records), its own login. Sign in as Phạm Văn Đức: the same rules,
+    filters, URL-held view, decision comments and history as the React inbox, decided through the
+    same handlers. Say honestly that it is not a composed micro frontend
+    ([ADR-0016](adr/0016-vue-approvals-inbox-on-the-shared-contract.md)).
+
+## Excel export and the component library
+
+17. **Inventory → Products → Export Excel** (also on Stock movements). Open it: money
+    is a real number formatted `#,##0 "₫"` so it sums, dates are real dates, headers are frozen
+    and filterable. Written by an in-house OOXML writer, because the library considered hung
+    silently under this app's CSP ([ADR-0013](adr/0013-xlsx-export-without-a-library.md)).
+18. `pnpm --filter @mekong-erp/ui storybook` (port 6006): 52 stories of the design system, with a
+    light/dark toolbar toggle; every story is checked in CI for console errors and axe A/AA
+    violations in both themes ([ADR-0014](adr/0014-storybook-and-shared-design-tokens.md)).
 
 ## Things worth showing off
 

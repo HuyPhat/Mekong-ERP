@@ -78,11 +78,17 @@ second one seeds.
   flag on `ApprovalView` would fix it in both apps at once. It is a contract change, so
   it is proposed here rather than made.
 
+- **The list was unreadable beside the detail panel.** A documentation screenshot, not
+  a test, showed it: with the panel open the subject column was squeezed to a sliver (a
+  supplier name over seven lines) and the action buttons ran off the edge. The subject now
+  has a minimum width, the table scrolls sideways inside its region, and the Actions
+  column is pinned to the right. The panel spec asserts both and failed on the old build.
+
 ## Consequences
 
 - One contract, two frameworks, same behaviour: a decision, a refusal, a resubmitted
   document's history and a language switch all work the same in both.
-- The Vue app is small: 82.5 kB gzip of initial JavaScript against 278.8 kB for the React
+- The Vue app is small: 82.5 kB gzip of initial JavaScript against 279.0 kB for the React
   app (budgets enforced in CI for both), because it has one screen and no charting or
   grid library.
 - **Not deployed.** Like the React app it needs a Vercel project, which is an owner step,
