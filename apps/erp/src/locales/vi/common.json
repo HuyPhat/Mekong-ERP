@@ -802,5 +802,26 @@
         "amount": "Số tiền"
       }
     }
+  },
+  "demoTools": {
+    "menuItem": "Công cụ demo",
+    "title": "Công cụ demo",
+    "description": "Điều khiển cho backend giả lập. Chỉ ảnh hưởng đến trình duyệt này.",
+    "network": {
+      "title": "Mạng giả lập",
+      "latencyEnabled": "Thêm độ trễ giả lập",
+      "latencyMin": "Độ trễ tối thiểu (ms)",
+      "latencyMax": "Độ trễ tối đa (ms)",
+      "failureRate": "Tỷ lệ lỗi ngẫu nhiên (%)",
+      "failureHint": "Yêu cầu sẽ trả về lỗi 503 theo tỷ lệ này để xem trạng thái lỗi và thử lại. Đặt 0 để tắt."
+    },
+    "reset": {
+      "title": "Đặt lại dữ liệu demo",
+      "body": "Xóa toàn bộ dữ liệu lưu trong trình duyệt này và tạo lại dữ liệu mẫu ban đầu. Các chứng từ bạn đã tạo sẽ mất.",
+      "action": "Đặt lại dữ liệu demo…",
+      "confirm": "Đồng ý, đặt lại tất cả",
+      "cancel": "Hủy",
+      "working": "Đang đặt lại…"
+    }
   }
 }

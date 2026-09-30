@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Moon, Sun, Search, LogOut, UserRound } from 'lucide-react';
+import { useState } from 'react';
+import { Moon, Sun, Search, LogOut, UserRound, Wrench } from 'lucide-react';
 import {
   Button,
   DropdownMenu,
@@ -13,6 +14,7 @@ import {
 import { DEMO_USERS } from '@mekong-erp/contract';
 import { useLogin, useLogout, useSession } from '../../features/auth/queries';
 import { useUiStore } from '../../shared/store/ui-store';
+import { DemoToolsDialog } from './demo-tools-dialog';
 
 export function Topbar() {
   const { t, i18n } = useTranslation();
@@ -23,6 +25,7 @@ export function Topbar() {
   const theme = useUiStore((state) => state.theme);
   const toggleTheme = useUiStore((state) => state.toggleTheme);
   const setCommandPaletteOpen = useUiStore((state) => state.setCommandPaletteOpen);
+  const [demoToolsOpen, setDemoToolsOpen] = useState(false);
 
   function handleLogout() {
     logout.mutate(undefined, {
@@ -91,6 +94,10 @@ export function Topbar() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setDemoToolsOpen(true)} data-testid="demo-tools-item">
+              <Wrench className="mr-2 h-4 w-4" />
+              {t('demoTools.menuItem')}
+            </DropdownMenuItem>
             <DropdownMenuItem onSelect={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               {t('auth.logout')}
@@ -98,6 +105,7 @@ export function Topbar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <DemoToolsDialog open={demoToolsOpen} onOpenChange={setDemoToolsOpen} />
     </header>
   );
 }

@@ -803,5 +803,26 @@
         "amount": "Amount"
       }
     }
+  },
+  "demoTools": {
+    "menuItem": "Demo tools",
+    "title": "Demo tools",
+    "description": "Controls for the mocked backend. They only affect this browser.",
+    "network": {
+      "title": "Simulated network",
+      "latencyEnabled": "Add artificial latency",
+      "latencyMin": "Min latency (ms)",
+      "latencyMax": "Max latency (ms)",
+      "failureRate": "Random failure rate (%)",
+      "failureHint": "Requests fail with a 503 at this rate so you can see the error and retry states. 0 turns it off."
+    },
+    "reset": {
+      "title": "Reset demo data",
+      "body": "Deletes everything stored in this browser and regenerates the original seed data. Documents you created are lost.",
+      "action": "Reset demo data…",
+      "confirm": "Yes, reset everything",
+      "cancel": "Cancel",
+      "working": "Resetting…"
+    }
   }
 }
