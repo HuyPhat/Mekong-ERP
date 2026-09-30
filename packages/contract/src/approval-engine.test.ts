@@ -6,6 +6,7 @@ import {
   chainOutcome,
   decideApproval,
   latestChain,
+  approvalHistory,
 } from './approval-engine';
 import type { Approval, ApprovalRule } from './approval-entities';
 import { generateApprovalRules } from './seed/approval-rules';
@@ -355,5 +356,50 @@ describe('latestChain: a resubmitted document', () => {
     );
     expect(right.outcome).toBe('pending');
     expect(currentApprovalStep(right.chain)?.id).toBe('new-2');
+  });
+});
+
+describe('approvalHistory', () => {
+  const step = (id: string, sequence: number, createdAt: string): Approval => ({
+    id,
+    docType: 'purchase_order',
+    docId: 'po-1',
+    docNumber: 'PO-2026-000001',
+    sequence,
+    approverRole: 'approver_manager',
+    status: 'pending',
+    createdAt,
+  });
+
+  it('keeps each round together, oldest first, whatever order the steps arrive in', () => {
+    const history = approvalHistory([
+      step('new-2', 2, '2026-03-04T09:00:00.000Z'),
+      step('old-1', 1, '2026-03-02T09:00:00.000Z'),
+      step('new-1', 1, '2026-03-04T09:00:00.000Z'),
+      step('old-2', 2, '2026-03-02T09:00:00.000Z'),
+    ]);
+    expect(history.map((entry) => entry.step.id)).toEqual(['old-1', 'old-2', 'new-1', 'new-2']);
+    expect(history.map((entry) => entry.round)).toEqual([1, 1, 2, 2]);
+    expect(history.every((entry) => entry.rounds === 2)).toBe(true);
+  });
+
+  it('is one round for a first submission, and empty for nothing', () => {
+    const at = '2026-03-02T09:00:00.000Z';
+    expect(
+      approvalHistory([step('b', 2, at), step('a', 1, at)]).map((e) => [e.step.id, e.rounds]),
+    ).toEqual([
+      ['a', 1],
+      ['b', 1],
+    ]);
+    expect(approvalHistory([])).toEqual([]);
+  });
+
+  it('leaves the list it was given alone', () => {
+    const steps = [
+      step('b', 2, '2026-03-02T09:00:00.000Z'),
+      step('a', 1, '2026-03-02T09:00:00.000Z'),
+    ];
+    approvalHistory(steps);
+    expect(steps.map((s) => s.id)).toEqual(['b', 'a']);
   });
 });

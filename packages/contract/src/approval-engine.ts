@@ -53,6 +53,31 @@ export function latestChain(steps: Approval[]): Approval[] {
   return steps.filter((step) => step.createdAt === newest);
 }
 
+export interface ApprovalHistoryEntry {
+  step: Approval;
+  /** Which submission the step belongs to, counting from 1. */
+  round: number;
+  /** How many submissions the document has had, so a client can skip the label for one. */
+  rounds: number;
+}
+
+/**
+ * A document's approval steps as a history: oldest submission first, each round kept
+ * together in chain order. Ordering by the step's place in the chain alone would
+ * interleave the rounds of a document that was sent back and resubmitted.
+ */
+export function approvalHistory(steps: Approval[]): ApprovalHistoryEntry[] {
+  const ordered = [...steps].sort(
+    (a, b) => a.createdAt.localeCompare(b.createdAt) || a.sequence - b.sequence,
+  );
+  const submissions = [...new Set(ordered.map((step) => step.createdAt))];
+  return ordered.map((step) => ({
+    step,
+    round: submissions.indexOf(step.createdAt) + 1,
+    rounds: submissions.length,
+  }));
+}
+
 /** The chain's next actionable step: the lowest-sequence approval still pending. */
 export function currentApprovalStep(chain: Approval[]): Approval | undefined {
   return [...chain]
