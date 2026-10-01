@@ -98,7 +98,8 @@ second one seeds.
   app (budgets enforced in CI for both), because it has one screen and no charting or
   grid library.
 - **Not deployed.** Like the React app it needs a Vercel project, which is an owner step,
-  and it has no `vercel.json` yet. Nothing in it depends on a server.
+  and its `vercel.json` (added the day after, a copy of the React app's and covered by the
+  same headers drift test) has never run on Vercel. Nothing in it depends on a server.
 - It has no realtime channel: it refreshes after its own decisions and when the window
   regains focus, not from the mock WebSocket. That is a gap in the demo, not in the
   contract, whose events any client can subscribe to.

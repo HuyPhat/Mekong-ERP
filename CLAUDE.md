@@ -36,6 +36,15 @@ unit}` replaces `supplierName`), which the owner approved beforehand. Saved
 report builder and offline drafts (the rest of PLAN §8's Phase 6 list) were not
 asked for and do not exist.
 
+Follow-up 2026-10-01 ("move on", scoped by the owner to closing known gaps):
+`ApprovalView` gained a required `actionable` flag (`actionableStepIds` in the
+contract; both inboxes show "Waiting on an earlier approval" instead of buttons
+for a queued step); the DataGrid gained `pinnedEndColumns`, which the React
+inbox uses to keep its Actions column in reach; the approval hooks, keys,
+search schema, status helpers and timeline mapper moved from
+`features/purchasing` to `features/approvals`; `apps/erp-vue` got a
+`vercel.json` covered by the headers drift test. Still nothing deployed.
+
 Phase 5 (Quality, docs, deploy) landed 2026-09-30 **except deployment**: no
 Vercel projects exist, so there is no live URL, and the exit criterion "both
 apps deployed" is unmet (see `docs/PLAN.md` §13 for the owner's steps). What
@@ -240,18 +249,13 @@ Known gaps carried forward rather than overstated as done:
   has never run on Vercel (the Docker image was built and smoke-tested by CI,
   not locally, as the authoring sandbox has no Docker daemon).
 
-- From Phase 6: the inbox lists steps that are not yet actionable (a director's
-  step under a still-pending manager step; the server refuses a decision on it
-  with a 409). The fix is an `actionable` flag on `ApprovalView` — a contract
-  change, so it is proposed in ADR-0016 and not made. The React inbox's Actions
-  column is clipped at about 1400px wide (pre-existing; fixing it needs a
-  default-pinning API on the DataGrid, a public-API change). The Vue app has no
-  realtime feed, its own origin/data/login, and no `vercel.json`. Leave is a
-  slice of HR: flat 12-day allowance, whole days, four fixed public holidays and
-  no lunar ones, roles instead of reporting lines. `apps/erp/src/features/hrm`
-  imports the approval hooks from `features/purchasing` (a cross-feature import
-  that should move to a shared module if a third document type arrives). The
-  `.xlsx` was verified with openpyxl and SheetJS, never desktop Excel.
+- From Phase 6: the Vue app has no realtime feed, its own origin/data/login, and
+  a `vercel.json` that has never run on Vercel. Leave is a slice of HR: flat
+  12-day allowance, whole days, four fixed public holidays and no lunar ones,
+  roles instead of reporting lines. DataGrid's `pinnedEndColumns` works in server
+  mode only (virtualized rows are absolutely positioned and don't pin). The
+  `.xlsx` was verified with openpyxl and SheetJS, never desktop Excel. A stale
+  tab can still try to decide a queued step; the server answers 409.
 
 Pick these up if a future phase's work would benefit, or if asked.
 
@@ -486,3 +490,14 @@ preview` of the production build, with the real CSP. Seeding takes ~1 min, so
   `case-study/` directory of data files. A plain file server asked for `/case-study/` returns
   a directory listing (HTTP 200), which Lighthouse scores as an 86/91 page with no `<main>`
   and no description; the real page, `/case-study.html`, scores 100. Audit the `.html` URL.
+- **`actionable` is the server's call.** `ApprovalView.actionable` is true only for the next
+  pending step of a document's newest chain, worked out by `actionableStepIds` over the _whole_
+  step list before any filter (a filtered list can't tell which step is next). Clients gate
+  buttons and bulk actions on it and don't re-derive it; `canDecide` in the Vue app and the
+  React inbox both read it. The approval hooks live in `apps/erp/src/features/approvals`.
+- **A pinned column needs its own background and left border** (`pinnedEndColumns` in the DataGrid,
+  `sticky right-0 bg-inherit` in the Vue table): otherwise the cells scrolling beneath show through.
+  A row that is highlighted needs a painted background for `bg-inherit` to inherit. Check it in a
+  screenshot at the real width: a Playwright `toBeVisible()` is true for a clipped element.
+- **A `getByRole('row').filter({ has: button })` can match the header row** (it did in the inbox
+  layout spec). Anchor on the button instead and climb to its cell with `xpath=ancestor::td[1]`.

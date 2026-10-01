@@ -45,7 +45,7 @@ renders" is a weak claim on its own.
 
 ## Consequences
 
-- 52 stories across primitives, form controls, FormKit, the wizard, the line-items
+- 53 stories (52 when this was written; `PinnedActions` documents the DataGrid's `pinnedEndColumns`) across primitives, form controls, FormKit, the wizard, the line-items
   table, the DataGrid (server mode, loading, empty, error, bulk actions, exports,
   10,000-row virtualized) and the filter bar. All pass in both themes.
 - **Not published.** `pnpm build-storybook` produces a static site (CI uploads it as

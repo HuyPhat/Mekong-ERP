@@ -72,7 +72,7 @@ starts in about a second.
   flashes changed stock rows.
 - **RBAC & i18n** — eight personas with `resource:action` permissions gating routes, navigation and
   actions; Vietnamese by default, English one click away; light/dark theme.
-- **Storybook** — 52 stories for `packages/ui` on the shared design tokens, every one checked in CI
+- **Storybook** — 53 stories for `packages/ui` on the shared design tokens, every one checked in CI
   for console errors and axe A/AA violations in light and dark
   ([ADR-0014](docs/adr/0014-storybook-and-shared-design-tokens.md)). Built in CI, not published.
 
@@ -155,15 +155,15 @@ stated gap; **Not built** = not in this repository.
 
 ## Quality
 
-All numbers were measured on 2026-09-30 from the commit that carries them.
+The tests, coverage and bundle numbers were measured on 2026-10-01 from the commit that carries them; the Lighthouse scores on 2026-09-30, before the last small inbox changes.
 
 | Check                 | Result                                                                                                                                                                                                                                                                                                                                                                                                      |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit tests            | 296 tests: `packages/contract` 176, `packages/ui` 47, `apps/erp-vue` 47, `apps/erp` 26 (`pnpm test`)                                                                                                                                                                                                                                                                                                        |
-| Domain-logic coverage | 99.2% of lines (98.7% of statements, 95.5% of branches) in the pure domain modules (approval engine, three-way match, ledger, leave rules, money, list-query, …), thresholds enforced in CI. Scope is listed in [`packages/contract/vitest.config.ts`](packages/contract/vitest.config.ts); handlers, seed data and thin clients are covered by e2e rather than counted.                                    |
-| End-to-end            | 40 Playwright specs for the React app and 15 for the Vue inbox, all on the **production build** served with the real security headers: login/RBAC, full P2P and O2C flows, the leave flows, dashboard, grid and Excel export, demo tools. Every spec fails on any console error, page error or CSP violation. The React suite passed from a fresh seed in 14 minutes; the Vue suite takes about 25 seconds. |
+| Unit tests            | 303 tests: `packages/contract` 180, `packages/ui` 47, `apps/erp-vue` 49, `apps/erp` 27 (`pnpm test`)                                                                                                                                                                                                                                                                                                        |
+| Domain-logic coverage | 99.3% of lines (98.8% of statements, 95.6% of branches) in the pure domain modules (approval engine, three-way match, ledger, leave rules, money, list-query, …), thresholds enforced in CI. Scope is listed in [`packages/contract/vitest.config.ts`](packages/contract/vitest.config.ts); handlers, seed data and thin clients are covered by e2e rather than counted.                                    |
+| End-to-end            | 41 Playwright specs for the React app and 15 for the Vue inbox, all on the **production build** served with the real security headers: login/RBAC, full P2P and O2C flows, the leave flows, dashboard, grid and Excel export, demo tools. Every spec fails on any console error, page error or CSP violation. The React suite passed from a fresh seed in 14 minutes; the Vue suite takes about 25 seconds. |
 | Accessibility         | axe-core (WCAG 2.0/2.1 A + AA): 13 checks on the React app (login, seven screens, the leave form and request page, the dark dashboard, the two searchable dialogs), 5 on the Vue inbox, and every Storybook story in light and dark                                                                                                                                                                         |
-| Initial bundle        | React app 279.0 kB JS + 5.7 kB CSS gzipped for the initial load (budget 300 kB / 20 kB); Vue inbox 82.5 kB + 4.4 kB (budget 150 kB / 20 kB). Both enforced in CI by `pnpm --filter <app> budget`; the seed generators are lazy-loaded                                                                                                                                                                       |
+| Initial bundle        | React app 279.1 kB JS + 5.7 kB CSS gzipped for the initial load (budget 300 kB / 20 kB); Vue inbox 82.6 kB + 4.4 kB (budget 150 kB / 20 kB). Both enforced in CI by `pnpm --filter <app> budget`; the seed generators are lazy-loaded                                                                                                                                                                       |
 | Lighthouse            | Lighthouse 13.5, desktop preset, local production builds, warm profile: the React app scores 97–99 performance and 100 accessibility, best practices and SEO on the login, dashboard, products, approvals and leave pages; the static site scores 100 in all four categories on its three pages. Not measured on the mobile preset, on a hosted deployment, or on the Vue app.                              |
 
 ```
@@ -182,9 +182,10 @@ Nothing is deployed yet, so there is no live URL to link:
   commands, SPA rewrite, security headers). For the site, set `NEXT_PUBLIC_SITE_URL` (canonical, sitemap
   and OG URLs) and `NEXT_PUBLIC_DEMO_URL` (enables the "Live demo" links). The install and build
   commands mirror what CI runs, but they have not been run on Vercel.
-- **Vue inbox and Storybook** — not deployed either. `apps/erp-vue` has **no `vercel.json` yet**: a
-  third project would need the same SPA rewrite and headers (`apps/erp/security-headers.ts` is the
-  source). CI builds the static Storybook and uploads it as an artifact; hosting it is an owner step.
+- **Vue inbox and Storybook** — not deployed either. `apps/erp-vue` has its own `vercel.json` (a
+  copy of the React app's, covered by the same headers drift test) and would be a third project with
+  root directory `apps/erp-vue`; it has never run on Vercel. CI builds the static Storybook and uploads
+  it as an artifact; hosting it is an owner step.
 - **Docker** — `docker compose up --build` serves the ERP build via unprivileged nginx on
   `http://localhost:8080` with the same headers. The authoring machine had no Docker daemon; the image is
   built and smoke-tested (headers and SPA fallback) by a CI job on every push, and passed there.
@@ -217,11 +218,10 @@ Stated up front rather than discovered later:
 - Leave is a slice of HR, not a module: a flat 12-day allowance (no accrual or carry-over), whole days
   only, weekdays minus four fixed public holidays (lunar holidays like Tết are not modelled), approvers
   by role rather than reporting line, no payroll or attendance.
-- The approvals inbox lists steps that are not yet actionable (a director's step under a manager's
-  still-pending one); the fix — an `actionable` flag on the shared view — is proposed in
-  [ADR-0016](docs/adr/0016-vue-approvals-inbox-on-the-shared-contract.md), not built. A decision on
-  such a step is refused with a 409, so nothing is decided out of order.
-- The React inbox's Actions column is clipped at about 1400px wide; the grid scrolls sideways.
+- The approvals inbox still lists a step that is queued behind an earlier approver (it says "Waiting on
+  an earlier approval" and offers no buttons); a stale tab that tries to decide one is refused with a 409.
+  Its Actions column is pinned to the right edge, so on a narrower screen the other columns scroll
+  beneath it.
 - The Vue app is a separate origin with its own demo data and login, has no realtime feed, and
   covers the inbox only. The React and Vue apps do not compose at run time.
 - The `.xlsx` export was read back with two independent readers (openpyxl and SheetJS) but **not

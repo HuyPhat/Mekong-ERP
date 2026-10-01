@@ -5,7 +5,7 @@ deploy) is complete except deployment, and Phase 6 (stretch: Excel export,
 Storybook, HR leave requests, a Vue approvals inbox) is complete except
 publishing Storybook and deploying the apps — the owner steps in §13. Two
 Phase 6 items were never asked for (a saved report builder, offline drafts).
-Last updated: 2026-09-30
+Last updated: 2026-10-01
 
 This document is the durable source of truth for scope, architecture, phasing,
 risks, and open decisions. It exists so any future session (including this one
@@ -447,9 +447,9 @@ from this repo with root directories `apps/erp` and `apps/site` (each already
 has a `vercel.json`), sets `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_DEMO_URL` on
 the site project, then replaces the README's "not deployed yet" line with the
 live links and records a short screen capture from `docs/DEMO_SCRIPT.md`. The
-Vue inbox (`apps/erp-vue`) needs a third project and, first, its own
-`vercel.json` (SPA rewrite and the headers from `apps/erp/security-headers.ts`);
-the static Storybook (`pnpm --filter @mekong-erp/ui build-storybook`, uploaded as
+Vue inbox (`apps/erp-vue`) needs a third project (it has its own `vercel.json`,
+added 2026-10-01, covered by the same headers drift test and never run on
+Vercel); the static Storybook (`pnpm --filter @mekong-erp/ui build-storybook`, uploaded as
 a CI artifact) needs a host.
 
 **Anything past Phase 6 has not been asked for** — the saved report builder and
@@ -1002,3 +1002,35 @@ format:check`, `lint`, `typecheck`, `test` (127 tests: 95 contract + 19 ui
   not reporting lines, no payroll or attendance); the saved report builder and
   offline drafts were not asked for. Known gaps from earlier phases carry
   forward unchanged.
+- **2026-10-01** — Project owner said "move on". The plan has no Phase 7, so the
+  options were asked, not assumed (the remaining stretch items, or closing known
+  gaps); the owner chose **closing known gaps**, which included the two items that
+  needed their sign-off (a contract change and a DataGrid option). Four commits,
+  each with its own check. (1) **`ApprovalView.actionable`**: a required flag, true
+  only for the next pending step of a document's newest chain, computed by
+  `actionableStepIds` over the whole step list before any filter narrows it. Both
+  inboxes now say "Waiting on an earlier approval" instead of showing buttons and a
+  checkbox on a queued step, and the bulk action sends only steps that are up; the
+  server still answers 409 to a stale tab. The Vue spec that depended on a batch
+  partly failing was replaced by one that follows a request from manager to
+  director, and the React leave-inbox spec covers both sides of the hand-over (ADR-0016
+  updated). (2) **DataGrid `pinnedEndColumns`**: columns kept at the right edge
+  whatever the saved layout says, used by the inbox's Actions column, which on a
+  1400px screen scrolled out of reach. The layout spec fails with the pin switched off
+  (confirmed) and passes with it; one more Storybook story (53). Found on the way: the
+  spec's first locator (`getByRole('row').filter({ has: button })`) matched the header
+  row, so the failing-build run proved nothing until the locator was fixed.
+  Virtualized mode still doesn't pin. (3) **`features/approvals`**: the approval hooks,
+  keys, search schema, status helpers and timeline mapper moved out of
+  `features/purchasing`, which `features/hrm` had been importing from; no behaviour
+  change. (4) **`apps/erp-vue/vercel.json`**, a copy of the React app's, with the
+  headers drift test now reading both (confirmed to fail on a changed header).
+  **Verification.** format, lint, typecheck, test (303 tests: contract 180, ui 47,
+  erp-vue 49, erp 27) and build green; domain coverage 99.3% of lines, 98.8% of
+  statements, 95.6% of branches; initial JS 279.1 kB (React) and 82.6 kB (Vue);
+  Vue e2e 15 passed; story checks 107 passed; the React specs these changes touch
+  (leave inbox, leave flows, P2P and its resubmission, layout) passed individually.
+  The full React suite (41 specs, saved seed reused) had not finished when this
+  entry was written. Lighthouse was not re-run after these changes. **Not done:** nothing deployed; Storybook not hosted; the saved report
+  builder and offline drafts (still not asked for); the Vue app has no realtime feed;
+  pinning in virtualized grids.

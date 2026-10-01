@@ -72,7 +72,7 @@ the data at any time.
     is a real number formatted `#,##0 "₫"` so it sums, dates are real dates, headers are frozen
     and filterable. Written by an in-house OOXML writer, because the library considered hung
     silently under this app's CSP ([ADR-0013](adr/0013-xlsx-export-without-a-library.md)).
-18. `pnpm --filter @mekong-erp/ui storybook` (port 6006): 52 stories of the design system, with a
+18. `pnpm --filter @mekong-erp/ui storybook` (port 6006): 53 stories of the design system, with a
     light/dark toolbar toggle; every story is checked in CI for console errors and axe A/AA
     violations in both themes ([ADR-0014](adr/0014-storybook-and-shared-design-tokens.md)).
 

@@ -7,6 +7,8 @@
 - As a **submitter**, I see the whole approval chain on the document's timeline.
 - As **anyone with a document open**, I get a toast when an approval is requested.
 - As an **approver**, I never decide my own leave request (`403 SELF_DECISION`).
+- As an **approver**, I see a step that is queued behind an earlier approver (the director's, while the
+  manager hasn't decided) marked "Waiting on an earlier approval", with no buttons until its turn.
 
 ## How a chain is built
 
