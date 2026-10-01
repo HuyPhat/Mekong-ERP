@@ -7,8 +7,8 @@ import { requirePermission } from '../../../../../shared/permissions/guards';
 import { useCan } from '../../../../../shared/permissions/use-can';
 import { formatDate, formatDateOnly } from '../../../../../shared/lib/format';
 import { useSession } from '../../../../../features/auth/queries';
-import { useApprovals } from '../../../../../features/purchasing/queries';
-import { approvalTimelineEntries } from '../../../../../features/purchasing/approval-timeline';
+import { useApprovals } from '../../../../../features/approvals/queries';
+import { approvalTimelineEntries } from '../../../../../features/approvals/approval-timeline';
 import {
   useCancelLeaveRequest,
   useLeaveRequest,

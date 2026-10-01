@@ -9,14 +9,14 @@ import { formatDate } from '../../../../../shared/lib/format';
 import { useProducts } from '../../../../../features/inventory/queries';
 import {
   usePurchaseOrder,
-  useApprovals,
   useGoodsReceipts,
   useVendorBills,
   useSubmitPurchaseOrder,
   useCancelPurchaseOrder,
 } from '../../../../../features/purchasing/queries';
 import { poStatusLabel, poStatusTone } from '../../../../../features/purchasing/status';
-import { approvalTimelineEntries } from '../../../../../features/purchasing/approval-timeline';
+import { useApprovals } from '../../../../../features/approvals/queries';
+import { approvalTimelineEntries } from '../../../../../features/approvals/approval-timeline';
 
 export const Route = createFileRoute('/_app/purchasing/orders/$poId/')({
   beforeLoad: ({ context }) => requirePermission(context.queryClient, PERMISSIONS.purchasingRead),

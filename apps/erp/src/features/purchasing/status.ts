@@ -1,11 +1,6 @@
 import type { TFunction } from 'i18next';
 import type { StatusBadgeTone } from '@mekong-erp/ui';
-import type {
-  ApprovalStatus,
-  MatchLineStatus,
-  PurchaseOrderStatus,
-  VendorBillStatus,
-} from '@mekong-erp/contract';
+import type { MatchLineStatus, PurchaseOrderStatus, VendorBillStatus } from '@mekong-erp/contract';
 
 const PO_STATUS_TONE: Record<PurchaseOrderStatus, StatusBadgeTone> = {
   draft: 'neutral',
@@ -26,22 +21,6 @@ export function poStatusTone(status: PurchaseOrderStatus): StatusBadgeTone {
 
 export function poStatusLabel(t: TFunction, status: PurchaseOrderStatus): string {
   return t(`purchasing.orders.status.${status}`);
-}
-
-const APPROVAL_STATUS_TONE: Record<ApprovalStatus, StatusBadgeTone> = {
-  pending: 'info',
-  approved: 'success',
-  rejected: 'destructive',
-  changes_requested: 'warning',
-  skipped: 'neutral',
-};
-
-export function approvalStatusTone(status: ApprovalStatus): StatusBadgeTone {
-  return APPROVAL_STATUS_TONE[status];
-}
-
-export function approvalStatusLabel(t: TFunction, status: ApprovalStatus): string {
-  return t(`approvals.status.${status}`);
 }
 
 const BILL_STATUS_TONE: Record<VendorBillStatus, StatusBadgeTone> = {

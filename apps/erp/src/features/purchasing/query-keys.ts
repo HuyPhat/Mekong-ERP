@@ -18,9 +18,6 @@ export const purchasingKeys = {
     detail: (id: string) => ['vendor-bills', 'detail', id] as const,
     match: (id: string) => ['vendor-bills', 'match', id] as const,
   },
-  approvals: {
-    list: (params: ListParams) => ['approvals', 'list', params] as const,
-  },
   auditLog: {
     list: (params: ListParams) => ['audit-log', 'list', params] as const,
   },

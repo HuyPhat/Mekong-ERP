@@ -18,8 +18,6 @@ import {
   confirmVendorBillMatch,
   overrideVendorBillMatch,
   payVendorBill,
-  fetchApprovals,
-  submitApprovalDecision,
   fetchAuditLog,
   type ListParams,
   type PurchaseOrderInput,
@@ -222,35 +220,6 @@ export function usePayVendorBill() {
       void queryClient.invalidateQueries({
         queryKey: purchasingKeys.purchaseOrders.detail(bill.poId),
       });
-    },
-  });
-}
-
-export function useApprovals(params: ListParams) {
-  return useQuery({
-    queryKey: purchasingKeys.approvals.list(params),
-    queryFn: () => fetchApprovals(params),
-    placeholderData: (previous) => previous,
-  });
-}
-
-export function useSubmitApprovalDecision() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({
-      id,
-      decision,
-      actorId,
-      comment,
-    }: {
-      id: string;
-      decision: 'approved' | 'rejected' | 'changes_requested';
-      actorId: string;
-      comment?: string;
-    }) => submitApprovalDecision(id, decision, actorId, comment),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['approvals'] });
-      invalidatePurchaseOrderLists(queryClient);
     },
   });
 }

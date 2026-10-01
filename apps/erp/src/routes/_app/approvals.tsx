@@ -32,12 +32,12 @@ import { requirePermission } from '../../shared/permissions/guards';
 import { useCan } from '../../shared/permissions/use-can';
 import { useSession } from '../../features/auth/queries';
 import { formatDate } from '../../shared/lib/format';
-import { useApprovals, useSubmitApprovalDecision } from '../../features/purchasing/queries';
+import { useApprovals, useSubmitApprovalDecision } from '../../features/approvals/queries';
 import {
   ApprovalsSearchSchema,
   type ApprovalsSearch,
-} from '../../features/purchasing/search-schemas';
-import { approvalStatusLabel, approvalStatusTone } from '../../features/purchasing/status';
+} from '../../features/approvals/search-schemas';
+import { approvalStatusLabel, approvalStatusTone } from '../../features/approvals/status';
 import { sortingToParam, paramToSorting } from '../../shared/lib/sort-params';
 import { buildDataGridLabels, buildFilterBarLabels } from '../../shared/lib/data-grid-labels';
 
