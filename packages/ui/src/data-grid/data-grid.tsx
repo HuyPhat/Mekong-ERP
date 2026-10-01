@@ -58,6 +58,13 @@ export interface DataGridProps<TData extends object> {
   enableRowSelection?: boolean;
   bulkActions?: BulkAction<TData>[];
 
+  /**
+   * Columns kept at the right edge whatever the saved layout says, so a wide table scrolls
+   * under them instead of pushing them out of reach (a row's action buttons). They can't be
+   * unpinned from the header.
+   */
+  pinnedEndColumns?: string[];
+
   renderFooter?: (rows: TData[]) => ReactNode;
   labels?: DataGridLabels;
   rowClassName?: (row: TData) => string | undefined;
@@ -87,6 +94,7 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
     onExportXlsx,
     enableRowSelection = false,
     bulkActions,
+    pinnedEndColumns,
     renderFooter,
     labels = defaultDataGridLabels,
     rowClassName,
@@ -109,7 +117,13 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
       rowSelection,
       columnVisibility: layout.columnVisibility as ColumnVisibilityState,
       columnOrder: layout.columnOrder,
-      columnPinning: layout.columnPinning as ColumnPinningState,
+      columnPinning: {
+        start: layout.columnPinning.start,
+        end: [
+          ...layout.columnPinning.end.filter((id) => !pinnedEndColumns?.includes(id)),
+          ...(pinnedEndColumns ?? []),
+        ],
+      } as ColumnPinningState,
     },
     onSortingChange,
     onPaginationChange: onPaginationChange ?? (() => undefined),
@@ -231,6 +245,7 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                       className={cn(
                         'relative select-none border-b border-border bg-background p-2 text-left font-medium',
                         pinned && 'sticky z-20 bg-background',
+                        pinned === 'end' && 'border-l',
                       )}
                       style={{
                         width: header.getSize(),
@@ -270,16 +285,23 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                             <table.FlexRender header={header} />
                           </span>
                         )}
-                        {header.column.getCanPin() && (
-                          <button
-                            type="button"
-                            className="ml-auto opacity-0 hover:opacity-100 group-hover:opacity-100"
-                            onClick={() => header.column.pin(pinned === 'start' ? false : 'start')}
-                            aria-label={pinned ? labels.unpinColumn : labels.pinColumn}
-                          >
-                            {pinned ? <PinOff className="h-3 w-3" /> : <Pin className="h-3 w-3" />}
-                          </button>
-                        )}
+                        {header.column.getCanPin() &&
+                          !pinnedEndColumns?.includes(header.column.id) && (
+                            <button
+                              type="button"
+                              className="ml-auto opacity-0 hover:opacity-100 group-hover:opacity-100"
+                              onClick={() =>
+                                header.column.pin(pinned === 'start' ? false : 'start')
+                              }
+                              aria-label={pinned ? labels.unpinColumn : labels.pinColumn}
+                            >
+                              {pinned ? (
+                                <PinOff className="h-3 w-3" />
+                              ) : (
+                                <Pin className="h-3 w-3" />
+                              )}
+                            </button>
+                          )}
                       </div>
                       {header.column.getCanResize() && (
                         // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- ARIA APG focusable-separator pattern; jsx-a11y's role table doesn't special-case it
@@ -445,7 +467,11 @@ export function DataGrid<TData extends object>(props: DataGridProps<TData>) {
                     return (
                       <td
                         key={cell.id}
-                        className={cn('overflow-hidden p-2', pinned && 'sticky z-10 bg-background')}
+                        className={cn(
+                          'overflow-hidden p-2',
+                          pinned && 'sticky z-10 bg-background',
+                          pinned === 'end' && 'border-l border-border',
+                        )}
                         style={{
                           width: cell.column.getSize(),
                           insetInlineStart:

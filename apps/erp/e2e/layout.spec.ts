@@ -57,3 +57,29 @@ test('the current module tab is marked and the others are not', async ({ page })
   await gotoApp(page, '/hrm/leave/new');
   expect(await underline('Leave requests')).not.toBe(transparent);
 });
+
+// The inbox's Actions column is wider than the room left on a 1400px screen, and used to
+// scroll out of reach with the rest of the row. It is pinned to the right edge now: the
+// decision buttons stay on screen while the other columns scroll beneath them.
+test('the approvals inbox keeps its decision buttons in reach', async ({ page }) => {
+  await loginAs(page, PERSONAS.manager);
+  await gotoApp(page, '/approvals');
+  // The cell of the first row that has something to decide.
+  const actions = page
+    .getByRole('button', { name: 'Approve', exact: true })
+    .first()
+    .locator('xpath=ancestor::td[1]');
+  await expect(actions).toBeVisible();
+  for (const name of ['Approve', 'Request changes', 'Reject']) {
+    await expect(actions.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+  }
+  // Scrolling the grid sideways leaves them where they are.
+  await page
+    .getByRole('grid')
+    .evaluate((grid) =>
+      grid.closest('div[class*="overflow"]')?.scrollTo({ left: Number.MAX_SAFE_INTEGER }),
+    );
+  await expect(actions.getByRole('button', { name: 'Reject', exact: true })).toBeInViewport({
+    ratio: 1,
+  });
+});

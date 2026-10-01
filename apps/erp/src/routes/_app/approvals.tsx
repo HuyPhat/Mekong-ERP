@@ -232,7 +232,7 @@ function ApprovalsInboxPage() {
       columnHelper.display({
         id: 'actions',
         header: () => <span className="sr-only">{t('approvals.columns.actions')}</span>,
-        size: 260,
+        size: 300,
         cell: (info) => {
           const approval = info.row.original;
           if (!canDecideRow(approval) || approval.status !== 'pending') return null;
@@ -330,6 +330,7 @@ function ApprovalsInboxPage() {
         getRowId={(row) => row.id}
         rowCount={data?.meta.total ?? 0}
         enableRowSelection={canDecide}
+        pinnedEndColumns={['actions']}
         bulkActions={bulkActions}
         pagination={{ pageIndex: search.page - 1, pageSize: search.pageSize }}
         onPaginationChange={(updater) => {

@@ -168,6 +168,45 @@ function VirtualizedGrid({ rows = 10_000 }: { rows?: number }) {
   );
 }
 
+const columnsWithActions = [
+  ...columns,
+  columnHelper.display({
+    id: 'actions',
+    header: () => <span className="sr-only">Actions</span>,
+    size: 150,
+    cell: () => (
+      <div className="flex gap-2">
+        <button type="button" className="rounded border border-border px-2 py-0.5 text-xs">
+          Edit
+        </button>
+        <button type="button" className="rounded border border-border px-2 py-0.5 text-xs">
+          Archive
+        </button>
+      </div>
+    ),
+  }),
+];
+
+/** Narrower than its columns, so it scrolls sideways; the actions column stays pinned. */
+function PinnedActionsGrid() {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const data = useMemo(() => makeProducts(8), []);
+  return (
+    <div className="w-[640px]">
+      <DataGrid<Product>
+        viewId="story-pinned-actions-grid"
+        columns={columnsWithActions}
+        data={data}
+        getRowId={(row) => row.id}
+        rowCount={data.length}
+        sorting={sorting}
+        onSortingChange={setSorting}
+        pinnedEndColumns={['actions']}
+      />
+    </div>
+  );
+}
+
 const meta = {
   title: 'Data/DataGrid',
   component: ServerGrid,
@@ -196,4 +235,9 @@ export const WithExports: Story = { args: { exportable: true } };
 /** 10,000 rows in memory, rendered virtually: scroll the grid, only visible rows are in the DOM. */
 export const ClientVirtualized: Story = {
   render: () => <VirtualizedGrid />,
+};
+
+/** `pinnedEndColumns` keeps a row's actions at the right edge while the other columns scroll. */
+export const PinnedActions: Story = {
+  render: () => <PinnedActionsGrid />,
 };
