@@ -1030,7 +1030,10 @@ format:check`, `lint`, `typecheck`, `test` (127 tests: 95 contract + 19 ui
   statements, 95.6% of branches; initial JS 279.1 kB (React) and 82.6 kB (Vue);
   Vue e2e 15 passed; story checks 107 passed; the React specs these changes touch
   (leave inbox, leave flows, P2P and its resubmission, layout) passed individually.
-  The full React suite (41 specs, saved seed reused) had not finished when this
-  entry was written. Lighthouse was not re-run after these changes. **Not done:** nothing deployed; Storybook not hosted; the saved report
+  The full React suite (41 specs, saved seed reused) then passed locally in 12.6
+  minutes, and CI on the pushed head passed all five jobs (the React e2e in 9
+  minutes, the Vue e2e in 28 seconds, the Storybook check, the Docker smoke test
+  and the main job with both bundle budgets). Lighthouse was not re-run after
+  these changes. **Not done:** nothing deployed; Storybook not hosted; the saved report
   builder and offline drafts (still not asked for); the Vue app has no realtime feed;
   pinning in virtualized grids.

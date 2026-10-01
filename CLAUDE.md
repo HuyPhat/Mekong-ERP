@@ -99,7 +99,7 @@ pnpm format:check     # prettier --check
 ```
 
 Also: `pnpm test:e2e` (builds `apps/erp`, then runs Playwright against
-`vite preview`; ~14 min locally from a fresh seed, ~5 min on CI),
+`vite preview`; ~12–14 min locally, ~9 min on CI),
 `pnpm test:e2e:vue` (the Vue inbox's suite, ~30 s), `pnpm --filter
 @mekong-erp/contract test:coverage` (domain-logic thresholds), and `pnpm
 --filter @mekong-erp/erp budget` / `pnpm --filter @mekong-erp/erp-vue budget`
