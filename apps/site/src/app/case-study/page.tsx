@@ -144,10 +144,6 @@ export default function CaseStudyPage() {
           Cross-tab realtime with <code>BroadcastChannel</code>; today realtime is same-tab.
         </li>
         <li>
-          Tell each client whether an approval step is actionable yet, so both inboxes can hide the
-          buttons on steps that are waiting behind an earlier approver.
-        </li>
-        <li>
           Compose the React and Vue apps at run time behind one shell; today they are separate apps
           that share packages.
         </li>
