@@ -10,18 +10,27 @@ interface VercelConfig {
   headers: { source: string; headers: VercelHeader[] }[];
 }
 
-const vercel = JSON.parse(
-  readFileSync(new URL('./vercel.json', import.meta.url), 'utf8'),
-) as VercelConfig;
+// Both SPAs are served with the same headers: the Vue inbox previews under this file too.
+const vercelConfigs = {
+  'apps/erp': JSON.parse(
+    readFileSync(new URL('./vercel.json', import.meta.url), 'utf8'),
+  ) as VercelConfig,
+  'apps/erp-vue': JSON.parse(
+    readFileSync(new URL('../erp-vue/vercel.json', import.meta.url), 'utf8'),
+  ) as VercelConfig,
+};
 const nginx = readFileSync(new URL('./nginx.conf', import.meta.url), 'utf8');
 
 describe('security headers stay in sync', () => {
-  it('vercel.json serves exactly the shared header set on every route', () => {
-    const catchAll = vercel.headers.find((entry) => entry.source === '/(.*)');
-    expect(catchAll).toBeDefined();
-    const served = Object.fromEntries((catchAll?.headers ?? []).map((h) => [h.key, h.value]));
-    expect(served).toEqual(SECURITY_HEADERS);
-  });
+  it.each(Object.entries(vercelConfigs))(
+    '%s/vercel.json serves exactly the shared header set on every route',
+    (_app, vercel) => {
+      const catchAll = vercel.headers.find((entry) => entry.source === '/(.*)');
+      expect(catchAll).toBeDefined();
+      const served = Object.fromEntries((catchAll?.headers ?? []).map((h) => [h.key, h.value]));
+      expect(served).toEqual(SECURITY_HEADERS);
+    },
+  );
 
   it('nginx.conf carries every shared header verbatim', () => {
     for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
