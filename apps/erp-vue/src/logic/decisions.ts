@@ -14,9 +14,25 @@ const DECIDE_PERMISSION: Record<ApprovalDocType, string> = {
   leave_request: PERMISSIONS.leaveRequestApprove,
 };
 
-/** Whether this login may decide this step: it is waiting, and the login holds the permission. */
+/**
+ * Whether this login may decide this step now: it is the next one in its chain (the server
+ * says so, `actionable`), and the login holds the permission.
+ */
 export function canDecide(user: User | null | undefined, step: ApprovalView): boolean {
-  return step.status === 'pending' && hasPermission(user ?? null, DECIDE_PERMISSION[step.docType]);
+  return (
+    step.status === 'pending' &&
+    step.actionable &&
+    hasPermission(user ?? null, DECIDE_PERMISSION[step.docType])
+  );
+}
+
+/** A step this login could decide, but that waits on an earlier approver's decision. */
+export function isQueued(user: User | null | undefined, step: ApprovalView): boolean {
+  return (
+    step.status === 'pending' &&
+    !step.actionable &&
+    hasPermission(user ?? null, DECIDE_PERMISSION[step.docType])
+  );
 }
 
 export function decidableSteps(

@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { test, expect, loginAs, useEnglish, workingDay, PERSONAS } from './fixtures';
+import { test, expect, loginAs, useEnglish, workingDay, addDays, PERSONAS } from './fixtures';
 
 // The approvals inbox built with Vue, driven the way a person would, against the
 // production build under the real CSP. Each test starts on a fresh browser profile, so
@@ -221,15 +221,59 @@ test.describe('the rules', () => {
   // Refusals are 403s and 409s, which the browser logs as console errors.
   test.use({ allowedConsoleErrors: [/status of (403|409)/] });
 
-  test('a batch that includes steps not yet up says what went through', async ({ page }) => {
-    // The director's list holds steps whose earlier approver has not decided yet. They
-    // can't be approved (the server answers 409), and the batch says how many went through.
+  test('a step waiting on an earlier approver can be decided only once its turn comes', async ({
+    page,
+  }) => {
+    // A request of three or more working days goes to the manager, then the director.
+    await loginAs(page, PERSONAS.manager);
+    // Unpaid leave, so no balance can be in the way; the days stay inside one calendar year.
+    let start = workingDay(230);
+    if (addDays(start, 4).slice(0, 4) !== start.slice(0, 4)) start = workingDay(300);
+    const end = addDays(start, 4);
+    const number = await page.evaluate(
+      async ([from, to]) => {
+        const response = await fetch('/api/leave-requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            employeeId: 'emp-purchasing',
+            type: 'unpaid',
+            startDate: from,
+            endDate: to,
+            reason: 'A long weekend',
+          }),
+        });
+        return ((await response.json()) as { number: string }).number;
+      },
+      [start, end],
+    );
+    expect(number).toMatch(/^LV-\d{4}-\d+$/);
+
+    // The director sees the step, but it says whose turn it is and offers no decision.
+    await page.getByRole('button', { name: 'Log out' }).click();
+    await expect(page).toHaveURL(/\/login$/);
     await loginAs(page, PERSONAS.director);
-    await page.getByLabel('Type', { exact: true }).selectOption('leave_request');
-    await expect(rows(page).first()).toBeVisible();
-    await page.getByRole('checkbox', { name: /^Select every row/ }).check();
-    await page.getByRole('button', { name: 'Approve selected' }).click();
-    await expect(page.getByRole('status').getByText(/could not be approved yet/)).toBeVisible();
+    await page.getByLabel('Search', { exact: true }).fill(number);
+    const queued = rowFor(page, number);
+    await expect(queued).toHaveCount(1);
+    await expect(queued).toContainText('Waiting on an earlier approval');
+    await expect(queued.getByRole('button', { name: 'Approve', exact: true })).toHaveCount(0);
+    await expect(queued.getByRole('checkbox')).toHaveCount(0);
+
+    // Once the manager has approved, it is the director's turn.
+    await page.getByRole('button', { name: 'Log out' }).click();
+    await expect(page).toHaveURL(/\/login$/);
+    await loginAs(page, PERSONAS.manager);
+    await page.getByLabel('Search', { exact: true }).fill(number);
+    await rowFor(page, number).getByRole('button', { name: 'Approve', exact: true }).click();
+    await expect(rowFor(page, number).filter({ hasText: 'Pending' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Log out' }).click();
+    await expect(page).toHaveURL(/\/login$/);
+    await loginAs(page, PERSONAS.director);
+    await page.getByLabel('Search', { exact: true }).fill(number);
+    const turn = rowFor(page, number).filter({ hasText: 'Pending' });
+    await expect(turn).toHaveCount(1);
+    await expect(turn.getByRole('button', { name: 'Approve', exact: true })).toBeVisible();
   });
 
   test('nobody decides their own leave request, and the admin login can', async ({ page }) => {

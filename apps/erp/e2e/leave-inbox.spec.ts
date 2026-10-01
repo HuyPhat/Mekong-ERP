@@ -68,6 +68,13 @@ test('the inbox lists leave, refuses self-approval, and lets someone else decide
     await expect(row.getByText('Approved', { exact: true })).toBeVisible();
   });
 
+  await test.step("the director's step waits for the manager: shown, but not decidable yet", async () => {
+    await switchUser(page, PERSONAS.director);
+    const row = await rowFor(other.number);
+    await expect(row).toContainText('Waiting on an earlier approval');
+    await expect(row.getByRole('button', { name: /^Approve$/ })).toHaveCount(0);
+  });
+
   await test.step("someone else's request: approved, then waiting on the director", async () => {
     await switchUser(page, PERSONAS.manager);
     const row = await rowFor(other.number);
@@ -75,5 +82,12 @@ test('the inbox lists leave, refuses self-approval, and lets someone else decide
     await expect(row.getByText('Approved', { exact: true })).toBeVisible();
     // The toast is announced twice: once shown, once in a live region for screen readers.
     await expect(page.getByText(`${other.number} is waiting on Director`).first()).toBeVisible();
+  });
+
+  await test.step("then it is the director's turn", async () => {
+    await switchUser(page, PERSONAS.director);
+    const row = await rowFor(other.number);
+    await expect(row.getByRole('button', { name: /^Approve$/ })).toBeVisible();
+    await expect(row).not.toContainText('Waiting on an earlier approval');
   });
 });

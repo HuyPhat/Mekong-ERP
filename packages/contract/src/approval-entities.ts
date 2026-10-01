@@ -42,6 +42,11 @@ export const ApprovalViewSchema = ApprovalSchema.extend({
   amount: z.number().int(),
   /** VND for a purchase order, working days for a leave request. */
   unit: z.enum(['vnd', 'days']),
+  /**
+   * Whether someone can decide this step now: it is the next pending step of the
+   * document's newest chain. A pending step behind an earlier approver's is not yet up.
+   */
+  actionable: z.boolean(),
 });
 export type ApprovalView = z.infer<typeof ApprovalViewSchema>;
 

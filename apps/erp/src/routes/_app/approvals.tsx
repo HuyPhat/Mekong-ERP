@@ -144,7 +144,7 @@ function ApprovalsInboxPage() {
         run: async (rows): Promise<BulkActionResult> => {
           const outcomes = await Promise.allSettled(
             rows
-              .filter((row) => row.status === 'pending' && canDecideRow(row))
+              .filter((row) => row.actionable && canDecideRow(row))
               .map((row) =>
                 decideMutation.mutateAsync({ id: row.id, decision: 'approved', actorId }),
               ),
@@ -236,6 +236,14 @@ function ApprovalsInboxPage() {
         cell: (info) => {
           const approval = info.row.original;
           if (!canDecideRow(approval) || approval.status !== 'pending') return null;
+          // Queued behind an earlier approver: nothing to decide yet, and the server would refuse.
+          if (!approval.actionable) {
+            return (
+              <span className="text-xs text-muted-foreground">
+                {t('approvals.waitingOnEarlier')}
+              </span>
+            );
+          }
           return (
             <div className="flex gap-2">
               <Button

@@ -85,6 +85,26 @@ export function currentApprovalStep(chain: Approval[]): Approval | undefined {
     .find((step) => step.status === 'pending');
 }
 
+/**
+ * The ids of the steps someone can decide now: for each document, the next pending step of
+ * its newest chain. A step behind it (the director's, while the manager has not decided)
+ * is pending but not yet up, and a step from an earlier submission is history.
+ */
+export function actionableStepIds(steps: Approval[]): Set<string> {
+  const byDocument = new Map<string, Approval[]>();
+  for (const step of steps) {
+    const group = byDocument.get(step.docId);
+    if (group) group.push(step);
+    else byDocument.set(step.docId, [step]);
+  }
+  const ids = new Set<string>();
+  for (const group of byDocument.values()) {
+    const current = currentApprovalStep(latestChain(group));
+    if (current) ids.add(current.id);
+  }
+  return ids;
+}
+
 export type ChainOutcome = 'pending' | 'approved' | 'rejected' | 'changes_requested';
 
 export function chainOutcome(chain: Approval[]): ChainOutcome {

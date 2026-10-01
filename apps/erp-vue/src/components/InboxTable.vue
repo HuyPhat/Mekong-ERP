@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import type { ApprovalView, User } from '@mekong-erp/contract';
 import { useI18n } from '../i18n';
-import { canDecide, decidableSteps } from '../logic/decisions';
+import { canDecide, decidableSteps, isQueued } from '../logic/decisions';
 import { formatDate, formatVnd } from '../logic/format';
 import { roleLabel } from '../logic/labels';
 import type { InboxSort } from '../logic/inbox-query';
@@ -138,7 +138,12 @@ function amountText(step: ApprovalView): string {
             }}</StatusBadge>
           </td>
           <td class="sticky right-0 border-l border-border bg-inherit px-3 py-2">
-            <div v-if="canDecide(props.user, step)" class="flex gap-1">
+            <span
+              v-if="isQueued(props.user, step)"
+              class="text-xs whitespace-nowrap text-muted-foreground"
+              >{{ t('inbox.waitingOnEarlier') }}</span
+            >
+            <div v-else-if="canDecide(props.user, step)" class="flex gap-1">
               <BaseButton
                 size="sm"
                 :disabled="props.busy"

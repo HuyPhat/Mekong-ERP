@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { ApiError, DEMO_USERS, type ApprovalView, type User } from '@mekong-erp/contract';
-import { canDecide, classifyDecisionError, decidableSteps, summarizeBulk } from './decisions';
+import {
+  canDecide,
+  classifyDecisionError,
+  decidableSteps,
+  isQueued,
+  summarizeBulk,
+} from './decisions';
 
 function user(id: string): User {
   const found = DEMO_USERS.find((candidate) => candidate.id === id);
@@ -21,6 +27,7 @@ function step(overrides: Partial<ApprovalView> = {}): ApprovalView {
     subject: 'Supplier',
     amount: 1_000_000,
     unit: 'vnd',
+    actionable: true,
     ...overrides,
   };
 }
@@ -51,6 +58,24 @@ describe('canDecide', () => {
 
   it('is not for a login without any approval permission', () => {
     expect(canDecide(user('warehouse'), step())).toBe(false);
+  });
+});
+
+describe('a step queued behind an earlier approver', () => {
+  const queued = step({ actionable: false });
+
+  it('cannot be decided yet, even by someone holding the permission', () => {
+    expect(canDecide(user('approver_manager'), queued)).toBe(false);
+    expect(canDecide(user('admin'), queued)).toBe(false);
+  });
+
+  it('is reported as queued for a login that could decide it, and for nobody else', () => {
+    expect(isQueued(user('approver_manager'), queued)).toBe(true);
+    expect(isQueued(user('warehouse'), queued)).toBe(false);
+    expect(isQueued(user('approver_manager'), step())).toBe(false);
+    expect(
+      isQueued(user('approver_manager'), step({ status: 'approved', actionable: false })),
+    ).toBe(false);
   });
 });
 

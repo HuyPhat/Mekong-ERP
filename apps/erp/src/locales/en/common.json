@@ -469,6 +469,7 @@
       "changes_requested": "Changes requested",
       "skipped": "Skipped"
     },
+    "waitingOnEarlier": "Waiting on an earlier approval",
     "approveButton": "Approve",
     "approving": "Approving…",
     "rejectButton": "Reject",

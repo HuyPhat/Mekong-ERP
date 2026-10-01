@@ -79,3 +79,13 @@ export function workingDay(daysAhead = 200): string {
     day.setDate(day.getDate() + 1);
   }
 }
+
+/** A `yyyy-mm-dd` date moved by whole days. */
+export function addDays(date: string, days: number): string {
+  // Noon, so a daylight-saving change can't tip the result into the neighbouring day.
+  const moved = new Date(`${date}T12:00:00`);
+  moved.setDate(moved.getDate() + days);
+  const month = String(moved.getMonth() + 1).padStart(2, '0');
+  const day = String(moved.getDate()).padStart(2, '0');
+  return `${moved.getFullYear()}-${month}-${day}`;
+}

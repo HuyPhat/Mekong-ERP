@@ -465,6 +465,7 @@
       "changes_requested": "Yêu cầu chỉnh sửa",
       "skipped": "Đã bỏ qua"
     },
+    "waitingOnEarlier": "Đang chờ bước duyệt trước",
     "approveButton": "Duyệt",
     "approving": "Đang duyệt…",
     "rejectButton": "Từ chối",

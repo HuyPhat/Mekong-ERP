@@ -10,6 +10,7 @@ import {
 import { ensureSeeded } from '../../seed';
 import { applySort, matchesSearch, paginate, parseListParams } from '../../list-query';
 import {
+  actionableStepIds,
   currentApprovalStep,
   decideApproval,
   latestChain,
@@ -29,15 +30,28 @@ const DecideApprovalSchema = z.object({
 
 // One inbox lists every document type that runs on the approval engine, so each
 // type says what to show: who or what it is about, and the magnitude its rules use.
-function toView(approval: Approval): ApprovalView {
+function toView(approval: Approval, actionable: ReadonlySet<string>): ApprovalView {
+  const isUp = actionable.has(approval.id);
   if (approval.docType === 'leave_request') {
     const request = leaveRequestsStore.get(approval.docId);
     const employee = request ? employeesStore.get(request.employeeId) : undefined;
-    return { ...approval, subject: employee?.name ?? '', amount: request?.days ?? 0, unit: 'days' };
+    return {
+      ...approval,
+      subject: employee?.name ?? '',
+      amount: request?.days ?? 0,
+      unit: 'days',
+      actionable: isUp,
+    };
   }
   const po = purchaseOrdersStore.get(approval.docId);
   const supplier = po ? suppliersStore.get(po.supplierId) : undefined;
-  return { ...approval, subject: supplier?.name ?? '', amount: po?.grandTotal ?? 0, unit: 'vnd' };
+  return {
+    ...approval,
+    subject: supplier?.name ?? '',
+    amount: po?.grandTotal ?? 0,
+    unit: 'vnd',
+    actionable: isUp,
+  };
 }
 
 function documentStatus(
@@ -98,7 +112,11 @@ export const approvalsHandlers = [
     const docTypes = url.searchParams.get('filter[docType]')?.split(',').filter(Boolean) ?? [];
     const docId = url.searchParams.get('filter[docId]');
 
-    let items = approvalsStore.list().map(toView);
+    // Which steps are up depends on a document's whole chain, so it is worked out before
+    // any filter narrows the list.
+    const all = approvalsStore.list();
+    const actionable = actionableStepIds(all);
+    let items = all.map((approval) => toView(approval, actionable));
     if (approverRole) items = items.filter((approval) => approval.approverRole === approverRole);
     if (statuses.length > 0) items = items.filter((approval) => statuses.includes(approval.status));
     if (docTypes.length > 0)

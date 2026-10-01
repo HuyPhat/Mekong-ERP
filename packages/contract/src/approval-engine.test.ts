@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  actionableStepIds,
   resolveApprovalRoles,
   createApprovalChain,
   currentApprovalStep,
@@ -401,5 +402,58 @@ describe('approvalHistory', () => {
     ];
     approvalHistory(steps);
     expect(steps.map((s) => s.id)).toEqual(['b', 'a']);
+  });
+});
+
+describe('actionableStepIds', () => {
+  const step = (
+    id: string,
+    docId: string,
+    sequence: number,
+    status: Approval['status'],
+    createdAt = '2026-03-01T09:00:00.000Z',
+  ): Approval => ({
+    id,
+    docType: 'purchase_order',
+    docId,
+    docNumber: docId.toUpperCase(),
+    sequence,
+    approverRole: sequence === 1 ? 'approver_manager' : 'approver_finance',
+    status,
+    createdAt,
+  });
+
+  it('is only the next pending step of a chain, not the ones queued behind it', () => {
+    const steps = [step('a1', 'po-a', 1, 'pending'), step('a2', 'po-a', 2, 'pending')];
+    expect([...actionableStepIds(steps)]).toEqual(['a1']);
+  });
+
+  it('moves on to the next step once the one before it is decided', () => {
+    const steps = [step('a1', 'po-a', 1, 'approved'), step('a2', 'po-a', 2, 'pending')];
+    expect([...actionableStepIds(steps)]).toEqual(['a2']);
+  });
+
+  it('has one per document, whatever order the steps arrive in', () => {
+    const steps = [
+      step('b2', 'po-b', 2, 'pending'),
+      step('a1', 'po-a', 1, 'pending'),
+      step('b1', 'po-b', 1, 'pending'),
+      step('a2', 'po-a', 2, 'pending'),
+    ];
+    expect([...actionableStepIds(steps)].sort()).toEqual(['a1', 'b1']);
+  });
+
+  it('has nothing for a settled document, and ignores an earlier submission', () => {
+    const settled = [step('a1', 'po-a', 1, 'approved'), step('a2', 'po-a', 2, 'approved')];
+    expect(actionableStepIds(settled).size).toBe(0);
+    // Sent back, then resubmitted: the old skipped steps are history, the new chain is live.
+    const resubmitted = [
+      step('old-1', 'po-a', 1, 'changes_requested'),
+      step('old-2', 'po-a', 2, 'skipped'),
+      step('new-1', 'po-a', 1, 'pending', '2026-03-03T09:00:00.000Z'),
+      step('new-2', 'po-a', 2, 'pending', '2026-03-03T09:00:00.000Z'),
+    ];
+    expect([...actionableStepIds(resubmitted)]).toEqual(['new-1']);
+    expect(actionableStepIds([]).size).toBe(0);
   });
 });

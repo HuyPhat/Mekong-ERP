@@ -72,11 +72,17 @@ second one seeds.
   unawaited service worker update, and a guard for that was written and then removed
   once repeating the spec showed the real cause). The spec now waits for the sign-out.
 - **The inbox lists steps that are not yet up.** A director's list includes the second
-  step of a chain whose first approver has not decided. The list endpoint doesn't say
-  whether a step is current, so neither client can hide its buttons; a decision on such a
-  step is refused with a 409, and a batch reports how many went through. An `actionable`
-  flag on `ApprovalView` would fix it in both apps at once. It is a contract change, so
-  it is proposed here rather than made.
+  step of a chain whose first approver has not decided. The list endpoint didn't say
+  whether a step is current, so neither client could hide its buttons; a decision on such a
+  step was refused with a 409, and a batch reported how many went through. _Resolved the
+  day after this record was written:_ `ApprovalView` gained a required `actionable`
+  flag (the step is the next pending one of its document's newest chain, worked out by
+  `actionableStepIds` in the contract before any filter narrows the list). Both inboxes
+  now show "Waiting on an earlier approval" in place of the buttons and the checkbox, and
+  the bulk action only sends steps that are up. The server still refuses an out-of-turn
+  decision with a 409 (a stale tab can still try). It was a contract change, made with the
+  owner's go-ahead, and the Vue spec that had relied on a batch partly failing was
+  replaced by one that follows a request from manager to director.
 
 - **The list was unreadable beside the detail panel.** A documentation screenshot, not
   a test, showed it: with the panel open the subject column was squeezed to a sliver (a
